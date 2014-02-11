@@ -1,0 +1,24 @@
+
+/******************************************************************************/
+/*                                                                            */
+/* FILE    : README                                                           */
+/* AUTHOR  : Joshua Miller                                                    */
+/* PROJECT : Project 2                                                        */
+/* CLASS   : Parallel Computing - Winter 2014                                 */
+/*                                                                            */
+/******************************************************************************/
+
+TO MAKE:
+
+../project2$   make
+               
+TO TEST:       
+
+../project2$   ./test
+
+TO RUN:
+
+../project2$   ./firewall numPackets numSources mean uniformFlag \
+                experimentNumber D [s=1/p=2/sq=3/s&p=4/sq&s=5]
+
+

@@ -1,0 +1,33 @@
+/******************************************************************************/
+/*                                                                            */
+/* FILE    : locks.h                                                          */
+/* DESCRIP : header file for threads                                          */
+/* AUTHOR  : Joshua Miller                                                    */
+/* PROJECT : Project 3                                                        */
+/* CLASS   : Parallel Computing - Winter 2014                                 */
+/*                                                                            */
+/******************************************************************************/
+
+#ifndef LOCKS_H_
+#define LOCKS_H_
+
+#include <pthread.h>
+
+typedef unsigned char TAS_t;
+
+typedef union Lock {
+    TAS_t tas;
+    pthread_mutex_t mutex;
+} Lock;
+
+/* Test and Set */
+int TAS_init(Lock *tas);
+int TAS_lock(Lock *tas);
+int TAS_unlock(Lock *tas);
+
+int mutex_lock(Lock *lock);
+int mutex_unlock(Lock *lock);
+
+
+#endif
+

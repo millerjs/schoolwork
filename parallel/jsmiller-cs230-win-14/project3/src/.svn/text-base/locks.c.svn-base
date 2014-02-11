@@ -1,0 +1,44 @@
+/******************************************************************************/
+/*                                                                            */
+/* FILE    : locks.c                                                          */
+/* DESCRIP : header file for threads                                          */
+/* AUTHOR  : Joshua Miller                                                    */
+/* PROJECT : Project 3                                                        */
+/* CLASS   : Parallel Computing - Winter 2014                                 */
+/*                                                                            */
+/******************************************************************************/
+
+
+#include "locks.h"
+#include "stdlib.h"
+#include "stdio.h"
+
+int TAS_lock(Lock *lock)
+{
+    while (__sync_lock_test_and_set(&lock->tas, 1));
+    return 0;
+}
+
+int TAS_unlock(Lock *lock)
+{
+    return !__sync_lock_test_and_set(&lock->tas, 0);
+}
+
+int TAS_init(Lock *lock)
+{
+    return (lock->tas = 0);
+}
+
+int mutex_lock(Lock *lock)
+{
+    return pthread_mutex_lock(&lock->mutex);
+}
+
+int mutex_unlock(Lock *lock)
+{
+    return pthread_mutex_unlock(&lock->mutex);
+}
+
+
+
+

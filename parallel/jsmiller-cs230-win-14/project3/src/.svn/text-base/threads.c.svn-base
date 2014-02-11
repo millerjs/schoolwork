@@ -1,0 +1,133 @@
+/******************************************************************************/
+/*                                                                            */
+/* FILE    : threads.c                                                        */
+/* DESCRIP : header file for threads                                          */
+/* AUTHOR  : Joshua Miller                                                    */
+/* PROJECT : Project 3                                                        */
+/* CLASS   : Parallel Computing - Winter 2014                                 */
+/*                                                                            */
+/******************************************************************************/
+
+
+#include <pthread.h>
+#include <stdlib.h>
+
+#include "../src/threads.h"
+#include "../src/util.h"
+
+volatile int LOOP_THREADS = 0;
+
+#define TEST
+/* #undef TEST */
+
+void * thread_loop(void* _args_)
+{
+
+    thread_arg_t *args = (thread_arg_t*) _args_;
+
+    while (!LOOP_THREADS);
+
+    while (LOOP_THREADS){
+
+        args->acquire(args->lock);
+
+#ifdef TEST
+        args->test_counter ++;
+#endif
+
+        *args->counter += 1;
+        args->release(args->lock);
+
+
+
+
+    }
+
+    return NULL;
+}
+
+thread_arg_t **new_thread_arg_array(int n)
+{
+
+    int i;
+    thread_arg_t **new = (thread_arg_t**) malloc(n*sizeof(thread_arg_t*));
+
+    for (i = 0; i < n; i++){
+        new[i] = malloc(sizeof(thread_arg_t));
+        new[i]->id = -1;
+        new[i]->loop = 0;
+        new[i]->test_counter = 0;
+        new[i]->acquire = NULL;
+        new[i]->release = NULL;
+        new[i]->counter = NULL;
+    }
+
+    return new;
+
+}
+
+
+int join_thread_pool(thread_arg_t **threads, int n)
+{
+    int i;
+    void *ret;
+    for (i = 0; i < n; i++)
+        pthread_join(threads[i]->this, &ret);
+    
+    return 0;
+}
+
+
+thread_arg_t **create_thread_pool(int n)
+{
+
+    int i;
+    thread_arg_t **thread_args = new_thread_arg_array(n);
+    pthread_t *threads = (pthread_t*) malloc(n*sizeof(pthread_t));
+
+    if (!threads) 
+        error("unable to allocate memory for threads");
+    
+    for (i = 0; i < n; i++){
+        thread_args[i]->id = i;
+        thread_args[i]->this = threads[i];
+        thread_args[i]->loop = 1;
+    }
+    
+    for (i = 0; i < n; i++){
+        if (pthread_create(&thread_args[i]->this, NULL, thread_loop, thread_args[i]))
+            error("unable to create thread\n");
+    }
+
+    return thread_args;
+
+}
+
+
+thread_arg_t **locking_thread_pool(Lock *lock, 
+                                   int (*acquire)(Lock*),
+                                   int (*release)(Lock*),
+                                   long *counter,
+                                   int n)
+{
+    thread_arg_t **threads = create_thread_pool(n);
+    for (int i = 0; i < n; i++){
+        threads[i]->acquire = acquire;
+        threads[i]->release = release;
+        threads[i]->counter = counter;
+        threads[i]->lock = lock;
+    }
+
+    return threads;
+
+}
+
+void start_threads()
+{
+    LOOP_THREADS = 1;
+}
+
+void stop_threads()
+{
+    LOOP_THREADS = 0;
+}

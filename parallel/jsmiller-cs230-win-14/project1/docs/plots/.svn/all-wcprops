@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/jsmiller-cs230-win-14/!svn/ver/1/project1/docs/plots
+END
+serial_parallel_size.png
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/jsmiller-cs230-win-14/!svn/ver/1/project1/docs/plots/serial_parallel_size.png
+END
+parallel_size.png
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/jsmiller-cs230-win-14/!svn/ver/1/project1/docs/plots/parallel_size.png
+END
+parallel_thread_16.png
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/jsmiller-cs230-win-14/!svn/ver/1/project1/docs/plots/parallel_thread_16.png
+END
+parallel_size_1024.png
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/jsmiller-cs230-win-14/!svn/ver/1/project1/docs/plots/parallel_size_1024.png
+END
+plotAll.sh
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/jsmiller-cs230-win-14/!svn/ver/1/project1/docs/plots/plotAll.sh
+END
+overhead.png
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/jsmiller-cs230-win-14/!svn/ver/1/project1/docs/plots/overhead.png
+END
+old.dat
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/jsmiller-cs230-win-14/!svn/ver/1/project1/docs/plots/old.dat
+END
+parallel_thread_1.png
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/jsmiller-cs230-win-14/!svn/ver/1/project1/docs/plots/parallel_thread_1.png
+END
+parallel_threads.png
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/jsmiller-cs230-win-14/!svn/ver/1/project1/docs/plots/parallel_threads.png
+END
+serial_parallel_performance.png
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/jsmiller-cs230-win-14/!svn/ver/1/project1/docs/plots/serial_parallel_performance.png
+END
+raw.dat
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/jsmiller-cs230-win-14/!svn/ver/1/project1/docs/plots/raw.dat
+END
+parallel_performance.png
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/jsmiller-cs230-win-14/!svn/ver/1/project1/docs/plots/parallel_performance.png
+END
+data1.dat
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/jsmiller-cs230-win-14/!svn/ver/1/project1/docs/plots/data1.dat
+END
+serial.png
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/jsmiller-cs230-win-14/!svn/ver/1/project1/docs/plots/serial.png
+END
+plot.py
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/jsmiller-cs230-win-14/!svn/ver/1/project1/docs/plots/plot.py
+END
