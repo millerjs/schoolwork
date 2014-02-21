@@ -1,3 +1,5 @@
-locks.o: locks.c locks.h
+locks.o: locks.c util.h locks.h
+
+util.h:
 
 locks.h:

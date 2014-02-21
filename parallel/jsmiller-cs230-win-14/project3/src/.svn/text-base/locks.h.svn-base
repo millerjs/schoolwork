@@ -12,21 +12,82 @@
 #define LOCKS_H_
 
 #include <pthread.h>
+#define MAX_THREADS 1028
+#define CLH_PAD 5
 
 typedef unsigned char TAS_t;
+typedef unsigned char TASB_t;
 
-typedef union Lock {
+extern volatile int TASB_MAX_DELAY;
+extern volatile int TASB_MIN_DELAY;
+
+typedef struct ALOCK_t {
+    int n;
+    long tail;
+    long curr;
+    volatile int *flag;
+} ALOCK_t;
+
+
+typedef struct CLHnode_t CLHnode_t;
+
+struct CLHnode_t {
+    unsigned int lock;
+    CLHnode_t *pred;
+};
+
+typedef struct CLHLock_t {
+    CLHnode_t *tail;
+    CLHnode_t *nodes[MAX_THREADS];
+    long ids[MAX_THREADS];
+    int n;
+} CLHLock_t;
+
+typedef struct Lock Lock;
+
+typedef struct Lock {
+    int (*acquire)(Lock*);
+    int (*trylock)(Lock*);
+    int (*release)(Lock*);
     TAS_t tas;
+    TASB_t tasb;
+    ALOCK_t alock;
+    CLHLock_t clh;
     pthread_mutex_t mutex;
 } Lock;
 
-/* Test and Set */
-int TAS_init(Lock *tas);
-int TAS_lock(Lock *tas);
-int TAS_unlock(Lock *tas);
+int null_init(Lock *lock);
+int null_handler(Lock *lock);
 
+/* Test and Set */
+int TAS_init(Lock *lock);
+int TAS_lock(Lock *lock);
+int TAS_trylock(Lock *lock);
+int TAS_unlock(Lock *lock);
+
+/* Mutex */
+int mutex_init(Lock *lock);
 int mutex_lock(Lock *lock);
+int mutex_trylock(Lock *lock);
 int mutex_unlock(Lock *lock);
+
+/* Test and Set Backoff */
+int TASB_init(Lock *lock, int min_delay, int max_delay);
+int TASB_lock(Lock *lock);
+int TASB_trylock(Lock *lock);
+int TASB_unlock(Lock *lock);
+
+/* Array Lock */
+int ALOCK_init(Lock *lock, int n);
+int ALOCK_lock(Lock *lock);
+int ALOCK_trylock(Lock *lock);
+int ALOCK_unlock(Lock *lock);
+
+/* Linked List Lock */
+int CLH_init(Lock *lock, int n);
+int CLH_lock(Lock *lock);
+int CLH_trylock(Lock *lock);
+int CLH_unlock(Lock *lock);
 
 
 #endif

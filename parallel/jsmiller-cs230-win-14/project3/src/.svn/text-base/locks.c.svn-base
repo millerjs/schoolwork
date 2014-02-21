@@ -8,10 +8,32 @@
 /*                                                                            */
 /******************************************************************************/
 
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <time.h>
+#include "util.h"
 
 #include "locks.h"
-#include "stdlib.h"
-#include "stdio.h"
+
+#define MAX_BACKOFF 1000
+
+volatile int TASB_MIN_DELAY = 1;
+volatile int TASB_MAX_DELAY = 2;
+
+const int RAND_SCALE = RAND_MAX/10;
+
+int null_init(Lock *lock)
+{
+    lock->acquire = &null_handler;
+    lock->trylock = &null_handler;
+    lock->release = &null_handler;
+    return 0;
+}
+
+int null_handler(Lock *lock){
+    return 0;
+}
 
 int TAS_lock(Lock *lock)
 {
@@ -19,14 +41,30 @@ int TAS_lock(Lock *lock)
     return 0;
 }
 
+int TAS_trylock(Lock *lock)
+{
+    return __sync_lock_test_and_set(&lock->tas, 1);
+}
+
 int TAS_unlock(Lock *lock)
 {
     return !__sync_lock_test_and_set(&lock->tas, 0);
-}
+ }
 
 int TAS_init(Lock *lock)
 {
+    lock->acquire = &TAS_lock;
+    lock->trylock = &TAS_trylock;
+    lock->release = &TAS_unlock;
     return (lock->tas = 0);
+}
+
+int mutex_init(Lock *lock)
+{
+    lock->acquire = &mutex_lock;
+    lock->trylock = &mutex_trylock;
+    lock->release = &mutex_unlock;
+    return pthread_mutex_init(&lock->mutex, NULL);
 }
 
 int mutex_lock(Lock *lock)
@@ -34,11 +72,151 @@ int mutex_lock(Lock *lock)
     return pthread_mutex_lock(&lock->mutex);
 }
 
+int mutex_trylock(Lock *lock)
+{
+    return pthread_mutex_trylock(&lock->mutex);
+}
+
 int mutex_unlock(Lock *lock)
 {
     return pthread_mutex_unlock(&lock->mutex);
 }
 
+int TASB_init(Lock *lock, int min_delay, int max_delay)
+{
+    lock->acquire = &TASB_lock;
+    lock->trylock = &TASB_trylock;
+    lock->release = &TASB_unlock;
+    
+    TASB_MIN_DELAY = min_delay;
+    TASB_MAX_DELAY = max_delay;
 
+    srand(time(NULL));
+    lock->tasb = 0;
+
+    return 0;
+}
+
+int TASB_trylock(Lock *lock)
+{
+    return __sync_lock_test_and_set(&lock->tasb, 1);
+}
+
+int TASB_lock(Lock *lock)
+{
+    int limit = TASB_MIN_DELAY;
+    while (__sync_lock_test_and_set(&lock->tasb, 1)){     
+        int delay = RANDOM(TASB_MIN_DELAY, limit + 1);
+        limit = MIN(TASB_MAX_DELAY, limit << 1);
+        usleep( delay );
+    }
+    return 0;
+}
+
+int TASB_unlock(Lock *lock)
+{
+    return !__sync_lock_test_and_set(&lock->tasb, 0);
+}
+
+#define BLOCKED 1
+#define FREE 0
+#define PAD 8
+
+int ALOCK_init(Lock *lock, int n)
+{
+    lock->acquire = &ALOCK_lock;
+    lock->trylock = &ALOCK_trylock;
+    lock->release = &ALOCK_unlock;
+
+    lock->alock.n = n*PAD;
+    lock->alock.tail = 0;
+    lock->alock.curr = 0;
+    lock->alock.flag = (volatile int*) malloc(lock->alock.n*sizeof(int));
+    for (int i = 1; i < lock->alock.n; i++)
+        lock->alock.flag[i] = BLOCKED;
+    lock->alock.flag[0] = FREE;
+    return 0;
+}
+
+int ALOCK_free(Lock *lock)
+{
+    free((void*)lock->alock.flag);
+    return 0;
+}
+
+int ALOCK_lock(Lock *lock)
+{
+    int i = __sync_fetch_and_add(&lock->alock.tail, PAD) % lock->alock.n;
+    while (lock->alock.flag[i] == BLOCKED);
+    return 0;
+}
+
+int ALOCK_trylock(Lock *lock)
+{
+    int i = __sync_fetch_and_add(&lock->alock.tail, PAD) % lock->alock.n;
+    return (lock->alock.flag[i] == BLOCKED);
+}
+
+int ALOCK_unlock(Lock *lock)
+{
+    int i = lock->alock.curr % lock->alock.n;
+    lock->alock.flag[i] = BLOCKED;
+    lock->alock.curr += PAD;
+    i = lock->alock.curr % lock->alock.n;
+    lock->alock.flag[i%lock->alock.n] = FREE;
+    return 0;
+}
+
+int CLH_init(Lock *lock, int n)
+{
+    lock->acquire = &CLH_lock;
+    lock->trylock = &CLH_trylock;
+    lock->release = &CLH_unlock;
+
+    lock->clh.n = n;
+    for (int i = 0; i < n; i++){
+        lock->clh.nodes[i] = (CLHnode_t*) malloc(sizeof(CLHnode_t));
+    }
+    lock->clh.tail = (CLHnode_t*) malloc(sizeof(CLHnode_t));
+
+    return 0;
+}
+
+CLHnode_t **find_id(Lock *lock, long id)
+{
+    for (int i = 0; i < lock->clh.n; i++)
+        if (lock->clh.ids[i] == id)
+            return lock->clh.nodes+i;
+    ERROR("not found");
+    return NULL;
+}
+
+int CLH_lock(Lock *lock)
+{
+    volatile CLHnode_t *node = *find_id(lock, pthread_self());
+    node->lock = 1;
+    node->pred = __sync_lock_test_and_set(&lock->clh.tail, node);
+    while (node->pred->lock);
+    return 0;
+}
+
+int CLH_trylock(Lock *lock)
+{
+    volatile CLHnode_t *node = *find_id(lock, pthread_self());
+    if (node->lock)
+        return node->pred->lock;
+    node->lock = 1;
+    node->pred = __sync_lock_test_and_set(&lock->clh.tail, node);
+    return node->pred->lock;
+}
+
+int CLH_unlock(Lock *lock)
+{
+    CLHnode_t **node = find_id(lock, pthread_self());
+    CLHnode_t *pred = (*node)->pred;
+    (*node)->lock = 0;
+    *node = pred;
+    return 0;
+}
 
 

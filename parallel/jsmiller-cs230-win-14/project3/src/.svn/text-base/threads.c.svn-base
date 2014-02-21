@@ -15,111 +15,115 @@
 #include "../src/threads.h"
 #include "../src/util.h"
 
-volatile int LOOP_THREADS = 0;
+#include "firewall.h"
 
-#define TEST
-/* #undef TEST */
+volatile int LOOP_THREADS = 1;
+volatile int N_PER_THREAD = 0;
 
-void * thread_loop(void* _args_)
+volatile int LOOP = 0;
+volatile int START = 0;
+
+void *time_based_loop(void* _args_)
 {
-
+    
     thread_arg_t *args = (thread_arg_t*) _args_;
+    Lock *lock = args->lock;
+    int count = 0;
 
-    while (!LOOP_THREADS);
-
-    while (LOOP_THREADS){
-
-        args->acquire(args->lock);
-
-#ifdef TEST
-        args->test_counter ++;
-#endif
-
-        *args->counter += 1;
-        args->release(args->lock);
-
-
-
-
+    while (!START) usleep(1);
+    
+    while (LOOP){
+        lock->acquire(lock);
+        *args->counter = *args->counter + 1;
+        lock->release(lock);
+        count += 1;
     }
+    args->test_counter = count;
 
     return NULL;
 }
 
-thread_arg_t **new_thread_arg_array(int n)
+
+void *work_based_loop(void* _args_)
 {
+    
+    thread_arg_t *args = (thread_arg_t*) _args_;
+    Lock *lock = args->lock;
+    int count = 0;
 
-    int i;
-    thread_arg_t **new = (thread_arg_t**) malloc(n*sizeof(thread_arg_t*));
-
-    for (i = 0; i < n; i++){
-        new[i] = malloc(sizeof(thread_arg_t));
-        new[i]->id = -1;
-        new[i]->loop = 0;
-        new[i]->test_counter = 0;
-        new[i]->acquire = NULL;
-        new[i]->release = NULL;
-        new[i]->counter = NULL;
+    while (!START) usleep(1);
+    
+    while (count < N_PER_THREAD){
+        lock->acquire(lock);
+        *args->counter = *args->counter + 1;
+        lock->release(lock);
+        count ++;
     }
+    args->test_counter = count;
 
-    return new;
-
+    return NULL;
 }
-
 
 int join_thread_pool(thread_arg_t **threads, int n)
 {
     int i;
     void *ret;
     for (i = 0; i < n; i++)
-        pthread_join(threads[i]->this, &ret);
-    
+        pthread_join(*(threads[i]->this), &ret);
     return 0;
 }
 
-
-thread_arg_t **create_thread_pool(int n)
+thread_arg_t **create_thread_pool(Lock *lock, loop_t loop, long *counter, int n)
 {
+    thread_arg_t **new = (thread_arg_t**) malloc(n*sizeof(thread_arg_t*));
 
-    int i;
-    thread_arg_t **thread_args = new_thread_arg_array(n);
     pthread_t *threads = (pthread_t*) malloc(n*sizeof(pthread_t));
 
-    if (!threads) 
-        error("unable to allocate memory for threads");
-    
-    for (i = 0; i < n; i++){
-        thread_args[i]->id = i;
-        thread_args[i]->this = threads[i];
-        thread_args[i]->loop = 1;
-    }
-    
-    for (i = 0; i < n; i++){
-        if (pthread_create(&thread_args[i]->this, NULL, thread_loop, thread_args[i]))
-            error("unable to create thread\n");
-    }
+    ERROR_IF(!threads, "unable to allocate memory for threads");
 
-    return thread_args;
+    if (lock)
+        memset(lock->clh.ids, 0, sizeof(long)*MAX_THREADS);
 
+    for (int i = 0; i < n; i++){
+        new[i]               = malloc(sizeof(thread_arg_t));
+        new[i]->counter      = NULL;
+        new[i]->counter      = counter;
+        new[i]->id           = i;
+        new[i]->lock         = lock;
+        new[i]->loop         = 0;
+        new[i]->loop         = 1; 
+        new[i]->n            = 10000;
+        new[i]->nsources     = n;        
+        new[i]->qs           = NULL;
+        new[i]->test_counter = 0;
+        new[i]->this         = &threads[i];
+
+        int rs = pthread_create(&threads[i], NULL, loop, new[i]);
+        ERROR_IF(rs, "unable to create thread\n");
+
+        if (lock){
+            lock->clh.ids[i] = threads[i];
+            /* DEBUG("%li: ", lock->clh.ids[i]); */
+        }
+
+    }
+    return new;
 }
 
-
-thread_arg_t **locking_thread_pool(Lock *lock, 
-                                   int (*acquire)(Lock*),
-                                   int (*release)(Lock*),
-                                   long *counter,
-                                   int n)
+int assign_queues(Lock *locks, thread_arg_t ** threads, int n, LQ_t **qs, 
+                  int numPackets)
 {
-    thread_arg_t **threads = create_thread_pool(n);
+
     for (int i = 0; i < n; i++){
-        threads[i]->acquire = acquire;
-        threads[i]->release = release;
-        threads[i]->counter = counter;
-        threads[i]->lock = lock;
+        qs[i]->npackets = numPackets;        
+        qs[i]->ncomplete = 0;
+        qs[i]->lock = &locks[i];
+        for (int j = 0; j < threads[i]->nsources; j++){
+            locks[j].clh.ids[i] = *threads[i]->this;
+        }
+        threads[i]->qs = qs;
     }
-
-    return threads;
-
+    return 0;
 }
 
 void start_threads()

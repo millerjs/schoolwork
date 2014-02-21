@@ -1,0 +1,104 @@
+/******************************************************************************/
+/*                                                                            */
+/* FILE    : q.c                                                              */
+/* DESCRIP : Lamport Queue definitions                                        */
+/* AUTHOR  : Joshua Miller                                                    */
+/* PROJECT : Project 2                                                        */
+/* CLASS   : Parallel Computing - Winter 2014                                 */
+/*                                                                            */
+/******************************************************************************/
+
+#include "q.h"
+#include "util.h"
+
+int MAX_Q_LEN = 5;
+
+int getLQlen(LQ_t *q)
+{
+    int len = 0;
+    LQ_node_t *head = q->head;
+    while (head){
+        head = head->next;
+        len++;
+    }
+    return len;
+}
+
+LQ_t ** newLQ_array(int n)
+{
+    LQ_t **new = (LQ_t**) malloc(n*sizeof(LQ_t*));
+    ERROR_IF(!new, "out of memory");
+    for (int i = 0; i < n; i++)
+        new[i] = newLQ();
+    return new;
+}
+
+LQ_t * newLQ()
+{
+    LQ_t *new = (LQ_t*) malloc(sizeof(LQ_t));
+    ERROR_IF(!new, "out of memory");
+    new->head = NULL;
+    new->tail = NULL;
+    return new;
+}
+
+LQ_node_t * newLQnode(volatile Packet_t *packet)
+{
+    LQ_node_t *new = (LQ_node_t*) malloc(sizeof(LQ_node_t));
+    ERROR_IF(!new, "out of memory");
+    new->packet = packet;
+    new->next = NULL;
+    return new;
+}
+
+int enqueue_LQ(LQ_t *q, volatile Packet_t *packet)
+{    
+    LQ_node_t * new_node = newLQnode(packet);
+    if (!q->head){
+        q->head = new_node;
+        q->tail = q->head;
+        return RET_SUCCESS;
+    } 
+    q->tail->next = new_node;
+    q->tail = new_node;
+    return RET_SUCCESS;
+
+}
+
+int dequeue_LQ(LQ_t *q, volatile Packet_t *packet)
+{    
+    if (!q->head || q->head == q->tail) 
+        return ERR_NOSUCHQ;
+
+    ERROR_IF(!q->head->packet, "head has null packet");
+    *packet = *q->head->packet;
+    q->head = q->head->next;
+    /* free((void*)q->head->packet); */
+    return RET_SUCCESS;
+}
+
+int free_LQ(LQ_t *q)
+{    
+    if (!q->head || q->head == q->tail) 
+        return ERR_NOSUCHQ;
+
+    volatile Packet_t p;
+    while (dequeue_LQ(q, &p));
+    free(q);
+    return RET_SUCCESS;
+}
+
+
+void fprintLQf(FILE *file, LQ_t* q)
+{
+    fprintf(file, "QUEUE(len=%d):  ", getLQlen(q));
+    LQ_node_t *head = q->head;
+    while (head){
+        if (head->packet)
+            fprintf(file, "[%li]->", head->packet->iterations);
+        head = head->next;
+    }
+    fprintf(file, "[X]\n");
+}
+
+

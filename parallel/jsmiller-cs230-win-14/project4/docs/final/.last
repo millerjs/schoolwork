@@ -1,0 +1,421 @@
+\include{zLaTex-Preamble}
+
+\title{Project 3 Final Write-Up \\ Locked Queued Firewall} 
+\author{Joshua Miller}
+\date{February 4, 2014}
+
+\begin{document}
+\rhead{\fancyplain{}{Joshua Miller}}
+\maketitle
+
+
+\section{Purpose}
+
+\section{Design}
+
+\subsection{Modules}
+
+The project was divided in to the following modules
+
+\begin{itemize}
+\item util.h - I/O and error handling
+\item firewall.h - contains the distribution sections
+\item experiment{1-8}.c - contain the functions to operate the locked queues over parameter sets
+\item threads.h - contains the thread utility functions as well as the thread worker loop
+\item q.h - contains the queue data structures as well as the node structures
+\item main.c - the general running of the firewall
+\item test.c - a test suite to verify correctness
+\end{itemize}
+
+\subsection{Overall design}
+
+If I were to redo this project, I would go for less polymorphism.  I
+initially wrote the framework for the thread functions and locking
+calls before I was completely familiar all the locks (i.e. the CLH
+lock).  Because of this I believe I made my task slightly more
+difficult, as well as hampered the performance with sundry function
+pointers and wrapping function calls.  
+
+The {\tt CLH\_lock} posed the largest difficulty in the polymorphic design.
+In order to maintain a clear cut lack of thread local variables, I
+ended up creating a lookup table based on the thread's pthread id in
+order to differentiate between threads while in the {\tt CLH\_lock} function.
+
+\subsection{Utilities}
+
+I wrote a macro which sets a timeout on a function call and returns to
+the calling address if the timeout is triggered.  I thought this was
+pretty neat.
+
+\subsection{Lock Design}
+
+
+\section{Purpose}
+
+The purpose of this project is to implement different locking
+mechanisms for the purpose of testing the overhead introduced in
+resource contention.  
+
+\section{Design}
+
+\subsection{Framework}
+
+The overhead introduced by each lock was tested by having {\tt N}
+threads attempting to update a single incrementing counter.  Because
+this setup is serliazed completely by the single shared resource, 
+
+The framework for testing these locks take a single {\tt Lock}
+structure.  This structure contains a {\tt Struct} of the five lock
+implementations that will be implement for this project.  As the
+threads are spawned, they are passed function pointers which specify
+the procedures for the {\tt acquire}, {\tt release}, and {\tt trylock}
+of each lock. This allows for the simple and efficient abstraction of
+the lock over the thread loop while fixing each lock and unlock call
+to a function pointer de-reference. This may however increase the over
+head by disallowing the compiler to in-line the code for the lock and
+unlock, resulting in greater branch overhead.
+
+I ended up including the lock handling functions in the lock struct
+itself.
+
+\begin{code}
+while (LOOP_THREADS){
+        lock->acquire(args->lock);
+        args->test_counter ++;
+        *args->counter += 1;
+        lock->release(args->lock);
+}
+\end{code}
+
+The global variable {\tt LOOP} is switched off after a given
+duration of time by the main thread.  Timing of the functions is not
+necessary because we are controlling the duration of execution, rather
+than the number of iterations.  The duration which to sleep is
+implemented using the {\tt usleep()} method.
+
+The second round if testing will use the value of the counter as the
+loop test condition. The dependant variable to be tested will then be
+the time required to complete the execution of the loop a given number
+of times.
+
+Included in the thread loop is a preprocessor switch which allows the
+thread loop to maintain its own counter during testing.  After threads
+are joined, the counters are totalled and compared against the shared
+counter.  In this way, I can test the accuracy of each of the locks.
+Any locks which do not provide mutual exclusion will allow race
+conditions, and the final counter comparison will fail. Therefore, I
+was able to write one test to test all of the locks.  By calling {\tt
+thread\_battery()} I am able to reinitialize the lock based on the
+implementation ad pass the {\tt *Lock} and its {\tt acquire} and {\tt
+release} functions to the test.
+
+\begin{code}
+Lock lock;
+
+TASB_init(&lock);
+thread_battery("TASB", &lock, &TASB_lock, &TASB_unlock);
+
+ALOCK_init(&lock, 8);
+thread_battery("ALOCK", &lock, &ALOCK_lock, &ALOCK_unlock);
+\end{code}
+
+An example output of the test run on the {\tt ALOCK\_t} lock
+implementation is as follows.
+
+As mentioned above, the code will move passed time-outs and try and
+catch and report segfaults.
+
+\begin{code}
+TEST: [               ALOCK] [                 1 threads 1 trials] [ PASSED ]
+TEST: [               ALOCK] [                 2 threads 1 trials] [ PASSED ]
+TEST: [               ALOCK] [                 4 threads 1 trials] [ PASSED ]
+TEST: [               ALOCK] [                 8 threads 1 trials] [ PASSED ]
+TEST: [               ALOCK] [                32 threads 1 trials] [ PASSED ]
+TEST: [               ALOCK] [                 8 threads 5 trials] [ PASSED ]
+TEST: [               ALOCK] [                8 threads 10 trials] [ PASSED ]
+TEST: [               ALOCK] [                8 threads 23 trials] [ PASSED ]
+\end{code}
+
+\lang{C}
+\subsection{TASLock}
+
+The following code is my implementation for the {\tt TASLock}
+
+\begin{code}
+int TAS_lock(Lock *lock)
+{
+    while (__sync_lock_test_and_set(&lock->tas, 1));
+    return 0;
+}
+
+int TAS_unlock(Lock *lock)
+{
+    return !__sync_lock_test_and_set(&lock->tas, 0);
+}
+
+int TAS_init(Lock *lock)
+{
+    return (lock->tas = 0);
+}
+\end{code}
+
+This uses the built-in intel atomic commands to acquire the lock.
+
+
+\section{TASLock Backoff}
+
+The following code is my implementation for the {\tt TASBLock}
+
+\begin{code}
+int TASB_init(Lock *lock)
+{
+    srand(time(NULL));
+    return (lock->tas = 0);
+}
+
+int TASB_lock(Lock *lock)
+{
+    int limit = TASB_MIN_DELAY;
+    while (__sync_lock_test_and_set(&lock->tasb, 1)){     
+        int delay = RANDOM(TASB_MIN_DELAY, limit + 1);
+        limit = MIN(TASB_MAX_DELAY, limit << 1);
+        usleep( delay );
+    }
+    return 0;
+}
+
+int TASB_unlock(Lock *lock)
+{
+    return !__sync_lock_test_and_set(&lock->tas, 0);
+}
+\end{code}
+
+Every time {\tt TASB\_lock} is called, backoff is initially capped at
+1 microsecond.  While the thread is unable to acquire the lock, it
+will double the maximum delay to {\tt delay\_top} microseconds.  After
+failure to acquire the lock, the thread will then wait on a delay in
+the range of 0 to {\tt delay\_top} microseconds.
+
+\subsection{pthread\_mutex\_t}
+
+The pthread is simply included in the lock {\tt Union} and is
+initialized, locked, and unlocked in the normal way.
+
+\subsection{ALOCK}
+
+
+\begin{code}
+#define BLOCKED 1
+#define FREE 0
+#define PAD 8
+
+int ALOCK_init(Lock *lock, int n)
+{
+    lock->alock.n = n*PAD;
+    lock->alock.tail = 0;
+    lock->alock.curr = 0;
+    lock->alock.flag = (volatile int*) malloc(lock->alock.n*sizeof(int));
+    for (int i = 1; i < lock->alock.n; i++)
+        lock->alock.flag[i] = BLOCKED;
+    lock->alock.flag[0] = FREE;
+    return 0;
+}
+
+int ALOCK_free(Lock *lock)
+{
+    free(lock->alock.flag);
+    return 0;
+}
+
+
+int ALOCK_lock(Lock *lock)
+{
+
+    int i = __sync_fetch_and_add(&lock->alock.tail, PAD) % lock->alock.n;
+    while (lock->alock.flag[i] == BLOCKED);
+    return 0;
+
+}
+
+int ALOCK_unlock(Lock *lock)
+{
+
+    int i = lock->alock.curr % lock->alock.n;
+    lock->alock.flag[i] = BLOCKED;
+    lock->alock.curr += PAD;
+    i = lock->alock.curr % lock->alock.n;
+    lock->alock.flag[i%lock->alock.n] = FREE;
+    
+    return 0;
+}
+\end{code}
+
+The Anderson lock was implemented with a padding of 8 bytes.
+
+\subsection{CLH Queue Lock}
+
+Because of the exterme use of abstraction in my project, I found it
+necessary to create a lookup table for threads to find their repective
+CLH nodes, indexed by their pthread id.
+
+\begin{code}
+CLHnode_t **find_id(Lock *lock, long id)
+{
+    for (int i = 0; i < lock->clh.n; i++)
+        if (lock->clh.ids[i] == id)
+            return lock->clh.nodes+i;
+    ERROR("not found");
+    return NULL;
+}
+
+int CLH_lock(Lock *lock)
+{
+    volatile CLHnode_t *node = *find_id(lock, pthread_self());
+    node->lock = 1;
+    node->pred = __sync_lock_test_and_set(&lock->clh.tail, node);
+    while (node->pred->lock);
+    return 0;
+}
+\end{code}
+
+
+\subsection{Awesome Locking scheme}
+
+I decided to implement a locking scheme vary similar to the {\tt
+LAST\_QUEUE} lock.  My thinking was that while the randomness ensure
+that threads were being selected for work for large runtimes, I did
+not believe this was a fair setup.  Therefore my own design uses the
+trylock of each lock, and if it is unable to acquire the lock then it
+simply proceeds to the next queue (modulus numSources) to try again.
+When the threads start off, they initially stumble over themselves in
+contention for the the first queue, but eventually the ones that do
+not make it will statistically be spread amongst the queues in search
+of work, while garunteeing an ordered selection.
+
+\subsection{Packet Processing}
+
+I was mostly able to reuse the code from the last project with a
+decent amount of refactoring to allow for the locks. I will explain
+the structure in detail, nor comment on the numerous segfaults and
+bugs that arose from passing so many pointers around.
+
+\section{Experimental Results \& Analysis}
+
+\section{Experimental Results}
+
+\subsection{Counter Experiment 1}
+
+\shadetable{|c|c|c|}{Lock type & Raw Count & Speedup}
+{Overhead - 100 MS - 5 run average}{  
+none   &  25422244   &  -   \\
+CLH   &  5618229   &  0.22  \\
+TAS   &  5277035   &  0.20  \\
+TASB   &  4660841   &  0.18  \\
+mutex   &  3779035   &  0.14  \\
+ALOCK   &  1955261   &  0.07  
+}{tab:test1}
+
+
+We can see in Table~1 that the CLH lock displayed the lowest overhead
+for single threaded time-based schemes. This is not what I
+predicted. I assumed that the increased work required to sort out the
+linked list would outweigh any benefits in terms of contention.
+Considering there is a single thread attempting to gain control of the
+lock, I still do not have a solid explanation for this result.
+
+\subsection{Counter Experument 2}
+
+\shadetable{|c|c|c|}{Lock type & Raw Count & Speedup}
+{Overhead - 262144 count total - 5 run average}{  
+none    &  1100  &    -  \\
+CLH     &  4734  &  0.23  \\
+TAS     &  5089  &  0.21  \\
+TASB    &  5739  &  0.19  \\
+mutex   &  7052  &  0.15  \\
+ALOCK   &  13689 &  0.08  
+}{tab:test1}
+
+Again, we see nearly identicle results with the single threaded
+functions, even though the data in table two was the result of a
+work-based scheme.  This is concurrent with my hypothesis that
+``Because both this and the previous test are functionally
+indesdinguishable (as far as I can tell) tests of throughput, the
+performance differences between implementations will be the same as in
+Experiment~1.''
+
+\subsection{Counter Experiment 3}
+
+I found that the optimal delay settings for the exponential backoff
+lock were with a minimum of 256 $\mu$s and a maximum of 2056$\mu$s.
+However, I do not present these numbers with confidence, because the
+margin between the optimal count using these parameters was not great,
+and in successive runs, the optimal parameters found were subject to
+change.  Nevertheless, using this setting, I obtained the following data.
+
+\figH {../plots/experiment3.png}{Experiment 3}{LABEL}{1}        
+
+We can see that for the time based threads, the {\tt TASB} lock was
+most successful at scaling, while the {\tt ALOCK} performed the worst
+with scaling. I predicted that the {\tt ALOCK} would outperform both
+the {\tt TAS(B)} locks and the {\tt CLH} lock because of its ability
+to spread the contention while limiting the overhead.  However, it may
+be that there is a caching issure preventing it from seeing this
+performance.
+
+\subsection{Counter Experiment 4}
+
+Althought the {\tt TASB} lock demonstrates similar performance in a
+work-based scheme, as show in Figure~2, the other locks are faced with
+the scaling penalty with relatively lower thread counts.  I suspect
+that the general steeper performance curve is due the fairness of the
+lock. Because we are waiting for each thread to perform a given number
+of operates after claiming the lock, an unlucky thread might have to
+wait untill all of the others are finished to begin its work.
+
+\figH {../plots/experiment4.png}{Experiment 4}{LABEL}{1}        
+
+\subsection{Counter Experiment 5}
+
+Figure~\ref{LABEL5} demonstrates the relationship between the
+throughput of each lock and the thread fairness.  As expected, the
+standard deviation of thread counts from the test and set locks are
+much higher than those of the other locks. This is because there is no
+garuntee that a thread who attempted to acquire the lock first
+actually does so. However, we see a very very small standard deviation
+for the {\tt ALOCK} and {\tt CLH} queue lock. This is because these
+locks line up threads as they attempt to acquire the lock.  The data
+suggests that the test and set locks are about 4 times less fair.
+However, we can visually acknowledge the tradeoff between the fairness
+of the {\tt CLH} or even the mutex over the throughput of the {\tt
+TASB}
+
+\figH {../plots/experiment5.png}{Experiment 5}{LABEL5}{1}        
+
+\subsection{Packet Experiment 1}
+
+Figure~\ref{LABEL6} demonstrates the speedup of a single thread in the
+firewall simulation.
+
+\figH {../plots/experiment6.png}{Experiment 6}{LABEL6}{1}        
+
+
+\figH {../plots/experiment7_ALOCK_22.png}{Experiment 7 [ALOCK] Mean Work = 8000}{alock}{1}        
+
+Figure~\ref{alock} demonstrates a case for the {\tt ALOCK} in which
+the {\tt AWESOME} scheme out performs the others.
+
+\figH {../plots/experiment7_1000_22.png}{Experiment 7 Mean Work = 1000}{LABEL0}{1}        
+\figH {../plots/experiment7_2000_22.png}{Experiment 7 Mean Work = 2000}{LABEL1}{1}        
+\figH {../plots/experiment7_4000_22.png}{Experiment 7 Mean Work = 4000}{LABEL2}{1}        
+\figH {../plots/experiment7_8000_22.png}{Experiment 7 Mean Work = 8000}{LABEL3}{1}        
+
+%% \figH {../plots/experiment8_1000.png}{Experiment 8 Mean Work = 1000}{LABEL5}{1}        
+%% \figH {../plots/experiment8_2000.png}{Experiment 8 Mean Work = 2000}{LABEL6}{1}        
+%% \figH {../plots/experiment8_4000.png}{Experiment 8 Mean Work = 4000}{LABEL7}{1}        
+%% \figH {../plots/experiment8_8000.png}{Experiment 8 Mean Work = 8000}{LABEL8}{1}        
+
+
+
+
+\end{document}
+

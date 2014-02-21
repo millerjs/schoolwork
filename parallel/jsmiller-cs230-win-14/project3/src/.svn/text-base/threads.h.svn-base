@@ -14,52 +14,46 @@
 
 #include <pthread.h>
 #include "../src/locks.h"
+#include "q.h"
+/* #include "firewall.h" */
 
-extern volatile int LOOP_THREADS;
+#ifndef _LOOP_T
+#define _LOOP_T
+typedef void *(*loop_t)(void*);
+#endif
+
+extern volatile int N_PER_THREAD;
 
 typedef struct thread_arg_t {
-    pthread_t this;
+    pthread_t *this;
+    int n;
     int id;
     int loop;
     long test_counter;
+    
+    LQ_t **qs;
+    
+    int nsources;
+
     long *counter;
     Lock *lock;
-    int (*acquire)(Lock*);
-    int (*release)(Lock*);
 } thread_arg_t;
 
 /* The main worker loop for this project */
-void * thread_loop(void* _args_);
 
 /* Creates and spaws a pool of n threads */
-thread_arg_t **create_thread_pool(int n);
-
-/* Initializes n thread structures */
-thread_arg_t **new_thread_arg_array(int n);
+thread_arg_t **create_thread_pool(Lock *lock, loop_t loop, long *counter, int n);
 
 /* Joins all threads in array threads */
 int join_thread_pool(thread_arg_t **threads, int n);
 
-/* Set the functions to call when locking an unlocking */
-int set_locking_functions(thread_arg_t ** threads, 
-                          int (*acquire)(Lock*),
-                          int (*release)(Lock*),
-                          int n);
-
-/* Insert the lock into the thread structures */
-int set_thread_lock(thread_arg_t ** threads, 
-                    Lock *lock,
-                    int n);
+int assign_queues(Lock *locks, thread_arg_t ** threads, int n, LQ_t **qs, int numPackets);
 
 void start_threads();
 void stop_threads();
 
-thread_arg_t **locking_thread_pool(Lock *lock, 
-                                   int (*acquire)(Lock*),
-                                   int (*release)(Lock*),
-                                   long *counter,
-                                   int n);
-
+void *time_based_loop(void* _args_);
+void *work_based_loop(void* _args_);
 
 
 #endif

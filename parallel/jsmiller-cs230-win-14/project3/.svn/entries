@@ -26,7 +26,13 @@ jsmiller
 
 a0c9545e-b09a-4d50-9934-c9311084793e
 
+tests
+dir
+
 src
+dir
+
+docs
 dir
 
 Makefile
@@ -63,6 +69,6 @@ jsmiller
 
 146
 
-tests
+output
 dir
 
