@@ -1,0 +1,215 @@
+// ###########################################################################
+// #  File: hw3.cpp
+// #  Josh Miller
+// #  Homework 3 
+// #  Machine Learning
+// #  Winter 2014
+// ###########################################################################
+using namespace std;
+#include <iostream>
+#include <cstdlib>
+#include <stdio.h>
+#include <sstream>
+#include <iostream>
+#include <fstream>
+
+
+#include "util.h"
+#include "vector.h"
+#include "matrix.h"
+
+double theta = .1;
+double Z; 
+
+#define N 100
+
+#define LOOPIJ(f) do {                           \
+    for (int i = 0; i < N; i++){                \
+        for (int j = 0; j < N; j++){            \
+            f;                                  \
+        }                                       \
+    }                                           \
+    } while (0)                                \
+
+matrix parseData(const char *path)
+{
+    FILE *input = fopen(path, "r");
+    matrix ret(N, N, 0.0);
+    LOOPIJ(
+          ERROR_IF(!fscanf(input, "%lf", &ret[i][j]), "element read");
+          );
+    ret.normalize();
+    return ret;
+}
+
+void writeData(const char *path, matrix a)
+{
+    ofstream dout;
+    dout.open(path);
+    for (int i = 0; i < N; i++){
+        for (int j = 0; j < N; j++){
+            dout << a[i][j] << " " ;
+        }
+        dout << endl;
+    }
+    dout.close();
+    return;
+}
+
+void ppm_out(const char *path, matrix a)
+{
+    ofstream pout;
+    pout.open(path);
+    pout << "P3" << endl;
+    pout << N << " " << N << endl;
+    pout << 1 << endl;
+    LOOPIJ(
+          int p = !!a[i][j];
+          pout << p << " " << p << " " << p << " " << endl;
+          );
+    pout.close();
+    return;
+}
+
+
+matrix add_noise(matrix a)
+{
+    matrix b = a.copy();
+    double mu = 0.2;
+    srand(time(0));
+    LOOPIJ(
+          double r = rand()/(double)RAND_MAX;
+          if (r < mu){
+              if (b[i][j]) b[i][j] = 0.0;
+              else         b[i][j] = 1.0;
+          });
+    return b;
+}
+
+
+double phi(double a, double b)
+{
+    if   (a == b) return 1 + theta;
+    else          return 1 - theta;
+}
+
+
+class node{
+public:
+    matrix *y, *m, *m_1;
+    int i, j;
+
+    node(){
+        m = new matrix(2, 5, .5);
+        m_1 = new matrix(2, 5, .5);
+    }
+
+    void set_pos(int x, int y){
+        i = x; j = y;
+    }
+
+    void pass_to(node n){
+        for (int x = 0; x <= 1; x++){
+            if      (j < n.j) n.m_1->x[x][0] = m->x[x][2];
+            else if (j > n.j) n.m_1->x[x][2] = m->x[x][0];
+            else if (i < n.i) n.m_1->x[x][3] = m->x[x][1];
+            else if (i > n.i) n.m_1->x[x][1] = m->x[x][3];
+            else ERROR("nodes are not neighbors");
+        }
+    }
+
+    double mt(int j, int xprime){
+        double product;
+        double sum = 0;
+
+        m->x[xprime][4] = phi(y->x[i][j], xprime);
+
+        for (int x = 0; x <= 1; x++){
+            product = 1;
+            for (int i = 0; i < 5; i++)
+                if (i != j) product *= m_1->x[0][i];
+            sum += product * phi(x, xprime);
+        }
+
+        return sum;
+        
+    }
+    
+
+    void calculate_m(){
+
+        for (int j = 0; j < 5; j++){
+            for (int xprime = 0; xprime <= 1; xprime ++)
+                m->x[xprime][j] = mt(j, xprime);
+
+            cout << j << ": " << m->x[0][j] << "\t";
+        }
+
+        cout << endl;
+
+    }
+
+};
+
+matrix predict(node graph[N][N])
+{
+    matrix xhat(N, N, 0.0);
+    LOOPIJ(
+          double x0 = 1;
+          double x1 = 1;
+          for (int k = 0; k < 5; k++){
+              x0 *= graph[i][j].m->x[0][k];
+              x1 *= graph[i][j].m->x[1][k];
+          }
+          if (x0 > x1) xhat[i][j] = 1.0;
+          );
+    
+    for (int i = 0; i < 5; i++)
+        printf("%d ", graph[10][10].m->x[0][i]);
+
+    for (int i = 0; i < 5; i++)
+        printf("%d ", graph[10][10].m->x[1][i]);
+
+    
+    return xhat;
+}
+
+
+void iterate(node graph[N][N], matrix y)
+{
+    LOOPIJ(
+          graph[i][j].calculate_m();
+          if (i > 0)     graph[i][j].pass_to(graph[i-1][j]);
+          if (j > 0)     graph[i][j].pass_to(graph[i][j-1]);
+          if (j < N - 1) graph[i][j].pass_to(graph[i][j+1]);
+          if (i < N - 1) graph[i][j].pass_to(graph[i+1][j]);
+          );
+}
+
+
+int main (int argc, char *argv[])
+{
+    matrix a = parseData("data/square.data");
+
+    matrix y = add_noise(a);
+
+    ppm_out("noised.ppm", y);
+    ppm_out("original.ppm", a);
+
+    node graph[N][N];
+    LOOPIJ(graph[i][j].set_pos(i, j););
+    LOOPIJ(graph[i][j].y = &y;);
+
+    for(int i = 0; i < 1; i++){
+        iterate(graph, y);
+    }
+
+    
+    matrix xhat = predict(graph);
+
+    ppm_out("denoised.ppm", xhat);
+
+    
+    return 0;
+}
+

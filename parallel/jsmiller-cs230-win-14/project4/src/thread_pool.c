@@ -3,7 +3,7 @@
 /* FILE    : threads.c                                                        */
 /* DESCRIP : header file for threads                                          */
 /* AUTHOR  : Joshua Miller                                                    */
-/* PROJECT : Project 3                                                        */
+/* PROJECT : Project 4                                                        */
 /* CLASS   : Parallel Computing - Winter 2014                                 */
 /*                                                                            */
 /******************************************************************************/
