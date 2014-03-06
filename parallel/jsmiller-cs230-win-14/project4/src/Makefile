@@ -13,6 +13,7 @@ OBJS = main.o\
 	 cll.o\
 	 hasht.o\
 	 hasht_locking.o\
+	 hasht_lockfreec.o\
 	 $(UTILS)/generators.o\
 	 $(UTILS)/stopwatch.o\
 	 $(UTILS)/fingerprint.o\

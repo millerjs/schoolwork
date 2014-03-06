@@ -12,7 +12,6 @@
 #define _HASHT_H
 
 #include <pthread.h>
-#include "thread_pool.h"
 #include "cll.h"
 
 #define MAX_Q_DEPTH 16
@@ -37,7 +36,7 @@ typedef void *(*hasht_resize_f)  (hasht_t *);
 typedef enum hasht_type_t 
 {
     LOCKING,
-    LOCK_FREE,
+    LOCKFREEC,
     LINEAR_PROBE,
     AWESOME
 } hasht_type_t;
@@ -51,7 +50,9 @@ typedef struct hasht_locking_t
 
 typedef struct hasht_lockfreec_t
 {
-
+    ll_t **buckets;
+    pthread_rwlock_t *rwlocks;
+    int n_rwlocks;
 } hasht_lockfreec_t;
 
 typedef struct hasht_linearprobe_t
@@ -83,7 +84,7 @@ struct hasht_t
 
     /* Member types */
     hasht_locking_t      locking;
-    hasht_lockfreec_t    lock_free;
+    hasht_lockfreec_t    lockfreec;
     hasht_linearprobe_t  probing;
     hasht_awesome_t      awesome;
 }; 

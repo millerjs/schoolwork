@@ -14,6 +14,10 @@
 
 #include <pthread.h>
 
+#include "hasht.h"
+
+typedef struct hasht_t hasht_t;   
+
 typedef void *(*loop_t)(void*);
 
 typedef struct thread_pool_t thread_pool_t;
@@ -21,10 +25,12 @@ typedef struct thread_pool_t thread_pool_t;
 typedef struct thread_t {
     pthread_t self;
     thread_pool_t *pool;
+    int retval;
 } thread_t;
 
 typedef struct thread_pool_t{
     thread_t *threads;
+    hasht_t *table;
     int size;
     int start;
     int stop;

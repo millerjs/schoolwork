@@ -14,15 +14,21 @@
 #include "math.h"
 #include <pthread.h>
 
+#include "hasht.h"
+#include "hasht_lockfreec.h"
+#include "hasht_locking.h"
+
 int MAX_BUCKET_LEN = 1<<5;
 
 hasht_t *hasht_new(hasht_type_t type, int capacity, int expected_threads)
 {
+    int ntypes = 2;
     const hasht_init_f inits[] = {
-        &hasht_locking_init
+        &hasht_locking_init,
+        &hasht_lockfreec_init,
     };
     
-    ERROR_IF( type < 0 || type >= 1, "unknown lock type");
+    ERROR_IF( type < 0 || type >= ntypes, "unknown lock type");
     
     hasht_t *table = MALLOC(hasht_t, 1);
     table->logsize = (int) log2(capacity);

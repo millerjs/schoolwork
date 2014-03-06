@@ -11,6 +11,7 @@ DEPS = $(OBJS:.o=.d)
 OBJS = test.o\
 	 $(SRC)/hasht.o\
 	 $(SRC)/hasht_locking.o\
+	 $(SRC)/hasht_lockfreec.o\
 	 $(SRC)/util.o\
 	 $(SRC)/cll.o\
 	 $(SRC)/thread_pool.o\

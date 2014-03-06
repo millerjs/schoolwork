@@ -88,10 +88,8 @@ ll_node_t *ll_popnode(ll_t *list)
 {
     ERROR_IF(!list, ERR_NOMEM);
 
-
     if (list->head == list->tail)
         return NULL;
-
 
     ll_node_t * head = list->head;
     list->head = list->head->next;

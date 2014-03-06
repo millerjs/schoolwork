@@ -1,9 +1,14 @@
-hasht.o: hasht.c hasht.h thread_pool.h cll.h util.h
+hasht.o: hasht.c hasht.h cll.h thread_pool.h util.h hasht_lockfreec.h \
+ hasht_locking.h
 
 hasht.h:
 
-thread_pool.h:
-
 cll.h:
 
+thread_pool.h:
+
 util.h:
+
+hasht_lockfreec.h:
+
+hasht_locking.h:
