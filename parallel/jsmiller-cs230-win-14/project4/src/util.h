@@ -75,7 +75,12 @@ int uerr;
 #else
 #define DEBUG(fmt, ...)                         \
     do {                                        \
-        INFO_DUMP("debug");                     \
+        char buf[21];                           \
+        sprintf(buf, "%.20s", __func__);        \
+        fprintf(stderr, "DEBUG %s:%d:[%20s]: ", \
+                __FILE__,                       \
+                __LINE__,                       \
+                buf);                           \
         fprintf(stderr, fmt, ##__VA_ARGS__);    \
         fprintf(stderr, "\n");                  \
     } while (0)

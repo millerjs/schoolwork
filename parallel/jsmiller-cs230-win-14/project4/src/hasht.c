@@ -26,6 +26,8 @@ hasht_t *hasht_new(hasht_type_t type, int capacity, int expected_threads)
     hasht_t *table = MALLOC(hasht_t, 1);
     table->logsize = (int) log2(capacity);
     table->count   = 0;
+    
+    DEBUG("initialized table with logsize [%d]", table->logsize);
 
     inits[type](table, capacity, expected_threads);
     return table;

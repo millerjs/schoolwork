@@ -27,10 +27,10 @@
 #define FAILED 1
 #define PASSED 0
 
-int run_hash_test(hasht_type_t type)
+int serial_hash_test(hasht_type_t type)
 {
 
-    int nthreads = 1;
+    int nthreads = 4;
     int capacity = 32;
 
     hasht_t *table = hasht_new(type, capacity, nthreads);
@@ -48,14 +48,22 @@ int run_hash_test(hasht_type_t type)
     double data = .0023;
 
     table->add(table, key, &data);
-    table->remove(table, key);
     table->contains(table, key);
-    table->resize(table);
-    
-    
+
+    /* 
+     * table->remove(table, key);
+     * table->resize(table);
+     */
+
+    return PASSED;
+
+}
+
+int run_hash_test(hasht_type_t type)
+{
+    serial_hash_test(type);
 
     return uerr;
-
 }
 
 
@@ -114,7 +122,6 @@ int main(int argc, char* argv[])
     }
 
     if (all || test1){
-
         TEST(test_queue(), "serial enqueue and dequeue");
         TEST(run_hash_test(LOCKING), "test 1 on locking table");
     }

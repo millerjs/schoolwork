@@ -41,7 +41,7 @@ typedef enum hasht_type_t
 
 typedef struct hasht_locking_t
 {
-    ll_t *buckets;
+    ll_t **buckets;
     pthread_rwlock_t *rwlocks;
     int n_rwlocks;
 } hasht_locking_t;
