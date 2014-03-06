@@ -81,6 +81,7 @@ void *parallel_simple_loop(void * __thread__)
                 thread->retval = FAILED;
         }
 
+
     }
     return thread->retval;
 }
