@@ -57,9 +57,10 @@ void *parallel_simple_loop(void * __thread__)
     thread_t *thread = (thread_t*)__thread__;
     DEBUG("entered thread: %li", thread->self);
     thread->retval = PASSED;
-    hasht_t *table = thread->pool->table;
 
     block_on_start(thread->pool);
+
+    hasht_t *table = thread->pool->table;
 
     int iterations = 2;
 
@@ -73,17 +74,17 @@ void *parallel_simple_loop(void * __thread__)
         for(int i = 0; i < n; i++){
             keys[i] = rand();
             data[i] = (double) rand() / RAND_MAX;
-            /* table->add(table, &data[i], keys[i]); */
+            table->add(table, &data[i], keys[i]);
         }
 
         for(int i = 0; i < n; i++){
-            /* if (!table->contains(table, keys[i])) */
+            if (!table->contains(table, keys[i]))
                 thread->retval = FAILED;
         }
 
 
     }
-    return thread->retval;
+    return NULL;
 }
 
 int parallel_simple_hash_test(hasht_type_t type)
@@ -94,13 +95,17 @@ int parallel_simple_hash_test(hasht_type_t type)
     pool->table = hasht_new(type, capacity, nthreads);
 
     DEBUG("table %p", pool->table);
-    exit(0);
 
     thread_pool_start(pool);
     thread_pool_join(pool);
     thread_pool_free(pool);
 
-    return PASSED;
+    int retval = 0;
+    for(int i = 0; i < nthreads; i++){
+        retval |= pool->threads[i].retval;
+    }
+
+    return retval;
 }
 
 
@@ -178,12 +183,17 @@ int main(int argc, char* argv[])
 {
 
     int all = 1;
-    int test1 = 0;
+    int tests[10];
+    memset(tests, 0, 10*sizeof(int));
 
     if (argc > 1){
         all = 0;
-        if (!strcmp(argv[1], "all"))    all    = 1;
-        if (!strcmp(argv[1], "test1"))  test1 = 1;
+        if (!strcmp(argv[1], "all"))         all      = 1;
+        if (!strcmp(argv[1], "QUEUE"))       tests[0] = 1;
+        if (!strcmp(argv[1], "LOCKING"))     tests[1] = 1;
+        if (!strcmp(argv[1], "LOCKFREEC"))   tests[2] = 1;
+        if (!strcmp(argv[1], "LINEARPROBE")) tests[3] = 1;
+        if (!strcmp(argv[1], "AWESOME"))     tests[4] = 1;
     }
 
     if (all){
@@ -192,17 +202,16 @@ int main(int argc, char* argv[])
         printf(" === Running %s === \n", argv[1]);
     }
 
-    if (all || test1){
+    if (all || tests[0]){
         TEST(test_queue(), "serial enqueue and dequeue");
+    }
+
+    if (all || tests[1]){
         TEST(serial_simple_hash_test(LOCKING), "test 1 on locking table");
         TEST(serial_resize_hash_test(LOCKING), "test 1 on locking table");
         TEST(parallel_simple_hash_test(LOCKING), "test 1 on locking table");
-
-        /* 
-         * TEST(simple_hash_test(LOCKFREEC), "test 1 on locking table");
-         * TEST(resize_hash_test(LOCKFREEC), "test 1 on locking table");
-         */
     }
+
 
     return 0;
 }

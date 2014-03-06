@@ -37,7 +37,7 @@ typedef enum hasht_type_t
 {
     LOCKING,
     LOCKFREEC,
-    LINEAR_PROBE,
+    LINEARPROBE,
     AWESOME
 } hasht_type_t;
 

@@ -35,12 +35,7 @@
 #undef DEBUG
 #endif
 
-#ifdef _DEBUG
-/* #undef _DEBUG */
-#endif
-
 #define ERR_NOMEM "memory does not exist"
-
 
 jmp_buf __ex_loc__;
 jmp_buf __seg_loc__;

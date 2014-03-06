@@ -2,10 +2,10 @@ UTILS = ../../utils
 SRC = ../src
 DEPS = $(OBJS:.o=.d)
 CC = colorgcc
-CFLAGS = -I../../include -g3 -Wall -fpic -std=gnu99 -MMD -MP -DDEBUG -O3 -std=gnu99
+CFLAGS = -I../../include -g3 -Wall -fpic -std=gnu99\
+	 -MMD -MP -DDEBUG -O3 -std=gnu99 $(DEBUG) 
 BIN = test
 LDLIBS = -lm -lrt -pthread 
-
 DEPS = $(OBJS:.o=.d)
 
 OBJS = test.o\
@@ -26,7 +26,7 @@ OBJS = test.o\
 all: $(BIN)
 
 $(BIN): $(OBJS)
-	$(CC) $(DFLAGS) $(LDFLAGS) $(OBJS) $(LDLIBS) -o ../$(BIN)
+	$(CC) $(LDFLAGS) $(OBJS) $(LDLIBS) -o ../$(BIN)
 
 %.d: %.c
 

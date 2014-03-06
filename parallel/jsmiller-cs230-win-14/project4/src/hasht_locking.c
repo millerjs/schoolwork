@@ -22,9 +22,7 @@ int hasht_locking_add(hasht_t *table, void *item, int key)
     int ret = 0;
 
     if (table->locking.buckets[bucket_id]->len >= MAX_BUCKET_LEN -1){
-        hasht_locking_print(table);
         table->resize(table);
-        hasht_locking_print(table);
         mask = (1 << table->logsize) - 1;
         bucket_id = key & mask;
         lock_id = bucket_id % table->locking.n_rwlocks;
