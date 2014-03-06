@@ -14,7 +14,6 @@
 
 #include "hasht.h"
 
-
 int hasht_locking_add(hasht_t *table, void *item, int key);
 int hasht_locking_contains(hasht_t *table, int key);
 int hasht_locking_remove(hasht_t *table, int key);

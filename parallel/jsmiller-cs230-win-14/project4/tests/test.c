@@ -19,6 +19,9 @@
 #include "../src/cll.h"
 #include "../../utils/hashgenerator.h"
 
+#include "../src/hasht_locking.h"
+
+
 #define GREEN "\033[0;32m"
 #define NORM "\033[0m"
 #define RED "\033[0;31m"
@@ -30,13 +33,13 @@
 int simple_hash_test(hasht_type_t type)
 {
 
-    int nthreads = 4;
-    int capacity = 8;
+    int nthreads = 1;
+    int capacity = 1;
 
     hasht_t *table = hasht_new(type, capacity, nthreads);
 
     int n = 5;
-    int keys[] = {1, 17, 17, 31, 45};
+    int keys[] = {1, 16, 17, 31, 45};
     double data[] = {.234, 27.458, 2317.4, 458435.1346, 567123.8345};
 
     for(int i = 0; i < n; i++){
@@ -79,7 +82,7 @@ int test_queue()
 
     /* push first half */
     for (int i = 0; i < n/2; i++)
-        ll_push(list, &values[i], 0);
+        ll_push(list, &values[i], i);
 
     /* pop first third */
     for (int i = 0; i < n/3; i++){

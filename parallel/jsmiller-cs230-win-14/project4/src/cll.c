@@ -39,9 +39,10 @@ ll_node_t *ll_node_new(void *item, int key)
 int ll_push(ll_t *list, void *item, int key)
 {
     ERROR_IF(!list, ERR_NOMEM);
+    DEBUG("list length: %d", list->len );
     if (list->maxlen > 0)
         if (list->len >= list->maxlen) {
-            DEBUG("list full");
+            DEBUG("list full: %d", list->len );
             return ERR_LISTFULL;
         }
     ll_node_t *new = ll_node_new(item, key);
@@ -51,7 +52,7 @@ int ll_push(ll_t *list, void *item, int key)
     else      list->head = new;
 
     list->len++;
-    return RET_SUCCESS;
+    return list->len;
 }
 
 void *ll_pop(ll_t *list)
@@ -73,8 +74,7 @@ int ll_contains(ll_t *list, int key)
 {
     ERROR_IF(!list, "passed null list");
     ll_node_t *curr = list->head;
-    RETURN_IF(!curr, 0);
-    while (curr->next){
+    while (curr){
         if (curr->key == key)
             return 1;
         curr = curr->next;
@@ -85,9 +85,8 @@ int ll_contains(ll_t *list, int key)
 void ll_print(ll_t *list)
 {
     if (!list) return;
-    if (!list->head) return;
     ll_node_t *curr = list->head;
-    while (curr->next){
+    while (curr){
         fprintf(stderr, "[%d]->", curr->key);
         curr = curr->next;
     }

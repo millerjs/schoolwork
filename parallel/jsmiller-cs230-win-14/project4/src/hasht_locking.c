@@ -12,10 +12,11 @@
 #include "hasht_locking.h"
 #include "cll.h"
 
+
 int hasht_locking_add(hasht_t *table, void *item, int key)
 {
 
-    unsigned int mask = (1 << (table->logsize - 1)) - 1;
+    unsigned int mask = (1 << table->logsize) - 1;
     int bucket_id = key & mask;
     int lock_id = bucket_id % table->locking.n_rwlocks;
     int ret = 0;
@@ -37,7 +38,7 @@ int hasht_locking_add(hasht_t *table, void *item, int key)
 int hasht_locking_contains(hasht_t *table, int key)
 {
 
-    unsigned int mask = (1 << (table->logsize - 1)) - 1;
+    unsigned int mask = (1 << table->logsize) - 1;
     int bucket_id = key & mask;
     int lock_id = bucket_id % table->locking.n_rwlocks;
     int contains = 0;
@@ -105,6 +106,7 @@ int hasht_locking_init(hasht_t *table, int capacity, int expected_threads)
     /* create buckets */
     table->locking.buckets = MALLOC(ll_t*, capacity);
     for(int i = 0; i < capacity; i++){
+        DEBUG("adding list %d", i);
         table->locking.buckets[i] = ll_new(MAX_Q_DEPTH);
     }
 
