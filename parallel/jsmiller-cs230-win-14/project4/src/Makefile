@@ -10,6 +10,7 @@ LDLIBS = -lm -lrt -pthread  -D_POSIX_C_SOURCE=200112L -D_GNU_SOURCE
 OBJS = main.o\
 	 util.o\
 	 thread_pool.o\
+	 cll.o\
 	 $(UTILS)/generators.o\
 	 $(UTILS)/stopwatch.o\
 	 $(UTILS)/fingerprint.o\

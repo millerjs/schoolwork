@@ -6,8 +6,7 @@ project4:
 	$(MAKE) -C src/
 
 test: project4
-	$(MAKE) -C tests/
-	./test
+	$(MAKE)  -C tests/
 
 clean: 
 	$(MAKE) clean -C src/ 

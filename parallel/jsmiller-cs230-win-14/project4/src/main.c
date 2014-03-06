@@ -1,12 +1,12 @@
-/******************************************************************************/
-/*                                                                            */
-/* FILE    : main.c                                                           */
-/* DESCRIP : header file for threads                                          */
-/* AUTHOR  : Joshua Miller                                                    */
-/* PROJECT : Project 3                                                        */
-/* CLASS   : Parallel Computing - Winter 2014                                 */
-/*                                                                            */
-/******************************************************************************/
+/*****************************************************************************
+ *                      
+ *   FILE    : main.c       
+ *   DESCRIP : header file for threads
+ *   AUTHOR  : Joshua Miller
+ *   PROJECT : Project 4 
+ *   CLASS   : Parallel Computing - Winter 2014
+ *                                             
+ ******************************************************************************/
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -19,7 +19,9 @@
 
 #include "thread_pool.h"
 #include "util.h"
+#include "cll.h"
 #include "../../utils/stopwatch.h"
+
 
 #define MAX_PATH 1028
 
@@ -70,7 +72,6 @@ int main(int argc, char* argv[])
             ERROR_IF(sscanf(optarg, "%d", &experiment) != 1,
                      "-e expects an integer option\n");
             break;
-
         default:
             fprintf(stderr, "Unknown argument -%c\n", c);
             break;

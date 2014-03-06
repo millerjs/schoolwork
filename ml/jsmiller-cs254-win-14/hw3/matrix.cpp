@@ -11,6 +11,7 @@ using namespace std;
 #include <stdio.h>
 #include <sstream>
 #include <iomanip>
+#include <cmath>
 
 #include "matrix.h"
 #include "util.h"
@@ -46,6 +47,11 @@ matrix::matrix()
     x = NULL;
 }
 
+matrix::~matrix() 
+{
+    // if (x) delete [] x;
+}
+
 matrix matrix::copy() 
 {
     matrix a(m, n);
@@ -55,11 +61,6 @@ matrix matrix::copy()
         }
     }
     return a;
-}
-
-
-matrix::~matrix()
-{
 }
 
 double *&matrix::operator [] (int i)
@@ -100,9 +101,7 @@ matrix matrix::operator * (double a)
 
 matrix matrix::operator * (matrix a)
 {
-
     ERROR_IF( n!= a.m, "Dim mismatch: %d != %d", n, m);
-
     matrix newm(m, a.n, 0.0);
     for(int i = 0; i < m; i++)                        
         for(int j = 0; j < n; j++)                    
@@ -154,7 +153,7 @@ matrix matrix::operator - (matrix v)
 {
     matrix r(m, n);
     for (int i = 0; i < m; i++)
-        for (int j = 0; j < n; i++)
+        for (int j = 0; j < n; j++)
             r[i][j] = x[i][j] - v[i][j];
     return r;
 }
@@ -221,6 +220,15 @@ double matrix::product()
     return prod;
 }
 
+void matrix::abs()
+{
+    for (int i = 0; i < n; i++){
+        for(int j = 0; j < m; j++){
+            x[i][j] = std::abs(x[i][j]);
+        }
+    }
+    return;
+}
 
 matrix matrix::operator /(int a)
 {

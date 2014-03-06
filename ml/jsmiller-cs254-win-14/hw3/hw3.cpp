@@ -16,15 +16,18 @@ using namespace std;
 #include "util.h"
 #include "vector.h"
 #include "matrix.h"
+x
+double theta = -1;
+double mu    = -1;
 
-double theta = .5;
-double mu    = .1;
+int N = 0;
+int M = 0;
 
-#define N 100
+int X = 0;
 
 #define LOOPIJ(f) do {                          \
-        for (int i = 0; i < N; i++){            \
-            for (int j = 0; j < N; j++){        \
+        for (int i = 0; i < X; i++){            \
+            for (int j = 0; j < X; j++){        \
                 {f;}                            \
             }                                   \
         }                                       \
@@ -42,9 +45,16 @@ double mu    = .1;
 matrix parseData(const char *path)
 {
     FILE *input = fopen(path, "r");
-    matrix ret(N, N, 0.0);
+    while (fgetc(input) != '\n') N++;
+    N = (N+1)/2;
+    fseek(input, 0, SEEK_SET);
+    while (EOF != (fscanf(input, "%*[^\n]"), fscanf(input, "%*c"))) M++;
+    fprintf(stderr, "Parsing Data: %d x %d\n", N, M);
+    ERROR_IF(!N || !M, "File data must have non-zero dimensions");
+    fseek(input, 0, SEEK_SET);
+    X = N > M ? N : M;
+    matrix ret(X, X, 0.0);
     LOOPIJ(ERROR_IF(!fscanf(input, "%lf", &ret[i][j]), "element read"));
-    // ret.normalize();
     return ret;
 }
 
@@ -53,7 +63,7 @@ void writeData(const char *path, matrix a)
     ofstream dout;
     dout.open(path);
     for (int i = 0; i < N; i++){
-        for (int j = 0; j < N; j++)
+        for (int j = 0; j < M; j++)
             dout << a[i][j] << " " ;
         dout << endl;
     }
@@ -66,9 +76,13 @@ void ppm_out(const char *path, matrix a)
     ofstream pout;
     pout.open(path);
     pout << "P3" << endl;
-    pout << N << " " << N << endl;
+    pout << M << " " << N << endl;
     pout << 1 << endl;
-    LOOPIJ(int p = !!a[i][j]; pout << p << " " << p << " " << p << " " << endl);
+    for (int i = 0; i < N; i++)
+        for (int j = 0; j < M; j++){
+            int p = !!a[i][j]; 
+            pout << p << " " << p << " " << p << " " << endl;
+        }
     pout.close();
     return;
 }
@@ -135,7 +149,6 @@ public:
     void receive(node *source, double m0, double m1){
         int idx;
         for (idx = 0; idx < 4; idx++) if (n[idx] == source) break;
-        ERROR_IF(idx >= 4, "source is not neighbor of recipient");
         m_in[0][idx] = m0;
         m_in[1][idx] = m1;
     }
@@ -148,57 +161,113 @@ public:
 };
 
 // assign each node in the graph its n
-void setupGraph(node graph[N][N], matrix y)
+void setupGraph(node **graph, matrix y)
 {
     LOOPIJ(graph[i][j].y = y[i][j];
            if (i > 0)     graph[i][j].n[0] = &graph[i-1][j];
            if (j > 0)     graph[i][j].n[1] = &graph[i][j-1];
-           if (j < N - 1) graph[i][j].n[2] = &graph[i][j+1];
-           if (i < N - 1) graph[i][j].n[3] = &graph[i+1][j]);
+           if (i < X - 1) graph[i][j].n[3] = &graph[i+1][j];
+           if (j < X - 1) graph[i][j].n[2] = &graph[i][j+1]);
 }
 
-void iterate(node graph[N][N])
+void iterate(node **graph)
 {
     LOOPIJ(graph[i][j].compute_messages());
     LOOPIJ(graph[i][j].pass_messages());
 }
 
-matrix predict(node graph[N][N], matrix y)
+void predict(node **graph, matrix y, matrix x)
 {
-    matrix xhat(N, N, 0.0);
+    LOOPIJ(x[i][j] = 0.0);
     LOOPIJ(double x0 = graph[i][j].p(0);
            double x1 = graph[i][j].p(1);
-           if (x1 > x0) xhat[i][j] = 1.0;
+           if (x1 > x0) x[i][j] = 1.0;
            );
-    return xhat;
+}
+
+
+void run(matrix a, double m, double t)
+{
+    mu = m;
+    theta = t;
+    matrix y = add_noise(a);
+    char path[1028];
+    matrix x2(X, X, 0.0);
+    matrix x1 = x2.copy();
+    ppm_out("output/noisy.ppm", y);
+    ppm_out("output/original.ppm", a);
+
+    node **graph = new node*[X];
+    for (int i = 0; i < N; i++)
+        graph[i] = new node[X];
+
+    setupGraph(graph, y);
+    int i = 0;
+    double sum = 1;
+
+    while (sum && i < 150){
+        iterate(graph);
+        predict(graph, y, x2);
+        matrix x3 = x1 - x2;
+        x3.abs();
+        sum = x3.sum();
+        x1 = x2.copy();
+        i++;
+    }    
+
+    matrix x3 = x2 - a;
+    x3.abs();
+    double errors = x3.sum();
+
+    fprintf(stdout, "\r%.2lf\t%.2lf\t%i\t%.2lf\t%.2lf\n", 
+            mu, theta, i, sum, errors);
+    sprintf(path, "output/predicted_mu%.2lf_theta%.2lf.ppm", mu, theta);
+
+    ppm_out(path, x2);
+    writeData("output.data", x2);
+
+    for (int i = 0; i < N; i++)
+        delete [] graph[i];
+
+    delete [] graph;
+    
 }
 
 int main (int argc, char *argv[])
 {
-    char path[1028];
-    matrix a = parseData("data/square.data");
-    matrix y = add_noise(a);
 
-    ppm_out("output/predict0.ppm", y);
-    ppm_out("output/original.ppm", a);
-
-    node graph[N][N];
-    setupGraph(graph, y);
-
-    int iterations = 15;
-    for(int i = 1; i <= iterations; i++){
-        iterate(graph);
-
-        if (i == iterations - 1){
-            matrix xhat = predict(graph, y);
-            sprintf(path, "output/predicted_%04d.ppm", i);
-            ppm_out(path, xhat);
+    char *path = NULL;
+    int c;
+     
+    opterr = 0;
+    while ((c = getopt (argc, argv, "m:t:f:")) != -1){
+        switch (c) {
+        case 't':
+            ERROR_IF(1 != sscanf(optarg, "%lf", &theta), "parsing -t");
+            break;
+        case 'm':
+            ERROR_IF(1 != sscanf(optarg, "%lf", &mu), "parsing -m");
+            break;
+        case 'f':
+            path = strdup(optarg);
+            break;
+        default:
+            ERROR("uknown option: %c", c);
         }
+    }
 
-        fprintf(stderr, "\r%d/%d", i, iterations);
+    ERROR_IF(!path, "no input specified [-f]");
+    matrix a = parseData(path);
+    // fprintf(stderr, "\r%s\t%s\t%s\t%s\t%s\n", "mu", "theta", "iter", "sum", "diff");
 
-    }    
-
+    if (mu == -1 || theta == -1){
+        WARN("-t theta or -m mu left unspecified: looping over all parameters");
+        for (double m = .1; m <= .5 ; m += .1)
+            for(double t = 0; t < 1; t += .05)
+                run(a, m, t);
+    } else {
+        run(a, mu, theta);
+    }
     
     return 0;
 }

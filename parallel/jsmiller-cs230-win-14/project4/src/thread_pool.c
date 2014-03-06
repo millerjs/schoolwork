@@ -32,8 +32,8 @@ void thread_pool_free(thread_pool_t *pool)
 
 thread_pool_t *thread_pool_create(loop_t loop, int n)
 {
-    thread_pool_t *pool = (thread_pool_t*) MALLOC(n*sizeof(thread_pool_t));
-    thread_t *threads = (thread_t*) MALLOC(n*sizeof(thread_t));
+    thread_pool_t *pool = MALLOC(thread_pool_t, n);
+    thread_t *threads = MALLOC(thread_t, n);
 
     pool->threads = threads;
     pool->size = n;

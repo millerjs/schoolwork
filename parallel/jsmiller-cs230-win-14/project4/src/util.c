@@ -81,3 +81,4 @@ void print_test_result(int failed, const char* test, const char* subtest)
     printf("TEST: [%20s] [%35s] [%s PASSED%s ]\n", 
            test, subtest, __lgr__, __nrm__); 
 }
+

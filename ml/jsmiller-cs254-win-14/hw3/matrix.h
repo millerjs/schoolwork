@@ -63,6 +63,7 @@ public:
     /* Other */
     void normalize();
     double sum();
+    void abs();
 
 };
 

@@ -21,6 +21,8 @@
 #include <execinfo.h>
 
 #define MAX_DESCRIPTOR 1028
+#define RET_FAILURE -1
+#define RET_SUCCESS 0
 
 #define __red__ "\033[1;31m"
 #define __lgr__ "\033[1;32m"
@@ -32,6 +34,9 @@
 #ifdef DEBUG
 #undef DEBUG
 #endif
+
+#define ERR_NOMEM "memory does not exist"
+
 
 jmp_buf __ex_loc__;
 jmp_buf __seg_loc__;
@@ -198,8 +203,8 @@ int uerr;
     } while(0)
 
 
-#define MALLOC(f)                                       \
-    ( __malloc__(__FILE__, __func__, __LINE__, STR(f), f) )
+#define MALLOC(typet, size)                     \
+    ( (typet*) malloc(size*sizeof(typet)) )
 
 
 #define TEST(f, sub)                                    \
@@ -208,11 +213,22 @@ int uerr;
         print_test_result((f || uerr), sub, STR(f));    \
     } while (0)                                         \
 
+
+#define RETURN_IF(f, err)                       \
+    do {                                        \
+        if (f != 0) {                           \
+            return err;                         \
+        }                                       \
+    } while(0)
+
+
+
 /* Functions */
 
 void sig_handler(int signo);
 void *__malloc__(const char* file, const char*func, int line, char*size_d, int size);
 void print_test_result(int failed, const char* test, const char* subtest);
+
 
     
 #endif

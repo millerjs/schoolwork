@@ -11,6 +11,7 @@ DEPS = $(OBJS:.o=.d)
 
 OBJS = test.o\
 	 $(SRC)/util.o\
+	 $(SRC)/cll.o\
 	 $(SRC)/thread_pool.o\
 	 $(UTILS)/generators.o\
 	 $(UTILS)/stopwatch.o\
