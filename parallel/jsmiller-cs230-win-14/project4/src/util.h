@@ -35,6 +35,10 @@
 #undef DEBUG
 #endif
 
+#ifdef _DEBUG
+/* #undef _DEBUG */
+#endif
+
 #define ERR_NOMEM "memory does not exist"
 
 

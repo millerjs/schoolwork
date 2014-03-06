@@ -8,6 +8,7 @@
 /*                                                                            */
 /******************************************************************************/
 
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
@@ -21,7 +22,6 @@
 
 #include "../src/hasht_locking.h"
 
-
 #define GREEN "\033[0;32m"
 #define NORM "\033[0m"
 #define RED "\033[0;31m"
@@ -33,8 +33,8 @@
 int simple_hash_test(hasht_type_t type)
 {
 
-    int nthreads = 1;
-    int capacity = 1;
+    int nthreads = 4;
+    int capacity = 8;
 
     hasht_t *table = hasht_new(type, capacity, nthreads);
 
@@ -46,27 +46,61 @@ int simple_hash_test(hasht_type_t type)
         table->add(table, &data[i], keys[i]);
     }
 
-    hasht_locking_print(table);
+    for(int i = 0; i < n; i++){
+        if (!table->contains(table, keys[i]))
+            return FAILED;
+    }
+    
+    for(int i = 0; i < n; i++){
+        table->remove(table, keys[i]);
+    }
+    
+    for(int i = 0; i < n; i++){
+        if (table->contains(table, keys[i]))
+            return FAILED;
+    }
+    
+    return PASSED;
+
+}
+
+int resize_hash_test(hasht_type_t type)
+{
+
+    int nthreads = 4;
+    int capacity = 8;
+
+    hasht_t *table = hasht_new(type, capacity, nthreads);
+
+    int n = 20;
+
+    int keys[n];
+    double data[n];
+
+    srand(time(0));
+    for(int i = 0; i < n; i++){
+        keys[i] = rand();
+        data[i] = (double) rand() / RAND_MAX;
+    }
+
+    for(int i = 0; i < n; i++){
+        table->add(table, &data[i], keys[i]);
+    }
 
     for(int i = 0; i < n; i++){
         if (!table->contains(table, keys[i]))
             return FAILED;
     }
 
-    /* 
-     * table->remove(table, key);
-     * table->resize(table);
-     */
+    table->resize(table);
+    
+    for(int i = 0; i < n; i++){
+        if (!table->contains(table, keys[i]))
+            return FAILED;
+    }
 
     return PASSED;
 
-}
-
-int run_hash_test(hasht_type_t type)
-{
-    RETURN_IF(simple_hash_test(type) == FAILED, FAILED);
-
-    return uerr;
 }
 
 
@@ -126,7 +160,8 @@ int main(int argc, char* argv[])
 
     if (all || test1){
         TEST(test_queue(), "serial enqueue and dequeue");
-        TEST(run_hash_test(LOCKING), "test 1 on locking table");
+        TEST(simple_hash_test(LOCKING), "test 1 on locking table");
+        TEST(resize_hash_test(LOCKING), "test 1 on locking table");
     }
 
     return 0;

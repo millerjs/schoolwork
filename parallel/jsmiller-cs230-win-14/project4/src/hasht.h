@@ -16,6 +16,8 @@
 #include "cll.h"
 
 #define MAX_Q_DEPTH 16
+#define MAX_TABLE_SIZE 1<<12
+#define MAX_BUCKET_LEN 1<<7
 
 /* The top level hash table abstraction */
 typedef struct hasht_t hasht_t;   
@@ -69,6 +71,7 @@ struct hasht_t
 
     /* Scalar properties */
     int logsize;
+    int capacity;
     int count;
 
     /* Member Function Pointers */

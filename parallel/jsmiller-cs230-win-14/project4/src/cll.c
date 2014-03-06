@@ -39,10 +39,8 @@ ll_node_t *ll_node_new(void *item, int key)
 int ll_push(ll_t *list, void *item, int key)
 {
     ERROR_IF(!list, ERR_NOMEM);
-    DEBUG("list length: %d", list->len );
     if (list->maxlen > 0)
         if (list->len >= list->maxlen) {
-            DEBUG("list full: %d", list->len );
             return ERR_LISTFULL;
         }
     ll_node_t *new = ll_node_new(item, key);
@@ -50,10 +48,25 @@ int ll_push(ll_t *list, void *item, int key)
     list->tail = new;
     if (tail) tail->next = new;    
     else      list->head = new;
-
     list->len++;
     return list->len;
 }
+
+int ll_pushnode(ll_t *list, ll_node_t *new)
+{
+    ERROR_IF(!list, ERR_NOMEM);
+    if (list->maxlen > 0)
+        if (list->len >= list->maxlen) {
+            return ERR_LISTFULL;
+        }
+    ll_node_t *tail = list->tail;
+    list->tail = new;
+    if (tail) tail->next = new;    
+    else      list->head = new;
+    list->len++;
+    return list->len;
+}
+
 
 void *ll_pop(ll_t *list)
 {
@@ -65,18 +78,39 @@ void *ll_pop(ll_t *list)
     ll_node_t * head = list->head;
     list->head = list->head->next;
     void *data = head->data;
+    list->len --;
     free(head);
 
     return data;
 }
+
+ll_node_t *ll_popnode(ll_t *list)
+{
+    ERROR_IF(!list, ERR_NOMEM);
+
+
+    if (list->head == list->tail)
+        return NULL;
+
+
+    ll_node_t * head = list->head;
+    list->head = list->head->next;
+
+    if (!list->head) list->tail = NULL;
+    list->len --;
+    
+    return head;
+}
+
 
 int ll_contains(ll_t *list, int key)
 {
     ERROR_IF(!list, "passed null list");
     ll_node_t *curr = list->head;
     while (curr){
-        if (curr->key == key)
+        if (curr->key == key){
             return 1;
+        }
         curr = curr->next;
     }
     return 0;
@@ -92,3 +126,26 @@ void ll_print(ll_t *list)
     }
 }
 
+void *ll_remove(ll_t *list, int key)
+{
+    ERROR_IF(!list, "passed null list");
+    ll_node_t *curr = list->head;
+    ll_node_t *last = NULL;
+    while (curr){
+        if (curr->key == key){
+            if (last) {
+                last->next = curr->next;
+            } else {
+                (list->head) = NULL;
+            }
+            if (list->tail == curr)
+                list->tail = NULL;
+            void *data = curr->data;
+            free(curr);
+            return data;
+        }
+        last = curr;
+        curr = curr->next;
+    }
+    return NULL;
+}

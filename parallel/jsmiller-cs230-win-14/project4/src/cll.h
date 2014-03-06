@@ -42,5 +42,8 @@ int ll_push(ll_t *list, void *item, int key);
 void *ll_pop(ll_t *list);
 int ll_contains(ll_t *list, int key);
 void ll_print(ll_t *list);
+void *ll_remove(ll_t *list, int key);
+ll_node_t *ll_popnode(ll_t *list);
+int ll_pushnode(ll_t *list, ll_node_t *new);
 
 #endif
