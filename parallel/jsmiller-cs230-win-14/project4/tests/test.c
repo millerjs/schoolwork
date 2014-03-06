@@ -73,7 +73,7 @@ int resize_hash_test(hasht_type_t type)
 
     hasht_t *table = hasht_new(type, capacity, nthreads);
 
-    int n = 200;
+    int n = 2000;
 
     int keys[n];
     double data[n];
@@ -84,9 +84,6 @@ int resize_hash_test(hasht_type_t type)
         for(int i = 0; i < n; i++){
             keys[i] = rand();
             data[i] = (double) rand() / RAND_MAX;
-        }
-
-        for(int i = 0; i < n; i++){
             table->add(table, &data[i], keys[i]);
         }
 
@@ -135,7 +132,6 @@ int test_queue()
     
     return PASSED;
 }
-
 
 
 int main(int argc, char* argv[])
