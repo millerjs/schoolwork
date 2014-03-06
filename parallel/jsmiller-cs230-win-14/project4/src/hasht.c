@@ -14,6 +14,7 @@
 #include "math.h"
 #include <pthread.h>
 
+int MAX_BUCKET_LEN = 1<<5;
 
 hasht_t *hasht_new(hasht_type_t type, int capacity, int expected_threads)
 {

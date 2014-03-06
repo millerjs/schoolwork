@@ -17,7 +17,8 @@
 
 #define MAX_Q_DEPTH 16
 #define MAX_TABLE_SIZE 1<<12
-#define MAX_BUCKET_LEN 1<<7
+
+extern int MAX_BUCKET_LEN;
 
 /* The top level hash table abstraction */
 typedef struct hasht_t hasht_t;   
@@ -27,10 +28,10 @@ typedef struct hasht_t hasht_t;
 typedef int (*hasht_init_f)    (hasht_t *, int, int);
 typedef int (*hasht_free_f)    (hasht_t *);
 typedef int (*hasht_get_type_f)(hasht_t *);
-typedef int (*hasht_resize_f)  (hasht_t *);
 typedef int (*hasht_add_f)     (hasht_t *, void*, int);
 typedef int (*hasht_remove_f)  (hasht_t *, int);
 typedef int (*hasht_contains_f)(hasht_t *, int);
+typedef void *(*hasht_resize_f)  (hasht_t *);
 
 /* Enumeration to be contained in hasht object */
 typedef enum hasht_type_t 

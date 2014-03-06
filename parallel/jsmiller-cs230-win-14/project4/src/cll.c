@@ -41,7 +41,7 @@ int ll_push(ll_t *list, void *item, int key)
     ERROR_IF(!list, ERR_NOMEM);
     if (list->maxlen > 0)
         if (list->len >= list->maxlen) {
-            return ERR_LISTFULL;
+            return 0;
         }
     ll_node_t *new = ll_node_new(item, key);
     ll_node_t *tail = list->tail;
@@ -49,7 +49,7 @@ int ll_push(ll_t *list, void *item, int key)
     if (tail) tail->next = new;    
     else      list->head = new;
     list->len++;
-    return list->len;
+    return 0;
 }
 
 int ll_pushnode(ll_t *list, ll_node_t *new)

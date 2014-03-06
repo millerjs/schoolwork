@@ -69,34 +69,32 @@ int resize_hash_test(hasht_type_t type)
 
     int nthreads = 4;
     int capacity = 8;
+    int iterations = 2;
 
     hasht_t *table = hasht_new(type, capacity, nthreads);
 
-    int n = 20;
+    int n = 200;
 
     int keys[n];
     double data[n];
 
-    srand(time(0));
-    for(int i = 0; i < n; i++){
-        keys[i] = rand();
-        data[i] = (double) rand() / RAND_MAX;
-    }
+    for(int iter = 0; iter < iterations; iter++){
 
-    for(int i = 0; i < n; i++){
-        table->add(table, &data[i], keys[i]);
-    }
+        srand(time(0));
+        for(int i = 0; i < n; i++){
+            keys[i] = rand();
+            data[i] = (double) rand() / RAND_MAX;
+        }
 
-    for(int i = 0; i < n; i++){
-        if (!table->contains(table, keys[i]))
-            return FAILED;
-    }
+        for(int i = 0; i < n; i++){
+            table->add(table, &data[i], keys[i]);
+        }
 
-    table->resize(table);
-    
-    for(int i = 0; i < n; i++){
-        if (!table->contains(table, keys[i]))
-            return FAILED;
+        for(int i = 0; i < n; i++){
+            if (!table->contains(table, keys[i]))
+                return FAILED;
+        }
+
     }
 
     return PASSED;
