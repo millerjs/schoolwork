@@ -26,7 +26,7 @@ typedef int (*hasht_init_f)    (hasht_t *, int, int);
 typedef int (*hasht_free_f)    (hasht_t *);
 typedef int (*hasht_get_type_f)(hasht_t *);
 typedef int (*hasht_resize_f)  (hasht_t *);
-typedef int (*hasht_add_f)     (hasht_t *, int, void*);
+typedef int (*hasht_add_f)     (hasht_t *, void*, int);
 typedef int (*hasht_remove_f)  (hasht_t *, int);
 typedef int (*hasht_contains_f)(hasht_t *, int);
 
@@ -67,6 +67,7 @@ struct hasht_t
     /* Type specifier */
     hasht_type_t type;
 
+    /* Scalar properties */
     int logsize;
     int count;
 

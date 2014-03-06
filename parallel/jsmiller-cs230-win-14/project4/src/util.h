@@ -221,7 +221,7 @@ int uerr;
 
 #define RETURN_IF(f, err)                       \
     do {                                        \
-        if (f != 0) {                           \
+        if ((f) != 0) {                         \
             return err;                         \
         }                                       \
     } while(0)

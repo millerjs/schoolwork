@@ -27,28 +27,28 @@
 #define FAILED 1
 #define PASSED 0
 
-int serial_hash_test(hasht_type_t type)
+int simple_hash_test(hasht_type_t type)
 {
 
     int nthreads = 4;
-    int capacity = 32;
+    int capacity = 8;
 
     hasht_t *table = hasht_new(type, capacity, nthreads);
 
-    double fractionAdd    = .3;
-    double fractionRemove = .3;
-    double hitRate        = .4;
-    long   mean           = 1000;
+    int n = 5;
+    int keys[] = {1, 17, 17, 31, 45};
+    double data[] = {.234, 27.458, 2317.4, 458435.1346, 567123.8345};
 
-    HashPacketGenerator_t * source = createHashPacketGenerator(fractionAdd,
-                                                               fractionRemove,
-                                                               hitRate,
-                                                               mean);
-    int key = 5;
-    double data = .0023;
+    for(int i = 0; i < n; i++){
+        table->add(table, &data[i], keys[i]);
+    }
 
-    table->add(table, key, &data);
-    table->contains(table, key);
+    hasht_locking_print(table);
+
+    for(int i = 0; i < n; i++){
+        if (!table->contains(table, keys[i]))
+            return FAILED;
+    }
 
     /* 
      * table->remove(table, key);
@@ -61,7 +61,7 @@ int serial_hash_test(hasht_type_t type)
 
 int run_hash_test(hasht_type_t type)
 {
-    serial_hash_test(type);
+    RETURN_IF(simple_hash_test(type) == FAILED, FAILED);
 
     return uerr;
 }
@@ -79,7 +79,7 @@ int test_queue()
 
     /* push first half */
     for (int i = 0; i < n/2; i++)
-        ll_push(list, &values[i]);
+        ll_push(list, &values[i], 0);
 
     /* pop first third */
     for (int i = 0; i < n/3; i++){
@@ -89,8 +89,8 @@ int test_queue()
 
     /* push last half */
     for (int i = n/2; i < n; i++)
-        ll_push(list, &values[i]);
-    ll_push(list, NULL);
+        ll_push(list, &values[i], 0);
+    ll_push(list, NULL, 0);
 
     /* pop last two thirds */
     for (int i =n/3; i < n; i++){

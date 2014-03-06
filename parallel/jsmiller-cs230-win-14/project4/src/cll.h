@@ -24,6 +24,7 @@
 typedef struct ll_node_t ll_node_t;
 
 struct ll_node_t {
+    int key;
     void *data;
     ll_node_t *next;
 } ;
@@ -36,9 +37,10 @@ typedef struct ll_t {
 } ll_t; 
 
 
-ll_t * ll_new(int maxlen);
-int ll_push(ll_t *list, void *item);
+ll_t * ll_new(int maxlen);;
+int ll_push(ll_t *list, void *item, int key);
 void *ll_pop(ll_t *list);
-
+int ll_contains(ll_t *list, int key);
+void ll_print(ll_t *list);
 
 #endif
