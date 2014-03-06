@@ -15,10 +15,10 @@
 #include "hasht.h"
 
 
-int hasht_locking_add(hasht_t *table, void *item);
-int hasht_locking_contains(hasht_t *table, void *item);
-int  hasht_locking_remove(hasht_t *table, void *item);
-int  hasht_locking_resize(hasht_t *table);
+int hasht_locking_add(hasht_t *table, int key, void *item);
+int hasht_locking_contains(hasht_t *table, int key);
+int hasht_locking_remove(hasht_t *table, int key);
+int hasht_locking_resize(hasht_t *table);
 int hasht_locking_init(hasht_t *table, int capacity, int expected_threads);
 
 

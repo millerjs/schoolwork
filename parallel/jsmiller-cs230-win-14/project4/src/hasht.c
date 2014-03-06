@@ -17,7 +17,7 @@
 
 hasht_t *hasht_new(hasht_type_t type, int capacity, int expected_threads)
 {
-    const hasht_init_t inits[] = {
+    const hasht_init_f inits[] = {
         &hasht_locking_init
     };
     

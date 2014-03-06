@@ -10,10 +10,13 @@ LDLIBS = -lm -lrt -pthread
 DEPS = $(OBJS:.o=.d)
 
 OBJS = test.o\
+	 $(SRC)/hasht.o\
+	 $(SRC)/hasht_locking.o\
 	 $(SRC)/util.o\
 	 $(SRC)/cll.o\
 	 $(SRC)/thread_pool.o\
 	 $(UTILS)/generators.o\
+	 $(UTILS)/hashgenerator.o\
 	 $(UTILS)/stopwatch.o\
 	 $(UTILS)/fingerprint.o\
 	 $(UTILS)/packetsource.o\

@@ -22,13 +22,13 @@ typedef struct hasht_t hasht_t;
 
 
 /* Pointer types for each table interaction member */
-typedef int (*hasht_init_t)    (hasht_t *, int, int);
+typedef int (*hasht_init_f)    (hasht_t *, int, int);
 typedef int (*hasht_free_f)    (hasht_t *);
 typedef int (*hasht_get_type_f)(hasht_t *);
 typedef int (*hasht_resize_f)  (hasht_t *);
-typedef int (*hasht_add_f)     (hasht_t *, void *);
-typedef int (*hasht_remove_f)  (hasht_t *, void *);
-typedef int (*hasht_contains_f)(hasht_t *, void *);
+typedef int (*hasht_add_f)     (hasht_t *, int, void*);
+typedef int (*hasht_remove_f)  (hasht_t *, int);
+typedef int (*hasht_contains_f)(hasht_t *, int);
 
 /* Enumeration to be contained in hasht object */
 typedef enum hasht_type_t 

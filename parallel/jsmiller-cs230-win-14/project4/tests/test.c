@@ -17,6 +17,7 @@
 #include "../src/hasht.h"
 #include "../src/util.h"
 #include "../src/cll.h"
+#include "../../utils/hashgenerator.h"
 
 #define GREEN "\033[0;32m"
 #define NORM "\033[0m"
@@ -25,6 +26,38 @@
 #define MAX_DESCRIP 1028
 #define FAILED 1
 #define PASSED 0
+
+int run_hash_test(hasht_type_t type)
+{
+
+    int nthreads = 1;
+    int capacity = 32;
+
+    hasht_t *table = hasht_new(type, capacity, nthreads);
+
+    double fractionAdd    = .3;
+    double fractionRemove = .3;
+    double hitRate        = .4;
+    long   mean           = 1000;
+
+    HashPacketGenerator_t * source = createHashPacketGenerator(fractionAdd,
+                                                               fractionRemove,
+                                                               hitRate,
+                                                               mean);
+    int key = 5;
+    double data = .0023;
+
+    table->add(table, key, &data);
+    table->remove(table, key);
+    table->contains(table, key);
+    table->resize(table);
+    
+    
+
+    return uerr;
+
+}
+
 
 int test_queue()
 {
@@ -60,15 +93,6 @@ int test_queue()
     return PASSED;
 }
 
-
-int run_hash_test(hasht_type_t type)
-{
-
-
-
-    return uerr;
-
-}
 
 
 int main(int argc, char* argv[])

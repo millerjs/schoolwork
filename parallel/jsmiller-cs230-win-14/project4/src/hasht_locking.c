@@ -12,21 +12,23 @@
 #include "hasht_locking.h"
 #include "cll.h"
 
-int hasht_locking_add(hasht_t *table, void *item)
+int hasht_locking_add(hasht_t *table, int key, void *item)
 {
-    DEBUG("adding [%p] to table", item);
+    DEBUG("adding [%d] to table", key);
+
+
     return RET_SUCCESS;
 }
 
-int hasht_locking_contains(hasht_t *table, void *item)
+int hasht_locking_contains(hasht_t *table, int key)
 {
-    DEBUG("checking contains [%p] in table", item);
+    DEBUG("checking contains [%d] in table", key);
     return RET_SUCCESS;
 }
 
-int  hasht_locking_remove(hasht_t *table, void *item)
+int  hasht_locking_remove(hasht_t *table, int key)
 {
-    DEBUG("removing [%p] from table", item);
+    DEBUG("removing [%d] from table", key);
     return RET_SUCCESS;
 }
 
