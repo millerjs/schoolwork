@@ -11,6 +11,8 @@ OBJS = main.o\
 	 util.o\
 	 thread_pool.o\
 	 cll.o\
+	 hasht.o\
+	 hasht_locking.o\
 	 $(UTILS)/generators.o\
 	 $(UTILS)/stopwatch.o\
 	 $(UTILS)/fingerprint.o\

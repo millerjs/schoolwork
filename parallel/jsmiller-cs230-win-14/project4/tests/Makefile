@@ -2,7 +2,7 @@ UTILS = ../../utils
 SRC = ../src
 DEPS = $(OBJS:.o=.d)
 CC = colorgcc
-CFLAGS = -I../../include -g3 -Wall -fpic -std=gnu99 -MMD -MP -DDEBUG -O3 -std=c99
+CFLAGS = -I../../include -g3 -Wall -fpic -std=gnu99 -MMD -MP -DDEBUG -O3 -std=gnu99
 DFLAGS = 
 BIN = test
 LDLIBS = -lm -lrt -pthread 

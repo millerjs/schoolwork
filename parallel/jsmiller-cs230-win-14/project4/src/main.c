@@ -19,9 +19,9 @@
 
 #include "thread_pool.h"
 #include "util.h"
+#include "hasht.h"
 #include "cll.h"
 #include "../../utils/stopwatch.h"
-
 
 #define MAX_PATH 1028
 

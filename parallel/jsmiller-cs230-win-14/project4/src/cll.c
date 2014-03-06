@@ -43,10 +43,10 @@ int ll_push(ll_t *list, void *item)
     ll_node_t *new = ll_node_new(item);
     ll_node_t *tail = list->tail;
     list->tail = new;
-    if (tail) 
-        tail->next = new;    
-    else
-        list->head = new;
+
+    if (tail) tail->next = new;    
+    else      list->head = new;
+
     list->len++;
     return RET_SUCCESS;
 }

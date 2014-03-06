@@ -14,6 +14,7 @@
 #include <signal.h>
 
 #include "../src/thread_pool.h"
+#include "../src/hasht.h"
 #include "../src/util.h"
 #include "../src/cll.h"
 
@@ -25,31 +26,45 @@
 #define FAILED 1
 #define PASSED 0
 
-int usleep(int msec);
-
 int test_queue()
 {
     ll_t *list = ll_new(-1);
-    int values[] = {0, 3, 5, 13, -3};
+    const int n = 100;
+    int values[n];
 
-    for (int i = 0; i < 5; i++)
+    srand(time(0));
+    for (int i = 0; i < n; i++)
+        values[i] = rand();
+
+    /* push first half */
+    for (int i = 0; i < n/2; i++)
         ll_push(list, &values[i]);
-    ll_push(list, NULL);
 
-    for (int i = 0; i < 5; i++){
+    /* pop first third */
+    for (int i = 0; i < n/3; i++){
         if (values[i] != *(int*)ll_pop(list))
             return FAILED;
     }
 
-    return 0;
+    /* push last half */
+    for (int i = n/2; i < n; i++)
+        ll_push(list, &values[i]);
+    ll_push(list, NULL);
 
+    /* pop last two thirds */
+    for (int i =n/3; i < n; i++){
+        if (values[i] != *(int*)ll_pop(list))
+            return FAILED;
+    }
+    
+    return PASSED;
 }
 
-int run_test1(int delay)
-{
-    /* TIMEOUT     */
 
-    TIMEOUT(1, usleep(RANDOM(0,delay)*1000));
+int run_hash_test(hasht_type_t type)
+{
+
+
 
     return uerr;
 
@@ -76,9 +91,8 @@ int main(int argc, char* argv[])
 
     if (all || test1){
 
-        /* TEST(run_test1(10000), "first test"); */
-        TEST(test_queue(), "test on serial enqueue and dequeue");
-
+        TEST(test_queue(), "serial enqueue and dequeue");
+        TEST(run_hash_test(LOCKING), "test 1 on locking table");
     }
 
     return 0;

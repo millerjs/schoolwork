@@ -74,11 +74,11 @@ void *__malloc__(const char* file, const char*func, int line, char*size_d, int s
 void print_test_result(int failed, const char* test, const char* subtest)
 {
     if (failed){
-        printf("TEST: [%20s] [%35s] [%s FAILED %s]\n", 
+        printf("TEST: [%30s] [%35s] [%s FAILED %s]\n", 
                test, subtest, __red__, __nrm__); 
         return;
     } 
-    printf("TEST: [%20s] [%35s] [%s PASSED%s ]\n", 
+    printf("TEST: [%30s] [%35s] [%s PASSED%s ]\n", 
            test, subtest, __lgr__, __nrm__); 
 }
 

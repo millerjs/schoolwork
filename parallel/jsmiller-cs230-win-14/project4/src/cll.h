@@ -9,6 +9,9 @@
 /******************************************************************************/
 
 
+#ifndef _CLL_H
+#define _CLL_H
+
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -38,3 +41,4 @@ int ll_push(ll_t *list, void *item);
 void *ll_pop(ll_t *list);
 
 
+#endif
