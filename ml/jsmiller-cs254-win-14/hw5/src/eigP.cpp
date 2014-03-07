@@ -27,6 +27,7 @@ Usage:\n\
 void writeMatrix(char *path, matrix m)
 {
     FILE * out = fopen(path, "w");
+    fprintf(stdout, "Writing matrix to %s\n", path);
     for(int i = 0; i < m.rows; i++){
         for(int j = 0; j < m.cols; j++){
             fprintf(out, "%lf ", m[i][j]);
@@ -39,6 +40,7 @@ void writeMatrix(char *path, matrix m)
 void writeEigenvectors(char *path, matrix *v, int n)
 {
     FILE * out = fopen(path, "w");
+    fprintf(stdout, "Writing evects to %s\n", path);
     for(int i = 0; i < n; i++){
         for(int j = 0; j < v[i].rows; j++){
             fprintf(out, "%lf ", v[i][j][0]);
@@ -48,6 +50,17 @@ void writeEigenvectors(char *path, matrix *v, int n)
     fclose(out);
 }
 
+void writeEigenvalues(char *path, double *vals, int n)
+{
+    FILE * out = fopen(path, "w");
+    fprintf(stdout, "Writing evals to %s\n", path);
+    for(int i = 0; i < n; i++){
+        fprintf(out, "%lf\n", vals[i]);
+    }
+    fclose(out);
+}
+
+
 int main(int argc, char *argv[])
 {
     int c;
@@ -56,9 +69,11 @@ int main(int argc, char *argv[])
     int random = 0;
     double precis = 0;
 
+    matrix A; 
+
     char *input_path = NULL;
-    const char *eigenvectors = "eigenvectors.out";
-    const char *eigenvalues  = "eigenvalues.out";
+    char *eigenvectors = (char*) "eigenvectors.out";
+    char *eigenvalues  = (char*) "eigenvalues.out";
 
     opterr = 0;
     while ((c = getopt (argc, argv, "k:f:e:r:")) != -1){
@@ -76,23 +91,15 @@ int main(int argc, char *argv[])
     }
 
     ERROR_IF(!k||!precis||!(input_path||random), "%s", usage);
-    matrix A; 
 
     if (input_path) A = parseData(input_path);
-    else{            
-        A = randomSymMatrix(N, N, 100);
-        // writeMatrix((char*)"sample.out", A);
-    }
+    else            A = randomSymMatrix(N, N, 100);
 
     matrix *v = getEigenvectors(A, precis, k);
     double *vals = getEigenvalues(A, v, k);
 
-    writeEigenvectors((char*)eigenvectors, v, k);
-   
-    FILE * out = fopen(eigenvalues, "w");
-    for(int i = 0; i < k; i++)
-        fprintf(out, "%lf\n", vals[i]);
-    fclose(out);
+    writeEigenvectors(eigenvectors, v, k);
+    writeEigenvalues(eigenvalues, vals, k);
 
     return 0;
 }

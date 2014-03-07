@@ -476,3 +476,14 @@ matrix diag(double *vals, int n)
         ret[i][i] = vals[i];
     return ret;
 }
+
+double normFrobenius(matrix& A, matrix& B)
+{
+    double ret = 0;
+    for(int i = 0; i < A.rows; i++){
+        for(int j = 0; j < A.cols; j++){
+            ret += pow(A[i][j] - B[i][j], 2.0);
+        }
+    }
+    return pow(ret, .5);
+}

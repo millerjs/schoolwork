@@ -102,5 +102,8 @@ matrix matrixFromCols(matrix *cols, int n);
 /* Constructs a square diagnonal matrix from double array vals */
 matrix diag(double *vals, int n);
 
+/* Calculates the frobenius norm between two matrices */
+double normFrobenius(matrix& A, matrix& B);
+
 #endif
 

@@ -27,6 +27,7 @@ Usage:\n\
 void writeMatrix(char *path, matrix m)
 {
     FILE * out = fopen(path, "w");
+    fprintf(stdout, "Writing matrix to %s\n", path);
     for(int i = 0; i < m.rows; i++){
         for(int j = 0; j < m.cols; j++){
             fprintf(out, "%lf ", m[i][j]);
@@ -39,11 +40,22 @@ void writeMatrix(char *path, matrix m)
 void writeEigenvectors(char *path, matrix *v, int n)
 {
     FILE * out = fopen(path, "w");
+    fprintf(stdout, "Writing evects to %s\n", path);
     for(int i = 0; i < n; i++){
         for(int j = 0; j < v[i].rows; j++){
             fprintf(out, "%lf ", v[i][j][0]);
         }
         fprintf(out, "\n");
+    }
+    fclose(out);
+}
+
+void writeEigenvalues(char *path, double *vals, int n)
+{
+    FILE * out = fopen(path, "w");
+    fprintf(stdout, "Writing evals to %s\n", path);
+    for(int i = 0; i < n; i++){
+        fprintf(out, "%lf\n", vals[i]);
     }
     fclose(out);
 }
@@ -56,7 +68,10 @@ int main(int argc, char *argv[])
     double precis = 0;
 
     char *input_path = NULL;
-
+    char *outputU = (char*) "svdU.out";
+    char *outputV = (char*) "svdV.out";
+    char *outputS = (char*) "svdS.out";
+    
     opterr = 0;
     while ((c = getopt (argc, argv, "k:f:e:r")) != -1){
         if (c ==  'r'){
@@ -85,20 +100,17 @@ int main(int argc, char *argv[])
     double *vals = getSVDsqrtEigenvalues(A, v, k);
 
     matrix S = diag(vals, k);
-    cout << S << endl;
     matrix U = matrixFromCols(u, k);
     matrix V = matrixFromCols(v, k);
+
     matrix Vt = ~V;
+    matrix AA = U*S*Vt;
 
-    cout << A << endl << endl;
-    cout << U*S*Vt  << endl;
+    writeMatrix(outputU, U);
+    writeMatrix(outputV, V);
+    writeEigenvalues(outputS, vals, k);
 
-    // writeEigenvectors((char*)eigenvectors, v, k);
-   
-    // FILE * out = fopen(eigenvalues, "w");
-    // for(int i = 0; i < k; i++)
-    //     fprintf(out, "%lf\n", getEigenvalue(A, v[i], precis));
-    // fclose(out);
+    cout << normFrobenius(A, AA) << endl;
 
     return 0;
 }
