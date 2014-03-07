@@ -1,19 +1,19 @@
 DEPS = $(OBJS:.o=.d)
 CC = g++
-CFLAGS = -g3 -Wall -fpic -std=gnu99 -MMD -MP -DDEBUG -D_DEBUG -O3 -Werror
+CFLAGS = -g3 -Wall -fpic -MMD -MP -DDEBUG -D_DEBUG -O3 -Werror
 LDLIBS = -lm -lrt -pthread  -D_POSIX_C_SOURCE=200112L -D_GNU_SOURCE
 
 UTILS = libutilcpp
 
 ##### Objects
-BIN = ../hw5
-OBJS = main.o\
+eigP = ../eigP
+OBJS = eigP.o\
 	 $(UTILS)/matrix.o
 
-all: $(BIN)
+all: $(eigP)
 
-$(BIN): $(OBJS)
-	$(CC) $(LDFLAGS) $(OBJS)  $(LDLIBS) -o $(BIN)
+$(eigP): $(OBJS)
+	$(CC) $(LDFLAGS) $(OBJS)  $(LDLIBS) -o $(eigP)
 
 %.d: %.cpp
 

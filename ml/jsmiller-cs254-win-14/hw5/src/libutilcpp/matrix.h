@@ -46,6 +46,8 @@ public:
     matrix operator * (matrix& v1);
     double product();
 
+    matrix operator / (double a);
+
     /* addition */
     matrix operator + (double a);
     matrix operator + (matrix& v);
@@ -61,11 +63,19 @@ public:
     /* Other */
     void normalize();
     void abs();
+    double dot(matrix& v2);
+    void orthogonalize(matrix *v, int n);
 
 };
 
 ostream& operator << (ostream& o, matrix v);
 double sum(matrix& m);
+double norm(matrix m);
+matrix parseData(const char *path);
+matrix randomMatrix(int rows, int cols, double max);
+matrix randomSymMatrix(int rows, int cols, double max);
+double getEigenvalue(matrix& m, matrix& v, double precis);
+matrix *getEigenvectors(matrix& A, double precis, int order);
 
 #endif
 

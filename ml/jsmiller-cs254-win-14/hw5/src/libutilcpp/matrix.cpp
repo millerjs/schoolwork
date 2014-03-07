@@ -127,6 +127,26 @@ matrix matrix::operator * (double a)
     return ret;
 }
 
+double matrix::dot(matrix& v1)
+{
+    double ret = 0;
+    assert(rows == v1.rows && cols == v1.cols);
+    for (int i = 0; i < rows; i++)
+        for (int j = 0; j < cols; j++)
+            ret += x[i][j]*v1[i][j];
+    return ret;
+}
+
+matrix matrix::operator / (double a)
+{
+    matrix ret(rows, cols);
+    for (int i = 0; i < rows; i++)
+        for (int j = 0; j < cols; j++)
+            ret[i][j] = x[i][j] / a;
+    return ret;
+}
+
+
 matrix matrix::operator * (matrix& a)
 {
     assert(a.rows == cols);
@@ -200,6 +220,22 @@ double sum(matrix& m)
         }
     }
     return s;
+}
+
+double norm(matrix m)
+{
+    double sum = 0;
+    if (m.rows == 1){
+        for (int i = 0; i < m.cols; i++)
+            sum += m[0][i]*m[0][i];
+    } else if (m.cols == 1){
+        for (int i = 0; i < m.rows; i++)
+            sum += m[i][0]*m[i][0];
+    } else {
+        WARN("cannot compute norm of non-vector matrix");
+        return -1;
+    }
+    return pow(sum, .5);
 }
 
 void matrix::normalize()
@@ -289,4 +325,103 @@ matrix matrix::operator()(const int r, const int c)
     matrix ret(1, 1, x[r][c]);
     return ret;
 
+}
+
+matrix parseData(const char *path)
+{
+
+    FILE *input = fopen(path, "r");
+    ERROR_IF(!input, "unable to open file: %s", path);
+
+    int N = 0;
+    while (EOF != (fscanf(input, "%*[^\n]"), fscanf(input, "%*c"))) N++; 
+    fprintf(stderr, "Parsing Data: %d x %d\n", N, N); 
+    ERROR_IF(!N, "File data must have non-zero dimensions"); 
+    fseek(input, 0, SEEK_SET);     
+
+    matrix ret(N, N);
+
+    for(int i = 0; i < N; i++){
+        for(int j = 0; j < N; j++){
+            ERROR_IF(!fscanf(input, "%lf", &ret[i][j]), "element read"); 
+        }        
+    }
+
+    return ret;
+}
+
+matrix randomMatrix(int rows, int cols, double max)
+{
+    srand(time(0));
+    matrix ret(rows, cols);
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < cols; j++){
+            ret[i][j] = rand()*max/RAND_MAX;
+        }
+    }    
+    return ret;
+}
+
+matrix randomSymMatrix(int rows, int cols, double max)
+{
+    srand(time(0));
+    matrix ret(rows, cols);
+    for(int i = 0; i < rows; i++){
+        for(int j = i; j < cols; j++){
+            ret[i][j] = rand()*max/RAND_MAX;
+        }
+    }
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < i; j++){
+            ret[i][j] = ret[j][i];
+        }
+    }    
+    return ret;
+}
+
+double getEigenvalue(matrix& A, matrix& v, double precis)
+{
+    matrix v2;
+    if (v.rows == 1){
+        matrix v3 = ~v;
+        v2 = A*v3;
+    } else if (v.cols == 1){
+        v2 = A*v;
+    } else {
+        WARN("bad eigenvector dimensions");
+        return 0;
+    }
+    double val = v2[0][0]/v[0][0];
+    double error = abs(norm(v*val) - norm(v2));
+    WARN("error: %lf", error);
+    return val;
+}
+
+void matrix::orthogonalize(matrix *v, int n)
+{
+    for(int i = 0; i < n; i++){
+        matrix t1 = v[i] * (v[i].dot( (*this) ));
+        (*this) = (*this) - t1;
+    }
+}
+
+matrix *getEigenvectors(matrix& A, double precis, int order)
+{
+    matrix *ret = new matrix[order];
+    matrix r, r2, epos, eneg;
+
+    for(int i = 0; i < order; i++){
+        cerr << "Calculating v_" << i << endl;
+        r = randomMatrix(A.cols, 1, 10);
+        do {
+            r.orthogonalize(ret, i);
+            r2 = A*r / norm(A*r);
+            epos = r2 - r;
+            eneg = r2 + r;
+            r = r2;
+        } while ( norm(epos) > precis && norm(eneg) > precis);
+        ret[i] = r;
+    }
+    
+    return ret;
 }
