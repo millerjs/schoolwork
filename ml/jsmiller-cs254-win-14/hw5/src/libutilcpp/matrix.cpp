@@ -392,8 +392,8 @@ double getEigenvalue(matrix& A, matrix& v, double precis)
         return 0;
     }
     double val = v2[0][0]/v[0][0];
-    double error = abs(norm(v*val) - norm(v2));
-    WARN("error: %lf", error);
+    double error = pow(norm(v*val) - norm(v2), 2);
+    fprintf(stderr, "eigenvalue: (||v*lambda|| - ||Av||)**2 = %lf\n", error);
     return val;
 }
 
@@ -412,13 +412,15 @@ matrix *getEigenvectors(matrix& A, double precis, int order)
 
     for(int i = 0; i < order; i++){
         cerr << "Calculating v_" << i << endl;
-        r = randomMatrix(A.cols, 1, 10);
+        r = randomMatrix(A.cols, 1, 20.0);
+        int j = 0;
         do {
             r.orthogonalize(ret, i);
             r2 = A*r / norm(A*r);
             epos = r2 - r;
             eneg = r2 + r;
             r = r2;
+            if (j++ > 100000) break;
         } while ( norm(epos) > precis && norm(eneg) > precis);
         ret[i] = r;
     }
