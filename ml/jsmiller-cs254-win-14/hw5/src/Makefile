@@ -6,14 +6,17 @@ LDLIBS = -lm -lrt -pthread  -D_POSIX_C_SOURCE=200112L -D_GNU_SOURCE
 UTILS = libutilcpp
 
 ##### Objects
-eigP = ../eigP
-OBJS = eigP.o\
-	 $(UTILS)/matrix.o
+OBJS = $(UTILS)/matrix.o
+eigP = eigP
+svdP = svdP
 
-all: $(eigP)
+all: $(eigP) $(svdP)
 
-$(eigP): $(OBJS)
-	$(CC) $(LDFLAGS) $(OBJS)  $(LDLIBS) -o $(eigP)
+$(eigP): $(OBJS) $(eigP).o
+	$(CC) $(LDFLAGS) $(OBJS) $(eigP).o $(LDLIBS) -o ../$(eigP)
+
+$(svdP): $(OBJS) $(svdP).o
+	$(CC) $(LDFLAGS) $(OBJS) $(svdP).o $(LDLIBS) -o ../$(svdP)
 
 %.d: %.cpp
 
@@ -21,4 +24,4 @@ check-syntax:
 	$(CC) -o nul -S ${CHK_SOURCES}
 
 clean:
-	rm -f $(OBJS) $(BIN) sample *.d
+	rm -f $(OBJS) ../$(eigP) ../$(svdP) sample *.d

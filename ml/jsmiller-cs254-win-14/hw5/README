@@ -12,7 +12,7 @@ To build the programs, simply run make:
 
 All three programs have usage statements. Examples are as follows
 
-   .../hw5$  ./eigP -e 1e-4 -v8 -f sample.dat
+   .../hw5$  ./eigP -e 1e-4 -k8 -f sample_eig.dat
 
    # will find the 8 evecs with largest evals from 
    #    input file sample.dat with error < 1e-4

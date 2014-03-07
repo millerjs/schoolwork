@@ -71,11 +71,30 @@ public:
 ostream& operator << (ostream& o, matrix v);
 double sum(matrix& m);
 double norm(matrix m);
+
+/* Pull ASCII representation (w/ whitespace) into matrix */
 matrix parseData(const char *path);
+
+/* Create a random matrix with 0 < A_ij < max */
 matrix randomMatrix(int rows, int cols, double max);
+
+/* Create a random symmetric matrix with 0 < A_ij < max */
 matrix randomSymMatrix(int rows, int cols, double max);
+
+/* Get's the eigenvalues of a matrix given array of eigenvectors */
 double getEigenvalue(matrix& m, matrix& v, double precis);
+
+/* Get's the eigenvalues of a SQUARE SYMMETRIC MATRIX */
 matrix *getEigenvectors(matrix& A, double precis, int order);
+
+/* Get's the SVD eigenvalues v_i of matrix A */
+matrix *getSVDvectorsV(matrix& A, double precis, int order);
+
+/* Get's the SVD eigenvalues u_i of matrix A given v_i */
+matrix *getSVDvectorsU(matrix& A, matrix *v, int n);
+
+/* Constructs */
+matrix matrixFromCols(matrix *cols, int n);
 
 #endif
 

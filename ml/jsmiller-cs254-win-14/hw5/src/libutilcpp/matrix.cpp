@@ -329,7 +329,6 @@ matrix matrix::operator()(const int r, const int c)
 
 matrix parseData(const char *path)
 {
-
     FILE *input = fopen(path, "r");
     ERROR_IF(!input, "unable to open file: %s", path);
 
@@ -340,7 +339,6 @@ matrix parseData(const char *path)
     fseek(input, 0, SEEK_SET);     
 
     matrix ret(N, N);
-
     for(int i = 0; i < N; i++){
         for(int j = 0; j < N; j++){
             ERROR_IF(!fscanf(input, "%lf", &ret[i][j]), "element read"); 
@@ -428,3 +426,28 @@ matrix *getEigenvectors(matrix& A, double precis, int order)
     
     return ret;
 }
+
+matrix *getSVDvectorsV(matrix& A, double precis, int k)
+{
+    matrix AA = (~A) * A;
+    matrix *v = getEigenvectors(AA, precis, k);
+    cout << AA << endl;
+    return v;
+}
+
+matrix matrixFromCols(matrix *cols, int n)
+{
+
+
+}
+
+matrix *getSVDvectorsU(matrix& A, matrix *v, int n)
+{
+    matrix *u = new matrix[n];
+    for(int i = 0; i < n; i++){
+        u[i] = (A * v[i]) / norm (A * v[i]);
+    }
+    return u;
+}
+
+
