@@ -412,10 +412,12 @@ double *getEigenvalues(matrix& A, matrix *v, int n)
             WARN("bad eigenvector dimensions");
             return 0;
         }
+        double sum = 0;
         vals[i] = v2[0][0]/v[i][0][0];
-        double error = pow(norm(v[i]*vals[i]) - norm(v2), 2);
-        fprintf(stderr, "eval[%.3e]:\t(||v*lambda|| - ||Av||)**2 = %lf\n", 
-                vals[i], error);
+        matrix tmp = A*v[i];
+        matrix tmp2 = v[i]*vals[i];
+        double error = normFrobenius(tmp, tmp2);
+        fprintf(stderr, "eval[%.3e]:\t(||A*v_i - v[i]*val[i])||_F = %lf\n", vals[i], error);
     }
     return vals;
 }
@@ -442,7 +444,6 @@ matrix *getEigenvectors(matrix& A, double precis, int order)
 {
     matrix *ret = new matrix[order];
     matrix r, r2, epos, eneg;
-
     for(int i = 0; i < order; i++){
         cerr << "Calculating v_" << i << endl;
         r = randomMatrix(A.cols, 1, 20.0);
@@ -455,9 +456,9 @@ matrix *getEigenvectors(matrix& A, double precis, int order)
             r = r2;
             if (j++ > 100000) break;
         } while ( norm(epos) > precis && norm(eneg) > precis);
+        // fprintf(stdout, "%d\t%lf\t%d\n", A.rows, log10(precis), j);
         ret[i] = r;
     }
-    
     return ret;
 }
 

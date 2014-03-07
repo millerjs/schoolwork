@@ -27,7 +27,7 @@ Usage:\n\
 void writeMatrix(char *path, matrix m)
 {
     FILE * out = fopen(path, "w");
-    fprintf(stdout, "Writing matrix to %s\n", path);
+    fprintf(stderr, "Writing matrix to %s\n", path);
     for(int i = 0; i < m.rows; i++){
         for(int j = 0; j < m.cols; j++){
             fprintf(out, "%lf ", m[i][j]);
@@ -40,7 +40,7 @@ void writeMatrix(char *path, matrix m)
 void writeEigenvectors(char *path, matrix *v, int n)
 {
     FILE * out = fopen(path, "w");
-    fprintf(stdout, "Writing evects to %s\n", path);
+    fprintf(stderr, "Writing evects to %s\n", path);
     for(int i = 0; i < n; i++){
         for(int j = 0; j < v[i].rows; j++){
             fprintf(out, "%lf ", v[i][j][0]);
@@ -53,7 +53,7 @@ void writeEigenvectors(char *path, matrix *v, int n)
 void writeEigenvalues(char *path, double *vals, int n)
 {
     FILE * out = fopen(path, "w");
-    fprintf(stdout, "Writing evals to %s\n", path);
+    fprintf(stderr, "Writing evals to %s\n", path);
     for(int i = 0; i < n; i++){
         fprintf(out, "%lf\n", vals[i]);
     }
