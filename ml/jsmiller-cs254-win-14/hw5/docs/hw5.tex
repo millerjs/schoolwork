@@ -1,0 +1,84 @@
+\include{zLaTex-Preamble}
+
+\title{Homework 5} 
+\author{Joshua Miller}
+\date{}
+
+
+%% \newcommand\invisiblesection[1]{%
+%%   \refstepcounter{section}%
+%%   \addcontentsline{toc}{section}{\protect\numberline{\thesection}#1}%
+%%   \sectionmark{#1}}
+
+\lhead{\fancyplain{}{{\Large\textbf{CMSC25400 / STAT 27725}} \\ 
+    \large University of Chicago, Winter 2014  }}
+
+\begin{document}
+\rhead{\fancyplain{}{{\Large \textbf{Homework 5}}} \\ \large Joshua Miller}
+% \maketitle
+\vspace{40pt}~
+
+\renewcommand{\m}[1]{\mathbf{#1}}
+
+\section{Problem 1}
+
+In order to test that the vectors produced by my code were actually
+eigenvectors of $\m{A}$, I verified that for
+$\epsilon' \approx \epsilon$ given as a parameter
+\al{
+\sum_i \lp (\m{A}v)_i - \lambda v_i \rp^2 < \epsilon'
+}
+
+The following bash commands are an overview of how to reproduce the results that follow. 
+\lang{bash}
+\begin{code}
+# To build the programs, simply run make:
+
+.../hw5$  make
+
+# All three programs have usage statements. Examples are as follows
+
+.../hw5$  ./eigP -e 1e-4 -k8 -f sample_eig.dat
+
+# will find the 8 evecs with largest evals from input file sample.dat
+# with error < 1e-4.  eigenvalues and eigenvectors are written to
+# respective *.out files
+
+.../hw5$  ./eigP -e 1e-4 -k8 -r 100
+
+# the same as above but with a random matrix of size N = 100 //$
+\end{code}
+
+Figure~\ref{plot1} demonstrates the pattern of convergence given
+varialbes $\epsilon$ and $N$ for matrix $\m A$. As one might expect,
+the number of iterations required for the power method to converge is
+proportional to the selected precision.  However it is also
+interesting to note that the number of iterations to
+convergence \emph{decreases} as the matrix size increases. 
+
+\figH {plot1.png}{Plot of convergence iterations vs $\epsilon$ for
+       selected matrix sizes}{plot1}{.8}
+
+It can be
+noted that the number of iterations grew logarithmically with
+$\epsilon$, i.e. for the 10$\times$10 matrix,
+\al{
+\text{Iterations} \approx 0.780696\times\log(\epsilon)-0.130952
+}
+
+with an $r^2 = .9989$. Furthermore, as a function of matrix size for a
+fized $\epsilon$, the number of iteration necessary as a function of matrix size $N$ was close to the following,
+\al{
+ \text{Iterations} \approx 49.5\times N^{-.43} + 9
+}
+
+Therefore, we can say that as a function of $\epsilon$, convergence is
+on the order of $\mathcal{O}(\log(\epsilon))$.
+
+\figH {plot2.png}{Plot of Frobenius norm vs $k$ precision
+       level $\epsilon = 1\times 10^{-10}$ }{plot1}{.8}
+
+
+
+
+\end{document}
