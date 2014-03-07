@@ -24,8 +24,8 @@ typedef struct thread_pool_t thread_pool_t;
 
 typedef struct thread_t {
     pthread_t self;
+    int id;
     thread_pool_t *pool;
-    int retval;
 } thread_t;
 
 typedef struct thread_pool_t{

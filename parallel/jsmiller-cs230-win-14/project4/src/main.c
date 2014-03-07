@@ -56,7 +56,6 @@ void * thread_loop(void * __thread__)
     return NULL;
 }
 
-
 int main(int argc, char* argv[])
 {
     int c;

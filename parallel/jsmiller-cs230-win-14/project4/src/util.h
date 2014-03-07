@@ -26,7 +26,10 @@
 
 #define __red__ "\033[1;31m"
 #define __lgr__ "\033[1;32m"
+#define __gry__ "\033[1;30m"
 #define __nrm__ "\033[0m"
+
+extern char* colors[];
 
 #define STR(_x)   #_x
 #define XSTR(_x)  STR(_x)
@@ -72,16 +75,19 @@ int uerr;
 #ifndef _DEBUG
 #define DEBUG(fmt, ...)
 #else
-#define DEBUG(fmt, ...)                         \
-    do {                                        \
-        char buf[21];                           \
-        sprintf(buf, "%.20s", __func__);        \
-        fprintf(stderr, "DEBUG %s:%d:[%20s]: ", \
-                __FILE__,                       \
-                __LINE__,                       \
-                buf);                           \
-        fprintf(stderr, fmt, ##__VA_ARGS__);    \
-        fprintf(stderr, "\n");                  \
+#define DEBUG(fmt, ...)                                 \
+    do {                                                \
+        char buf[51];                                   \
+        int idx = ((unsigned int)pthread_self())%14;    \
+        snprintf(buf, 50, "[%d] [%s] [%d] [%s] ",       \
+                 ((unsigned int)pthread_self())%63,     \
+                 __FILE__,                              \
+                 __LINE__,                              \
+                 __func__);                             \
+        fprintf(stderr, "%s%50s | %s",                  \
+                __gry__, buf, colors[idx]);             \
+        fprintf(stderr, fmt, ##__VA_ARGS__);            \
+        fprintf(stderr, "%s\n", __nrm__);               \
     } while (0)
 #endif
 

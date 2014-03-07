@@ -16,6 +16,23 @@ int __timeout__           = 0;
 int __catching_exit__     = 0;
 int __catching_segfault__ = 0;
 
+char *colors[] = {
+    "\033[0;34m",
+    "\033[0;32m",
+    "\033[0;36m",
+    "\033[0;31m",
+    "\033[0;35m",
+    "\033[0;33m",
+    "\033[0;37m",
+    "\033[1;30m",
+    "\033[1;34m",
+    "\033[1;32m",
+    "\033[1;36m",
+    "\033[1;31m",
+    "\033[1;35m",
+    "\033[1;33m",
+};
+
 int uerr = 0;
 
 /* Obtain a backtrace and print it to stdout. */

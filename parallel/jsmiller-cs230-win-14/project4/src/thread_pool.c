@@ -18,9 +18,12 @@
 int thread_pool_join(thread_pool_t *pool)
 {
     void *ret;
-    for (int i = 0; i < pool->size; i++)
+    int retvalue = 0;
+    for (int i = 0; i < pool->size; i++){
         pthread_join(pool->threads[i].self, &ret);
-    return 0;
+        retvalue += *(int*)ret;
+    }
+    return retvalue;
 }
 
 void thread_pool_free(thread_pool_t *pool)
@@ -41,7 +44,7 @@ thread_pool_t *thread_pool_create(loop_t loop, int n)
     thread_pool_stop(pool);
     
     for (int i = 0; i < n; i++){
-        
+        pool->threads[i].id = i;
         pool->threads[i].pool = pool;
 
         int rs = pthread_create(&pool->threads[i].self, NULL, loop, &pool->threads[i]);

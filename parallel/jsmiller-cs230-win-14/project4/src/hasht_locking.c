@@ -12,14 +12,15 @@
 #include "hasht_locking.h"
 #include "cll.h"
 
-
 int hasht_locking_add(hasht_t *table, void *item, int key)
 {
-
     unsigned int mask = (1 << table->logsize) - 1;
     int bucket_id = key & mask;
     int lock_id = bucket_id % table->locking.n_rwlocks;
     int ret = 0;
+
+    DEBUG("Entering add [%d] to [%d], len[%d]", 
+          key, bucket_id, table->locking.buckets[bucket_id]->len);
 
     if (table->locking.buckets[bucket_id]->len >= MAX_BUCKET_LEN -1){
         table->resize(table);
@@ -28,14 +29,15 @@ int hasht_locking_add(hasht_t *table, void *item, int key)
         lock_id = bucket_id % table->locking.n_rwlocks;
     }
 
-    DEBUG("adding [%d] to bucket [%d]", key, bucket_id);
-        
     pthread_rwlock_wrlock(&table->locking.rwlocks[lock_id]);
-
+    DEBUG("   +++ acquired lock [%d]", lock_id);        
     ret = ll_push(table->locking.buckets[bucket_id], item, key);
-    
     __sync_fetch_and_add(&table->count, 1);
 
+    DEBUG("   +++ adding [%d] to [%d], len[%d]", 
+          key, bucket_id, table->locking.buckets[bucket_id]->len);
+
+    DEBUG("   +++ releasing lock [%d]", lock_id);
     pthread_rwlock_unlock(&table->locking.rwlocks[lock_id]);
 
     return ret;
@@ -49,13 +51,17 @@ int hasht_locking_contains(hasht_t *table, int key)
     int lock_id = bucket_id % table->locking.n_rwlocks;
     int contains = 0;
 
-    DEBUG("checking containment [%d] in bucket [%d]", key, bucket_id);
-    
+    DEBUG("Entering contains [%d] in bucket [%d]", key, bucket_id);
+    DEBUG("   ??? acquiring lock [%d]", lock_id);
     pthread_rwlock_rdlock(&table->locking.rwlocks[lock_id]);
 
     contains = ll_contains(table->locking.buckets[bucket_id], key);
+    DEBUG("   ??? contains result [%d] : %d", key, contains);
+    if (!contains)
+        ll_print(table->locking.buckets[bucket_id]);
 
     pthread_rwlock_unlock(&table->locking.rwlocks[lock_id]);
+    DEBUG("   ??? releasing lock [%d]", lock_id);
 
     return contains;
 }
@@ -68,14 +74,15 @@ int hasht_locking_remove(hasht_t *table, int key)
     int lock_id = bucket_id % table->locking.n_rwlocks;
     void *ret = NULL;
 
-    DEBUG("removing [%d] from bucket [%d]", key, bucket_id);
-    
+    DEBUG("Entering remove [%d] from bucket [%d]", key, bucket_id);
+    DEBUG("   --- acquiring lock [%d]", lock_id);    
     pthread_rwlock_wrlock(&table->locking.rwlocks[lock_id]);
 
     ret = ll_remove(table->locking.buckets[bucket_id], key);
     __sync_fetch_and_sub(&table->count, 1);
 
     pthread_rwlock_unlock(&table->locking.rwlocks[lock_id]);
+    DEBUG("   --- releasing lock [%d]", lock_id);
 
     return (!!ret);
 }
@@ -84,15 +91,26 @@ void *hasht_locking_resize(hasht_t *table)
 {
     int incoming_capacity = table->capacity;
     int nlocks = table->locking.n_rwlocks;
-
-    DEBUG("resizing table from [%d]", incoming_capacity);
+    DEBUG("Entering resize [%d / %d]", table->count, incoming_capacity);
+    DEBUG(" ");
+    DEBUG("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
 
     for (int lock_id = 0; lock_id < nlocks; lock_id ++){
+        DEBUG("          acquiring lock [%d]", lock_id);
         pthread_rwlock_wrlock(&table->locking.rwlocks[lock_id]);
+        DEBUG("          acquired lock [%d]", lock_id);
     }
 
-    if (incoming_capacity != table->capacity)
+    if (incoming_capacity != table->capacity){
+        DEBUG("          resize failed");
+        for (int lock_id = 0; lock_id < nlocks; lock_id ++){
+            pthread_rwlock_unlock(&table->locking.rwlocks[lock_id]);
+            DEBUG("          releasing lock [%d]", lock_id);
+        }
+        DEBUG("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+        DEBUG(" ");
         return NULL;
+    }
     
     int new_capacity = table->capacity * 2;
     int new_logsize  = table->logsize + 1;
@@ -113,7 +131,7 @@ void *hasht_locking_resize(hasht_t *table)
         while ((temp = ll_popnode(table->locking.buckets[i]))){
             temp->next = NULL;
             bucket_id = temp->key & mask;
-            DEBUG("moving node [%d] from old[%d] to new[%d]", temp->key, i, bucket_id);
+            DEBUG("          moving node [%d] from old[%d] to new[%d]", temp->key, i, bucket_id);
             ll_pushnode(buckets[bucket_id], temp);
         }
     }
@@ -124,7 +142,13 @@ void *hasht_locking_resize(hasht_t *table)
 
     for (int lock_id = 0; lock_id < nlocks; lock_id ++){
         pthread_rwlock_unlock(&table->locking.rwlocks[lock_id]);
+        DEBUG("          releasing lock [%d]", lock_id);
     }
+
+    DEBUG("resized table to [%d]", new_capacity);
+    DEBUG("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+    DEBUG(" ");
+
     
     return old_buckets;
 }
