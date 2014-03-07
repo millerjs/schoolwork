@@ -393,7 +393,8 @@ double getEigenvalue(matrix& A, matrix& v, double precis)
     }
     double val = v2[0][0]/v[0][0];
     double error = pow(norm(v*val) - norm(v2), 2);
-    fprintf(stderr, "eigenvalue: (||v*lambda|| - ||Av||)**2 = %lf\n", error);
+    fprintf(stderr, "eval[%.2f]:\t(||v*lambda|| - ||Av||)**2 = %lf\n", 
+            val, error);
     return val;
 }
 
