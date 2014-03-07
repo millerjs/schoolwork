@@ -80,10 +80,18 @@ int main(int argc, char *argv[])
         // writeMatrix((char*)"sample_svd.dat", A);
     }
 
-    matrix *v = getSVDvectorsV(A, precis, k);
-    matrix *u = getSVDvectorsU(A, v, k);
+    matrix *v    = getSVDvectorsV(A, precis, k);
+    matrix *u    = getSVDvectorsU(A, v, k);
+    double *vals = getSVDsqrtEigenvalues(A, v, k);
 
-    
+    matrix S = diag(vals, k);
+    cout << S << endl;
+    matrix U = matrixFromCols(u, k);
+    matrix V = matrixFromCols(v, k);
+    matrix Vt = ~V;
+
+    cout << A << endl << endl;
+    cout << U*S*Vt  << endl;
 
     // writeEigenvectors((char*)eigenvectors, v, k);
    

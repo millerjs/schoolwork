@@ -82,7 +82,10 @@ matrix randomMatrix(int rows, int cols, double max);
 matrix randomSymMatrix(int rows, int cols, double max);
 
 /* Get's the eigenvalues of a matrix given array of eigenvectors */
-double getEigenvalue(matrix& m, matrix& v, double precis);
+double *getEigenvalues(matrix& A, matrix *v, int n);
+
+/* Get's the eigenvalues of a matrix given array of eigenvectors */
+double *getSVDsqrtEigenvalues(matrix& A, matrix *v, int n);
 
 /* Get's the eigenvalues of a SQUARE SYMMETRIC MATRIX */
 matrix *getEigenvectors(matrix& A, double precis, int order);
@@ -93,8 +96,11 @@ matrix *getSVDvectorsV(matrix& A, double precis, int order);
 /* Get's the SVD eigenvalues u_i of matrix A given v_i */
 matrix *getSVDvectorsU(matrix& A, matrix *v, int n);
 
-/* Constructs */
+/* Constructs matrix from column vectors */
 matrix matrixFromCols(matrix *cols, int n);
+
+/* Constructs a square diagnonal matrix from double array vals */
+matrix diag(double *vals, int n);
 
 #endif
 

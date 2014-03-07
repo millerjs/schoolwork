@@ -377,23 +377,36 @@ matrix randomSymMatrix(int rows, int cols, double max)
     return ret;
 }
 
-double getEigenvalue(matrix& A, matrix& v, double precis)
+double *getEigenvalues(matrix& A, matrix *v, int n)
 {
-    matrix v2;
-    if (v.rows == 1){
-        matrix v3 = ~v;
-        v2 = A*v3;
-    } else if (v.cols == 1){
-        v2 = A*v;
-    } else {
-        WARN("bad eigenvector dimensions");
-        return 0;
+    double *vals = new double[n];
+    for(int i = 0; i < n; i++){
+        matrix v2;
+        if (v[i].rows == 1){
+            matrix v3 = ~v[i];
+            v2 = A*v3;
+        } else if (v[i].cols == 1){
+            v2 = A*v[i];
+        } else {
+            WARN("bad eigenvector dimensions");
+            return 0;
+        }
+        vals[i] = v2[0][0]/v[i][0][0];
+        double error = pow(norm(v[i]*vals[i]) - norm(v2), 2);
+        fprintf(stderr, "eval[%.2f]:\t(||v*lambda|| - ||Av||)**2 = %lf\n", 
+                vals[i], error);
     }
-    double val = v2[0][0]/v[0][0];
-    double error = pow(norm(v*val) - norm(v2), 2);
-    fprintf(stderr, "eval[%.2f]:\t(||v*lambda|| - ||Av||)**2 = %lf\n", 
-            val, error);
-    return val;
+    return vals;
+}
+
+
+double *getSVDsqrtEigenvalues(matrix& A, matrix *v, int n)
+{
+    matrix AA = (~A) * A;
+    double *vals = getEigenvalues(AA, v, n);
+    for(int i = 0; i < n; i++)
+        vals[i] = pow(vals[i], .5);
+    return vals;
 }
 
 void matrix::orthogonalize(matrix *v, int n)
@@ -431,14 +444,19 @@ matrix *getSVDvectorsV(matrix& A, double precis, int k)
 {
     matrix AA = (~A) * A;
     matrix *v = getEigenvectors(AA, precis, k);
-    cout << AA << endl;
     return v;
 }
 
 matrix matrixFromCols(matrix *cols, int n)
 {
-
-
+    int rows = cols[0].rows;
+    matrix ret(rows, n);
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < n; j++){
+            ret[i][j] = cols[j][i][0];
+        }
+    }
+    return ret;
 }
 
 matrix *getSVDvectorsU(matrix& A, matrix *v, int n)
@@ -451,3 +469,10 @@ matrix *getSVDvectorsU(matrix& A, matrix *v, int n)
 }
 
 
+matrix diag(double *vals, int n)
+{
+    matrix ret(n, n);
+    for(int i = 0; i < n; i++)
+        ret[i][i] = vals[i];
+    return ret;
+}

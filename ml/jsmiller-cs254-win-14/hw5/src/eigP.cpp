@@ -85,11 +85,13 @@ int main(int argc, char *argv[])
     }
 
     matrix *v = getEigenvectors(A, precis, k);
+    double *vals = getEigenvalues(A, v, k);
+
     writeEigenvectors((char*)eigenvectors, v, k);
    
     FILE * out = fopen(eigenvalues, "w");
     for(int i = 0; i < k; i++)
-        fprintf(out, "%lf\n", getEigenvalue(A, v[i], precis));
+        fprintf(out, "%lf\n", vals[i]);
     fclose(out);
 
     return 0;
