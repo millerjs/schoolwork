@@ -100,6 +100,8 @@ int main(int argc, char *argv[])
 
     writeEigenvectors(eigenvectors, v, k);
     writeEigenvalues(eigenvalues, vals, k);
+    
+    
 
     return 0;
 }

@@ -348,9 +348,19 @@ matrix parseData(const char *path)
     return ret;
 }
 
+double ** matrixToDouble(matrix& m)
+{
+    double ** ret = _new_2d_array(m.rows, m.cols, 0.0);
+    for(int i = 0; i < m.rows; i++){
+        for(int j = 0; j < m.cols; j++){
+            ret[i][j] = m[i][j];
+        }
+    }
+    return ret;
+}
+
 matrix randomMatrix(int rows, int cols, double max)
 {
-    srand(time(0));
     matrix ret(rows, cols);
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < cols; j++){
@@ -360,9 +370,20 @@ matrix randomMatrix(int rows, int cols, double max)
     return ret;
 }
 
+
+matrix *randomSphereVectors(int dimensions, int n)
+{
+    matrix *ret = new matrix[n];
+    for(int i = 0; i < n; i++){
+        ret[i] = randomMatrix(dimensions, 1, 1);
+        ret[i].normalize();
+    }
+    return ret;
+}
+
+
 matrix randomSymMatrix(int rows, int cols, double max)
 {
-    srand(time(0));
     matrix ret(rows, cols);
     for(int i = 0; i < rows; i++){
         for(int j = i; j < cols; j++){
@@ -393,7 +414,7 @@ double *getEigenvalues(matrix& A, matrix *v, int n)
         }
         vals[i] = v2[0][0]/v[i][0][0];
         double error = pow(norm(v[i]*vals[i]) - norm(v2), 2);
-        fprintf(stderr, "eval[%.2f]:\t(||v*lambda|| - ||Av||)**2 = %lf\n", 
+        fprintf(stderr, "eval[%.3e]:\t(||v*lambda|| - ||Av||)**2 = %lf\n", 
                 vals[i], error);
     }
     return vals;
@@ -487,3 +508,6 @@ double normFrobenius(matrix& A, matrix& B)
     }
     return pow(ret, .5);
 }
+
+
+

@@ -105,5 +105,11 @@ matrix diag(double *vals, int n);
 /* Calculates the frobenius norm between two matrices */
 double normFrobenius(matrix& A, matrix& B);
 
+/* Generates a random vector in the unit sphere of length n*/
+matrix *randomSphereVectors(int dimensions, int n);
+
+/* Returns a deep copy of the data in matrix m */
+double ** matrixToDouble(matrix& m);
+
 #endif
 
