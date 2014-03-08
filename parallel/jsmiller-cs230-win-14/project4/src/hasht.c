@@ -17,15 +17,17 @@
 #include "hasht.h"
 #include "hasht_lockfreec.h"
 #include "hasht_locking.h"
+#include "hasht_linear.h"
 
 int MAX_BUCKET_LEN = 1<<5;
 
 hasht_t *hasht_new(hasht_type_t type, int capacity, int expected_threads)
 {
-    int ntypes = 2;
+    int ntypes = 3;
     const hasht_init_f inits[] = {
         &hasht_locking_init,
         &hasht_lockfreec_init,
+        &hasht_linear_init,
     };
     
     ERROR_IF( type < 0 || type >= ntypes, "unknown lock type");

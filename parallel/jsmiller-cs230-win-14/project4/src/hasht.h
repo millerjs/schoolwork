@@ -37,7 +37,7 @@ typedef enum hasht_type_t
 {
     LOCKING,
     LOCKFREEC,
-    LINEARPROBE,
+    LINEAR,
     AWESOME
 } hasht_type_t;
 
@@ -55,16 +55,23 @@ typedef struct hasht_lockfreec_t
     int n_rwlocks;
 } hasht_lockfreec_t;
 
-typedef struct hasht_linearprobe_t
-{
+typedef struct linear_node_t{
+    unsigned int key;
+    void *data;
+    unsigned int steps;
+} linear_node_t;
 
-} hasht_linearprobe_t;
+typedef struct hasht_linear_t
+{
+    int n_rwlocks;
+    pthread_rwlock_t *rwlocks;
+    linear_node_t *buckets;
+} hasht_linear_t;
 
 typedef struct hasht_awesome_t
 {
-
+    
 } hasht_awesome_t;
-
 
 struct hasht_t 
 {
@@ -85,7 +92,7 @@ struct hasht_t
     /* Member types */
     hasht_locking_t      locking;
     hasht_lockfreec_t    lockfreec;
-    hasht_linearprobe_t  probing;
+    hasht_linear_t       linear;
     hasht_awesome_t      awesome;
 }; 
 

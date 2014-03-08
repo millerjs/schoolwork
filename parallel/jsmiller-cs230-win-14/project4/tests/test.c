@@ -263,12 +263,12 @@ int main(int argc, char* argv[])
 
     if (argc > 1){
         all = 0;
-        if (!strcmp(argv[1], "all"))         all      = 1;
-        if (!strcmp(argv[1], "QUEUE"))       tests[0] = 1;
-        if (!strcmp(argv[1], "LOCKING"))     tests[1] = 1;
-        if (!strcmp(argv[1], "LOCKFREEC"))   tests[2] = 1;
-        if (!strcmp(argv[1], "LINEARPROBE")) tests[3] = 1;
-        if (!strcmp(argv[1], "AWESOME"))     tests[4] = 1;
+        if (!strcmp(argv[1], "all"))       all      = 1;
+        if (!strcmp(argv[1], "QUEUE"))     tests[0] = 1;
+        if (!strcmp(argv[1], "LOCKING"))   tests[1] = 1;
+        if (!strcmp(argv[1], "LOCKFREEC")) tests[2] = 1;
+        if (!strcmp(argv[1], "LINEAR"))    tests[3] = 1;
+        if (!strcmp(argv[1], "AWESOME"))   tests[4] = 1;
     }
 
     if (all){
@@ -294,6 +294,14 @@ int main(int argc, char* argv[])
         TEST(parallel_hash_test1(LOCKFREEC), "and/resize/contain");
         TEST(parallel_hash_test2(LOCKFREEC), "random traversal of keyspace");
     }
+
+    if (all || tests[3]){
+        TEST(serial_simple_hash_test(LINEAR), "add/remove");
+        TEST(serial_resize_hash_test(LINEAR), "add/remove/resize");
+        TEST(parallel_hash_test1(LINEAR), "and/resize/contain");
+        TEST(parallel_hash_test2(LINEAR), "random traversal of keyspace");
+    }
+
 
     return 0;
 }
