@@ -46,6 +46,7 @@ void *ll_remove(ll_t *list, int key);
 ll_node_t *ll_popnode(ll_t *list);
 int ll_pushnode(ll_t *list, ll_node_t *new);
 int ll_len(ll_t *list);
+ll_node_t *ll_node_new(void *item, int key);
 void *ll_Lamport_pop(ll_t *list);
 
 #endif

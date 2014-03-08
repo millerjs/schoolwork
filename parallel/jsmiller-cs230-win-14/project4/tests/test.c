@@ -74,7 +74,7 @@ void *parallel_loop1(void * __thread__)
     
     for(int i = 0; i < n; i++){
         if (!table->contains(table, keys[i])){
-            WARN("should contain key[%d] = %d", i, keys[i]);
+            ERROR("should contain key[%d] = %d", i, keys[i]);
             ret = &FAILED;
         }
     }
@@ -117,13 +117,12 @@ void *parallel_loop2(void * __thread__)
         data[i] = ((double) rand()) / RAND_MAX;
     }
 
-
     srand(time(0));
 
     /* A pseudorandom full cycle over the test data */
     unsigned int index = rand() % n;
     unsigned int increment = 7;
-    for(unsigned int i = 0; i < 2*n; ++i)
+    for(unsigned int i = 0; i < 4*n; ++i)
     {
         index = (index + increment) % n;
 
@@ -133,15 +132,21 @@ void *parallel_loop2(void * __thread__)
 
             /* make sure it's there when it's supposed to be */
             if  (!table->contains(table, key)){
-                WARN("should contain key[%d]: %d", index, key);
+                ERROR("should contain key[%d]: %d", index, key);
                 return &FAILED;
+            }
+
+            /* with some probability remove a random element from the table */
+            if ( (double) rand() / RAND_MAX > .9){
+                table->remove(table, key);
+                contains[index] = 0;
             }
 
         } else  {
             /* Otherwise, make sure it's not there and add it */
 
             if (table->contains(table, key)){
-                WARN("should not contain key[%d]: %d", index, key);
+                ERROR("should not contain key[%d]: %d", index, key);
                 return &FAILED;
             } 
 
@@ -150,18 +155,8 @@ void *parallel_loop2(void * __thread__)
         }
 
 
-        /* with some probability remove a random element from the table */
-        if ( (double) rand() / RAND_MAX > .9){
-            int temp = rand() % n;
-            key = 100*thread->id + temp;
-            table->remove(table, key);
-            contains[temp] = 0;
-
-        }
-
 
     }
-
 
     return &PASSED;
 }
@@ -180,7 +175,7 @@ int parallel_hash_test2(hasht_type_t type)
         pool->table = hasht_new(type, capacity, nthreads);
         thread_pool_start(pool);
         if (thread_pool_join(pool)){
-            ERROR("test failed iteration %d", i);
+            WARN("test failed iteration %d", i);
             retval = FAILED;
         }
         garbageCollect();

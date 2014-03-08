@@ -99,6 +99,7 @@ int uerr;
         exit(EXIT_FAILURE);                     \
     } while(0)
 
+
 #define WARN(fmt, ...)                          \
     do {                                        \
         INFO_DUMP("warning");                   \
@@ -106,12 +107,14 @@ int uerr;
         fprintf(stderr, "\n");                  \
     } while(0)
 
-#define WARN_IF(f, fmt, ...){                   \
+
+#define WARN_IF(f, fmt, ...)                    \
     do {                                        \
-        if ((f) != 0){                          \
+        if ((f) != 0) {                         \
             WARN(fmt, ##__VA_ARGS__);           \
         }                                       \
     } while(0)
+
 
 #define ERROR_IF(f, fmt, ...)                   \
     do {                                        \

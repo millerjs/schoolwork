@@ -45,6 +45,7 @@ int ll_len(ll_t *list)
 int ll_push(ll_t *list, void *item, int key)
 {
     ERROR_IF(!list, ERR_NOMEM);
+    /* WARN_IF(list->len >= list->maxlen, "list add exceeds maxlen"); */
     ll_node_t *new = ll_node_new(item, key);
     ll_node_t *tail = list->tail;
     list->tail = new;
