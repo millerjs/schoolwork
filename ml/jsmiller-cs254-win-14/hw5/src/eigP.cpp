@@ -18,10 +18,7 @@ using namespace std;
 
 const char *usage = "\
 Usage:\n\
-    -f\tinput matrix file\n\
-    -v\tnumber of eigenvectors/values\n\
-    -k\tN\tgenerate random matrix N -> N x N\n\
-    -e\tprecision\
+    ./eigP k e filename\
 ";
 
 void writeMatrix(char *path, matrix m)
@@ -67,41 +64,39 @@ int main(int argc, char *argv[])
     int N = 10;
     int k = 0;
     int random = 0;
+    int jacobi = 0;
     double precis = 0;
 
     matrix A; 
 
     char *input_path = NULL;
-    char *eigenvectors = (char*) "eigenvectors.out";
-    char *eigenvalues  = (char*) "eigenvalues.out";
+    char *eigenvectors      = (char*) "eigenvectors.out";
+    char *eigenvalues       = (char*) "eigenvalues.out";
+    char *eigenvaluesJacobi = (char*) "eigenvaluesJACOBI.out";
 
-    opterr = 0;
-    while ((c = getopt (argc, argv, "k:f:e:r:")) != -1){
-        if (c ==  'r'){
-            random = 1;
-            ERROR_IF(!sscanf(optarg, "%d", &N), "parsing -r");
-        } else if (c == 'k'){
-            ERROR_IF(!sscanf(optarg, "%d", &k), "parsing -v");
-        } else if (c == 'f'){
-            input_path = strdup(optarg);
-        } else if (c == 'e'){
-            ERROR_IF(!sscanf(optarg, "%lf", &precis), "parsing -e");
-        } else
-            ERROR("unknown option: %c", c);
-    }
+    if (argc > 0) ERROR_IF(!sscanf(argv[1], "%d", &k), "k");
+    if (argc > 1) ERROR_IF(!sscanf(argv[2], "%lf", &precis), "e");
+    if (argc > 2) input_path = strdup(argv[3]);
+
+    fprintf(stderr, "k: %d\n", k);
+    fprintf(stderr, "e: %e\n", precis);
 
     ERROR_IF(!k||!precis||!(input_path||random), "%s", usage);
 
     if (input_path) A = parseData(input_path);
     else            A = randomSymMatrix(N, N, 100);
 
-    matrix *v = getEigenvectors(A, precis, k);
-    double *vals = getEigenvalues(A, v, k);
+    matrix *v;
+    double *vals;
+
+    v    = getEigenvectors(A, precis, k);
+    vals = getEigenvalues(A, v, k);
 
     writeEigenvectors(eigenvectors, v, k);
     writeEigenvalues(eigenvalues, vals, k);
-    
-    
+
+    vals = getEigenvaluesJacobi(A, precis, k);
+    writeEigenvalues(eigenvaluesJacobi, vals, k);
 
     return 0;
 }

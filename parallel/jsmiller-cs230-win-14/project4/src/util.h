@@ -212,10 +212,13 @@ int uerr;
         fprintf(stderr, "\n");                  \
     } while(0)
 
+void *_malloc_(size_t size);
+void garbageCollect();
 
 #define MALLOC(typet, size)                     \
-    ( (typet*) malloc(size*sizeof(typet)) )
+    _malloc_(size*sizeof(typet))
 
+extern void **trash;
 
 #define TEST(f, sub)                                    \
     do {                                                \

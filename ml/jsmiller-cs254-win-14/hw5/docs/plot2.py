@@ -20,24 +20,17 @@ def main():
     output = root+".png"
 
     data = array(parse("data/svd1.data"))
-        
-    plot(range(len(data)), data, "o-", alpha=.7, 
-         linewidth=3, label="$\epsilon = 1\times10^{-10}$");
+    
+    x = range(len(data))
 
-    dat = []
-    for i in data:
-        dat.append(float(data[0][0]))
-    data = array(dat)
-    # giving initial parameters
-    C = Parameter(7)
-    power = Parameter(3)
-    B = Parameter(5)
+    plot(x, data, "o-", alpha=.7, 
+         linewidth=3, label="$\epsilon = 1\\times10^{-10}$");
+
     
-    # define your function:
-    def f(x): return  C() * x**power() + B()
-    
-    # fit! (given that data is an array with the data to fit)
-    fit(f, [C, power, B], data)
+    x = linspace(0, max(x), 100)
+    y = 2.47587*(x - 10.6926)**2 - 9
+
+    plot(x, y, "r-.", linewidth=3, label="Fit $y_1$");
 
     save_plot(plt, ax, output)
 

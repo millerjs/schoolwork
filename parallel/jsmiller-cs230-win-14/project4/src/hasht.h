@@ -28,8 +28,8 @@ typedef int (*hasht_init_f)    (hasht_t *, int, int);
 typedef int (*hasht_free_f)    (hasht_t *);
 typedef int (*hasht_get_type_f)(hasht_t *);
 typedef int (*hasht_add_f)     (hasht_t *, void*, int);
-typedef int (*hasht_remove_f)  (hasht_t *, int);
 typedef int (*hasht_contains_f)(hasht_t *, int);
+typedef void *(*hasht_remove_f)  (hasht_t *, int);
 typedef void *(*hasht_resize_f)  (hasht_t *);
 
 /* Enumeration to be contained in hasht object */

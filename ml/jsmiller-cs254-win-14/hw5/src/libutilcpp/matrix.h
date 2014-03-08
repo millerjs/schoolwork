@@ -111,5 +111,11 @@ matrix *randomSphereVectors(int dimensions, int n);
 /* Returns a deep copy of the data in matrix m */
 double ** matrixToDouble(matrix& m);
 
+/* Generates a Jacobi rotation matrix for zeroing A_pq */
+matrix matrixJacobiRot(matrix& A, int p, int q);
+
+/* Returns the eigenvectors of A using the Jacobi method */
+double *getEigenvaluesJacobi(matrix& A, double precis, int k);
+
 #endif
 

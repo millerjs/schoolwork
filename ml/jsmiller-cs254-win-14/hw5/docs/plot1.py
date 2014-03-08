@@ -22,6 +22,10 @@ def main():
 
     sizes   = [10, 20, 40, 60, 80, 100, 1010, 5010, 9010, 15010]
 
+    jsizes = [-1., -3., -5., -7., -9., -11., -13., -15., -17., -19.]
+    jacobi = [109, 126, 141, 154, 162, 168 , 1001, 1001, 1001, 1001]
+
+
     for size in sizes:
         epsilon = []; iterations = []
         for i in range(len(data)):
@@ -29,7 +33,7 @@ def main():
                 epsilon.append(float(data[i][1]))
                 iterations.append(float(data[i][2]))
 
-        epsilon = 1*10**(-array(epsilon))
+        epsilon = 1*10**(array(epsilon))
 
         if len(iterations) > 0:
             print "(%.1f, %.1f)," %(size, iterations[-1] - 9)
@@ -37,10 +41,15 @@ def main():
         plot(epsilon, iterations, "o-", alpha=.7, 
              linewidth=3, label="$%d\\times %d$ matrix" % (size, size))
 
+
         if size == 10:
-            fit = 0.780696*log(epsilon)-0.130952
+            fit =-0.78045*log(epsilon)-0.157596
             plot(epsilon, fit, "k-.", alpha=.7, 
              linewidth=3, label="Log fit: $%d\\times %d$ matrix" % (size, size))
+    plot(jsizes, jacobi, "ko-", alpha=.7, 
+         linewidth=3, label="$10\\times 10$ matrix JACOBI")
+
+    ylim(-1, 30)
 
 
     save_plot(plt, ax, output)

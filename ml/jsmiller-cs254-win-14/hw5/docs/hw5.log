@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2014.2.10)  7 MAR 2014 11:47
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2014.2.10)  7 MAR 2014 16:45
 entering extended mode
  %&-line parsing enabled.
 **hw5.tex zLaTex-Preamble.tex
@@ -2619,31 +2619,28 @@ Style option: `fancyvrb' v2.7a, with DG/SPQR fixes, and firstline=lastline fix
 \c@FancyVerbLine=\count146
 \FV@StepNumber=\count147
 \FV@OutFile=\write5
-)) (./hw5.aux
-
-LaTeX Warning: Label `plot1' multiply defined.
-
-)
+)) (./hw5.aux)
 \openout1 = `hw5.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 16.
-LaTeX Font Info:    Try loading font information for TS1+cmr on input line 16.
- (/usr/share/texmf-texlive/tex/latex/base/ts1cmr.fd
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 17.
+LaTeX Font Info:    ... okay on input line 17.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 17.
+LaTeX Font Info:    ... okay on input line 17.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 17.
+LaTeX Font Info:    ... okay on input line 17.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 17.
+LaTeX Font Info:    ... okay on input line 17.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 17.
+LaTeX Font Info:    ... okay on input line 17.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 17.
+LaTeX Font Info:    ... okay on input line 17.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 17.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 17.
+
+(/usr/share/texmf-texlive/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    ... okay on input line 17.
 
 (/usr/share/texmf-texlive/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -2700,42 +2697,16 @@ driver: pdftex
 (1in=72.27pt, 1cm=28.45pt)
 -----------------------
 \c@lstlisting=\count153
-LaTeX Font Info:    Try loading font information for U+msa on input line 26.
+LaTeX Font Info:    Try loading font information for U+msa on input line 27.
 (/usr/share/texmf-texlive/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 26.
+LaTeX Font Info:    Try loading font information for U+msb on input line 27.
 
 (/usr/share/texmf-texlive/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 )
-(/usr/share/texmf-texlive/tex/latex/listings/lstlang1.sty
-File: lstlang1.sty 2004/09/05 1.3 listings language file
-)
-(/usr/share/texmf-texlive/tex/latex/listings/lstlang1.sty
-File: lstlang1.sty 2004/09/05 1.3 listings language file
-)
-LaTeX Font Info:    Try loading font information for OT1+fi4 on input line 34.
-
-(/usr/share/texmf-texlive/tex/latex/inconsolata/ot1fi4.fd
-File: ot1fi4.fd 2009/05/28 OT1/Inconsolata
-)
-
-LaTeX Font Warning: Font shape `OT1/fi4/m/it' undefined
-(Font)              using `OT1/fi4/m/n' instead on input line 35.
-
-LaTeX Font Info:    Try loading font information for TS1+fi4 on input line 37.
-(/usr/share/texmf-texlive/tex/latex/inconsolata/ts1fi4.fd
-File: ts1fi4.fd 2009/05/28 TS1/Inconsolata
-)
-Missing character: There is no < in font rm-inconsolata!
-
-
-LaTeX Font Warning: Font shape `TS1/fi4/m/it' undefined
-(Font)              using `TS1/fi4/m/n' instead
-(Font)              for symbol `textdollar' on input line 49.
-
-<plot1.png, id=1, 1073.2095pt x 518.8986pt>
+<plot1.png, id=1, 877.3578pt x 518.8986pt>
 File: plot1.png Graphic file (type png)
  <use plot1.png>
 
@@ -2749,7 +2720,7 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 
 
  <./plot1.png>]
-<plot2.png, id=21, 878.0805pt x 519.6213pt>
+<plot2.png, id=19, 880.2486pt x 519.6213pt>
 File: plot2.png Graphic file (type png)
  <use plot2.png>
 
@@ -2758,38 +2729,37 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[2 <./plot2.png>] (./hw5.aux)
+[2 <./plot2.png>] <plot3.png, id=24, 887.4756pt x 518.8986pt>
+File: plot3.png Graphic file (type png)
+ <use plot3.png>
 
-LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 29.00003pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
 
-
-LaTeX Warning: There were multiply-defined labels.
-
- ) 
+[3 <./plot3.png>] (./hw5.aux) ) 
 Here is how much of TeX's memory you used:
- 9177 strings out of 493848
- 137381 string characters out of 1152823
- 241171 words of memory out of 3000000
- 12284 multiletter control sequences out of 15000+50000
- 8307 words of font info for 32 fonts, out of 3000000 for 9000
+ 9032 strings out of 493848
+ 135437 string characters out of 1152823
+ 192638 words of memory out of 3000000
+ 12153 multiletter control sequences out of 15000+50000
+ 7515 words of font info for 29 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 45i,12n,49p,278b,1208s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/usr/share/texmf-texlive/fonts/enc/dvips/inconsolata/fi4-ts1.enc}{/usr/share
-/texmf-texlive/fonts/enc/dvips/inconsolata/fi4-ot1tt.enc}</usr/share/texmf-texl
-ive/fonts/type1/public/inconsolata/Inconsolata.pfb></usr/share/texmf-texlive/fo
-nts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-texlive/fonts/type1/p
-ublic/amsfonts/cm/cmbx12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfo
-nts/cm/cmex10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi
-10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr
-/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf
--texlive/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fon
-ts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texmf-texlive/fonts/type1/publ
-ic/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts
-/cm/cmsy7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti10.p
-fb>
-Output written on hw5.pdf (2 pages, 278453 bytes).
+ 45i,11n,45p,278b,265s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/share/texmf-texlive/fonts/type1/public/ams
+fonts/cm/cmbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cm
+bx12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmex10.pfb></
+usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/t
+exmf-texlive/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texmf-texlive
+/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1
+/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsf
+onts/cm/cmr7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy1
+0.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/
+share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti10.pfb>
+Output written on hw5.pdf (3 pages, 379907 bytes).
 PDF statistics:
- 66 PDF objects out of 1000 (max. 8388607)
+ 63 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 11 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 

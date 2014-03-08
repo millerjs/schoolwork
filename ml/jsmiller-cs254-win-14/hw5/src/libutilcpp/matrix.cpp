@@ -454,7 +454,7 @@ matrix *getEigenvectors(matrix& A, double precis, int order)
             epos = r2 - r;
             eneg = r2 + r;
             r = r2;
-            if (j++ > 100000) break;
+            if (j++ > 1000) break;
         } while ( norm(epos) > precis && norm(eneg) > precis);
         // fprintf(stdout, "%d\t%lf\t%d\n", A.rows, log10(precis), j);
         ret[i] = r;
@@ -510,5 +510,67 @@ double normFrobenius(matrix& A, matrix& B)
     return pow(ret, .5);
 }
 
+matrix matrixJacobiRot(matrix& A, int p, int q)
+{
+    ERROR_IF(A.rows != A.cols, "square matrix requirement");
+    int n = A.rows;
+    matrix J(n, n);
+    for (int i = 0; i < n; i++)
+        J[i][i] = 1;
+    double phi = .5 * atan( 2*A[p][q]/(A[q][q]-A[p][p]));
+    J[p][p] = J[q][q] = cos(phi);
+    J[p][q] = sin(phi);
+    J[q][p] = -sin(phi);
+    return J;
+}
 
+double matrixSumOfSquaresOffDiagonal(matrix &A)
+{
+    double ret = 0;
+    for(int i = 0; i < A.rows; i++){
+        for(int j = 0; j < A.cols; j++){
+            if (i != j)
+                ret += abs(A[i][j]);
+        }
+    }
+    return ret;
+}
+
+double *getEigenvaluesJacobi(matrix& A, double precis, int k)
+{
+    double *vals = new double[k];
+    double weight;
+    int iter = 0;
+
+    do { 
+        matrix J;
+        int maxp = 0, maxq = 1;
+        double max = A[0][1];
+
+        for(int p = 0; p < A.rows; p++){
+            for(int q = 0; q < A.cols; q++){
+                if (p != q && abs(A[p][q]) > max){
+                    max = abs(A[p][q]);
+                    maxp = p;
+                    maxq = q;
+                }
+            }
+        }
+
+        J = matrixJacobiRot(A, maxp, maxq);
+        matrix Jt = ~J;
+        A = Jt * A * J;
+        weight = matrixSumOfSquaresOffDiagonal(A);
+        iter ++;
+        if (iter > 1000) break;
+    } while ( weight > precis );
+
+    fprintf(stdout, "%d\t%lf\t%d\n", A.rows, log10(precis), iter);
+
+    for(int i = 0; i < k; i++){
+        vals[i] = A[i][i];
+    }
+
+    return vals;
+}
 

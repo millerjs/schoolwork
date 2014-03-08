@@ -15,12 +15,12 @@ OBJS = test.o\
 	 $(SRC)/util.o\
 	 $(SRC)/cll.o\
 	 $(SRC)/thread_pool.o\
+	 $(UTILS)/crc32.o\
 	 $(UTILS)/generators.o\
 	 $(UTILS)/hashgenerator.o\
 	 $(UTILS)/stopwatch.o\
 	 $(UTILS)/fingerprint.o\
-	 $(UTILS)/packetsource.o\
-	 $(UTILS)/crc32.o
+	 $(UTILS)/packetsource.o
 
 
 all: $(BIN)

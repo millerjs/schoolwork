@@ -57,24 +57,67 @@ void *parallel_simple_loop(void * __thread__)
 {
     thread_t *thread = (thread_t*)__thread__;
     DEBUG("entered thread: %li", thread->self);
+    void * ret = &PASSED;
 
     block_on_start(thread->pool);
 
     hasht_t *table = thread->pool->table;
 
-    int n = 10;
+    int n = 100;
     int keys[n];
     double data[n];
 
     srand(time(0));
     for(int i = 0; i < n; i++){
-        keys[i] = rand();
+        keys[i] = thread->id + rand();
         data[i] = ((double) rand()) / RAND_MAX;
         table->add(table, &data[i], keys[i]);
     }
     
     for(int i = 0; i < n; i++){
         if (!table->contains(table, keys[i])){
+            WARN("should contain key[%d] = %d", i, keys[i]);
+            ret = &FAILED;
+        }
+    }
+
+    return ret;
+}
+
+void *parallel_loop(void * __thread__)
+{
+    thread_t *thread = (thread_t*)__thread__;
+    DEBUG("entered thread: %li", thread->self);
+
+    block_on_start(thread->pool);
+
+    hasht_t *table = thread->pool->table;
+
+    int n = 500;
+    int keys[n];
+    double data[n];
+
+    srand(time(0));
+    for(int i = 0; i < n; i++){
+        keys[i] = thread->id + rand();
+        data[i] = ((double) rand()) / RAND_MAX;
+        table->add(table, &data[i], keys[i]);
+    }
+
+    for(int i = 0; i < n/2; i ++){
+        table->remove(table, keys[i]);
+    }
+    
+    for(int i = 0; i < n/2; i ++){
+        if (table->contains(table, keys[i])){
+            ERROR("should not contain");
+            return &FAILED;
+        }
+    }
+
+    for(int i = n/2; i < n; i ++){
+        if (!table->contains(table, keys[i])){
+            WARN("should contain key[%d] = %d", i, keys[i]);
             return &FAILED;
         }
     }
@@ -82,26 +125,46 @@ void *parallel_simple_loop(void * __thread__)
     return &PASSED;
 }
 
+
 int parallel_simple_hash_test(hasht_type_t type)
 {
-    int nthreads = 2;
-    int capacity = 4;
+    int nthreads = 4;
+    int capacity = 8;
     int retvalue;
 
-    MAX_BUCKET_LEN = 2;
+    MAX_BUCKET_LEN = 4;
 
     thread_pool_t *pool = thread_pool_create(&parallel_simple_loop, nthreads);
     pool->table = hasht_new(type, capacity, nthreads);
 
-    DEBUG("table %p", pool->table);
-
     thread_pool_start(pool);
     retvalue = thread_pool_join(pool);
-    thread_pool_free(pool);
-
-    DEBUG("retvalue: %d", retvalue);
 
     return retvalue;
+}
+
+
+int parallel_hash_test(hasht_type_t type)
+{
+    int ntests = 1000;
+    int nthreads = 4;
+    int capacity = 8;
+    int retval = PASSED;
+
+    MAX_BUCKET_LEN = 4;
+
+    for(int i = 0; i < ntests; i++){
+        thread_pool_t *pool = thread_pool_create(&parallel_loop, nthreads);
+        pool->table = hasht_new(type, capacity, nthreads);
+        thread_pool_start(pool);
+        if (thread_pool_join(pool)){
+            WARN("test failed iteration %d", i);
+            retval = FAILED;
+        }
+        garbageCollect();
+    }
+
+    return retval;
 }
 
 
@@ -114,7 +177,7 @@ int serial_resize_hash_test(hasht_type_t type)
 
     hasht_t *table = hasht_new(type, capacity, nthreads);
 
-    int n = 10;
+    int n = 100;
 
     int keys[n];
     double data[n];
@@ -163,7 +226,6 @@ int test_queue()
     /* push last half */
     for (int i = n/2; i < n; i++)
         ll_push(list, &values[i], 0);
-    ll_push(list, NULL, 0);
 
     /* pop last two thirds */
     for (int i =n/3; i < n; i++){
@@ -203,11 +265,17 @@ int main(int argc, char* argv[])
     }
 
     if (all || tests[1]){
-        /* TEST(serial_simple_hash_test(LOCKING), "test 1 on locking table"); */
-        /* TEST(serial_resize_hash_test(LOCKING), "test 1 on locking table"); */
-        TEST(parallel_simple_hash_test(LOCKING), "test 1 on locking table");
+        TEST(serial_simple_hash_test(LOCKING), "test 1 on locking table");
+        TEST(serial_resize_hash_test(LOCKING), "test 1 on locking table");
+        TEST(parallel_simple_hash_test(LOCKING), "and/resize/contain");
+        TEST(parallel_hash_test(LOCKING), "add/remove/resize/contain");
     }
 
+    if (all || tests[2]){
+
+    }
+
+    
 
     return 0;
 }

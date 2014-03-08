@@ -36,13 +36,15 @@ ll_node_t *ll_node_new(void *item, int key)
    return new;
 }
 
+int ll_len(ll_t *list)
+{
+   return list->len;
+}
+
+
 int ll_push(ll_t *list, void *item, int key)
 {
     ERROR_IF(!list, ERR_NOMEM);
-    if (list->maxlen > 0)
-        if (list->len >= list->maxlen) {
-            return 1;
-        }
     ll_node_t *new = ll_node_new(item, key);
     ll_node_t *tail = list->tail;
     list->tail = new;
@@ -55,10 +57,6 @@ int ll_push(ll_t *list, void *item, int key)
 int ll_pushnode(ll_t *list, ll_node_t *new)
 {
     ERROR_IF(!list, ERR_NOMEM);
-    if (list->maxlen > 0)
-        if (list->len >= list->maxlen) {
-            return ERR_LISTFULL;
-        }
     ll_node_t *tail = list->tail;
     list->tail = new;
     if (tail) tail->next = new;    
@@ -67,8 +65,7 @@ int ll_pushnode(ll_t *list, ll_node_t *new)
     return list->len;
 }
 
-
-void *ll_pop(ll_t *list)
+void *ll_Lamport_pop(ll_t *list)
 {
     ERROR_IF(!list, ERR_NOMEM);
 
@@ -79,8 +76,20 @@ void *ll_pop(ll_t *list)
     list->head = list->head->next;
     void *data = head->data;
     list->len --;
-    free(head);
+    return data;
+}
 
+void *ll_pop(ll_t *list)
+{
+    ERROR_IF(!list, ERR_NOMEM);
+
+    ll_node_t * head = list->head;
+
+    if (!head) return NULL;
+
+    list->head = list->head->next;
+    void *data = head->data;
+    list->len --;
     return data;
 }
 
@@ -88,10 +97,10 @@ ll_node_t *ll_popnode(ll_t *list)
 {
     ERROR_IF(!list, ERR_NOMEM);
 
-    if (list->head == list->tail)
-        return NULL;
-
     ll_node_t * head = list->head;
+
+    if (!head) return NULL;
+
     list->head = list->head->next;
 
     if (!list->head) list->tail = NULL;
@@ -134,12 +143,11 @@ void *ll_remove(ll_t *list, int key)
             if (last) {
                 last->next = curr->next;
             } else {
-                (list->head) = NULL;
+                list->head = curr->next;
             }
             if (list->tail == curr)
                 list->tail = NULL;
             void *data = curr->data;
-            free(curr);
             return data;
         }
         last = curr;

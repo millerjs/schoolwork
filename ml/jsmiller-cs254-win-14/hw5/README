@@ -1,20 +1,45 @@
-// ###########################################################################
-// #  File: README
-// #  Josh Miller
-// #  Homework 5
-// #  Machine Learning
-// #  Winter 2014
-// ###########################################################################
+###########################################################################
+#  File: README
+#  Josh Miller
+#  Homework 5
+#  Machine Learning
+#  Winter 2014
+###########################################################################
 
-To build the programs, simply run make:
+**** writeup in file: hw5.pdf
 
-   .../hw5$  make
+# To build the programs, simply run make:
 
-All three programs have usage statements. Examples are as follows
+     .../hw5$  make
 
-   .../hw5$  ./eigP -e 1e-4 -k8 -f sample_eig.dat
+# All three programs have usage statements. Examples are as follows
 
-   # will find the 8 evecs with largest evals from 
-   #    input file sample.dat with error < 1e-4
-   # eigenvalues and eigenvectors are written to respective *.out files
-   
+###########################################################################
+# EIGENVECTORS / VALUES
+# OUTPUT: eigenvectors.out, eigenvalues.out, eigenvaluesJACOBI.out
+###########################################################################
+
+     .../hw5$  ./eigP 1e-4 8 sample_eig.dat
+
+# will find the 8 evecs with largest evals from input file sample.dat
+#    with error < 1e-4 eigenvalues and eigenvectors are written to
+#    respective *.out files
+
+###########################################################################
+# SVD
+# OUTPUT: svdU.dat, svdV.dat, and svdS.dat 
+###########################################################################
+
+     .../hw5$  ./svdP 10 1e-10 sample_svd.dat 
+ 
+# will write the output of U, V and s_i into the files (with s_i from
+# the jacobi method
+
+###########################################################################
+# genA
+# OUTPUT: A.out, tildeA.out
+###########################################################################
+
+     .../hw5$  ./genA k p
+ 
+# will generate A, add noise, and then regenerate A using the SVD

@@ -33,6 +33,8 @@ char *colors[] = {
     "\033[1;33m",
 };
 
+void **trash = NULL;
+
 int uerr = 0;
 
 /* Obtain a backtrace and print it to stdout. */
@@ -97,5 +99,29 @@ void print_test_result(int failed, const char* test, const char* subtest)
     } 
     printf("TEST: [%30s] [%35s] [%s PASSED%s ]\n", 
            test, subtest, __lgr__, __nrm__); 
+}
+
+unsigned int malloc_count = 0;
+
+#define MAX_ALLOCATIONS 1000000
+void *allocated_pointers[MAX_ALLOCATIONS];
+
+void *_malloc_(size_t size)
+{
+    int spot = __sync_fetch_and_add(&malloc_count, 1);
+    ERROR_IF(malloc_count > MAX_ALLOCATIONS, 
+             "allocation count exceeded max [%d], increase MAX_ALLOCATIONS", malloc_count);
+    void *ret = allocated_pointers[spot] = malloc(size);
+    ERROR_IF(!ret, ERR_NOMEM);
+    return ret;
+}
+
+void garbageCollect()
+{
+    DEBUG("Garbage collecting: freeing %d allocations", malloc_count);
+    for(int i = 0; i < malloc_count; i++)
+        free(allocated_pointers[i]);
+    DEBUG("Garbage collecting: freed %d allocations", malloc_count);
+    malloc_count = 0;
 }
 

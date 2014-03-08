@@ -3,36 +3,6 @@ svn:wc:ra_dav:version-url
 V 41
 /svn/jsmiller-cs254-win-14/!svn/ver/8/hw3
 END
-matrix.h
-K 25
-svn:wc:ra_dav:version-url
-V 51
-/svn/jsmiller-cs254-win-14/!svn/ver/13/hw3/matrix.h
-END
-data3
-K 25
-svn:wc:ra_dav:version-url
-V 48
-/svn/jsmiller-cs254-win-14/!svn/ver/13/hw3/data3
-END
-README
-K 25
-svn:wc:ra_dav:version-url
-V 49
-/svn/jsmiller-cs254-win-14/!svn/ver/14/hw3/README
-END
-util.c
-K 25
-svn:wc:ra_dav:version-url
-V 48
-/svn/jsmiller-cs254-win-14/!svn/ver/8/hw3/util.c
-END
-hw3.o
-K 25
-svn:wc:ra_dav:version-url
-V 48
-/svn/jsmiller-cs254-win-14/!svn/ver/15/hw3/hw3.o
-END
 vector.o
 K 25
 svn:wc:ra_dav:version-url
@@ -45,17 +15,17 @@ svn:wc:ra_dav:version-url
 V 51
 /svn/jsmiller-cs254-win-14/!svn/ver/13/hw3/disk.out
 END
-hw3
-K 25
-svn:wc:ra_dav:version-url
-V 46
-/svn/jsmiller-cs254-win-14/!svn/ver/15/hw3/hw3
-END
 matrix.o
 K 25
 svn:wc:ra_dav:version-url
 V 51
 /svn/jsmiller-cs254-win-14/!svn/ver/13/hw3/matrix.o
+END
+hw3
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/jsmiller-cs254-win-14/!svn/ver/15/hw3/hw3
 END
 util.h
 K 25
@@ -63,23 +33,17 @@ svn:wc:ra_dav:version-url
 V 48
 /svn/jsmiller-cs254-win-14/!svn/ver/8/hw3/util.h
 END
-add_noise.cpp
-K 25
-svn:wc:ra_dav:version-url
-V 56
-/svn/jsmiller-cs254-win-14/!svn/ver/10/hw3/add_noise.cpp
-END
 square.out
 K 25
 svn:wc:ra_dav:version-url
 V 53
 /svn/jsmiller-cs254-win-14/!svn/ver/13/hw3/square.out
 END
-out
+add_noise.cpp
 K 25
 svn:wc:ra_dav:version-url
-V 46
-/svn/jsmiller-cs254-win-14/!svn/ver/13/hw3/out
+V 56
+/svn/jsmiller-cs254-win-14/!svn/ver/10/hw3/add_noise.cpp
 END
 circle.out
 K 25
@@ -87,11 +51,17 @@ svn:wc:ra_dav:version-url
 V 53
 /svn/jsmiller-cs254-win-14/!svn/ver/13/hw3/circle.out
 END
+out
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/jsmiller-cs254-win-14/!svn/ver/13/hw3/out
+END
 output.data
 K 25
 svn:wc:ra_dav:version-url
 V 54
-/svn/jsmiller-cs254-win-14/!svn/ver/16/hw3/output.data
+/svn/jsmiller-cs254-win-14/!svn/ver/39/hw3/output.data
 END
 hw3.pdf
 K 25
@@ -127,7 +97,7 @@ hw3.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 50
-/svn/jsmiller-cs254-win-14/!svn/ver/15/hw3/hw3.cpp
+/svn/jsmiller-cs254-win-14/!svn/ver/39/hw3/hw3.cpp
 END
 vector.cpp
 K 25
@@ -164,4 +134,34 @@ K 25
 svn:wc:ra_dav:version-url
 V 52
 /svn/jsmiller-cs254-win-14/!svn/ver/13/hw3/trees.out
+END
+matrix.h
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/jsmiller-cs254-win-14/!svn/ver/13/hw3/matrix.h
+END
+data3
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/jsmiller-cs254-win-14/!svn/ver/13/hw3/data3
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/jsmiller-cs254-win-14/!svn/ver/14/hw3/README
+END
+hw3.o
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/jsmiller-cs254-win-14/!svn/ver/15/hw3/hw3.o
+END
+util.c
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/jsmiller-cs254-win-14/!svn/ver/8/hw3/util.c
 END

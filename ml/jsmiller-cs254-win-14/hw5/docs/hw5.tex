@@ -13,6 +13,7 @@
 \lhead{\fancyplain{}{{\Large\textbf{CMSC25400 / STAT 27725}} \\ 
     \large University of Chicago, Winter 2014  }}
 
+
 \begin{document}
 \rhead{\fancyplain{}{{\Large \textbf{Homework 5}}} \\ \large Joshua Miller}
 % \maketitle
@@ -20,7 +21,7 @@
 
 \renewcommand{\m}[1]{\mathbf{#1}}
 
-\section{Problem 1}
+\section*{Problem 1}
 
 In order to test that the vectors produced by my code were actually
 eigenvectors of $\m{A}$, I verified that for
@@ -30,24 +31,6 @@ $\epsilon' \approx \epsilon$ given as a parameter
 }
 
 The following bash commands are an overview of how to reproduce the results that follow. 
-\lang{bash}
-\begin{code}
-# To build the programs, simply run make:
-
-.../hw5$  make
-
-# All three programs have usage statements. Examples are as follows
-
-.../hw5$  ./eigP -e 1e-4 -k8 -f sample_eig.dat
-
-# will find the 8 evecs with largest evals from input file sample.dat
-# with error < 1e-4.  eigenvalues and eigenvectors are written to
-# respective *.out files
-
-.../hw5$  ./eigP -e 1e-4 -k8 -r 100
-
-# the same as above but with a random matrix of size N = 100 //$
-\end{code}
 
 Figure~\ref{plot1} demonstrates the pattern of convergence given
 varialbes $\epsilon$ and $N$ for matrix $\m A$. As one might expect,
@@ -63,7 +46,7 @@ It can be
 noted that the number of iterations grew logarithmically with
 $\epsilon$, i.e. for the 10$\times$10 matrix,
 \al{
-\text{Iterations} \approx 0.780696\times\log(\epsilon)-0.130952
+\text{Iterations} \approx -0.78*\log(\epsilon)-0.16
 }
 
 with an $r^2 = .9989$. Furthermore, as a function of matrix size for a
@@ -75,10 +58,55 @@ fized $\epsilon$, the number of iteration necessary as a function of matrix size
 Therefore, we can say that as a function of $\epsilon$, convergence is
 on the order of $\mathcal{O}(\log(\epsilon))$.
 
-\figH {plot2.png}{Plot of Frobenius norm vs $k$ precision
-       level $\epsilon = 1\times 10^{-10}$ }{plot1}{.8}
+Furthermore, I implemented the Jacobi algorithm.  Although it was able
+to find the correct solution, it did using more iterative cycles.
+Given that each cycle required work to find the next pivot, and update
+the Jacobi matrix according, it also required more work per
+cycle. Therefore, the performance Jacobi implementation was below that
+of the power method.
 
+\shadetable{|c||c|c|c|c|c|c|}{ $\log_{10}(p)$ &-1 & -3 & -5 & -7 & -9 & -11}
+{Jacobi Iterations}{  
+Iterations &109 & 126 & 141 & 154 & 162 & 168  
+}{tab:test1}
+
+
+\section*{Part 2}
+
+The margin of error for the reconstructed matrix falls quadratically
+as $k$ increases.  More specifically for a $10\times20$ matrix, the
+Frobenius norm followed the function
+\al{
+    \text{Error} = y_1 \approx  2.48(k - 10.69)^2 - 9
+}
+
+\figH {plot2.png}{Plot of Frobenius norm vs $k$ precision
+       level $\epsilon = 1\times 10^{-10}$ }{plot2}{.8}
+
+This is exactly as one might expect as use find more information we
+expect our model to be better. Since the eigenvectors are orthogonal,
+each new eigenvector used in reconstructing the matrix adds unique
+information.
+
+\newpage
+\section*{Part 3}
+
+In Figure~\ref{plot3}, we can see two trends, (1) a general trend that
+the error decreases as the probability that each element $\m A_{ij}$
+will be uncorrupted increases, the margin of error between the
+reconstructed matrix $\tilde{\m {A}}$ decreases. Furthermore, (2) the
+error is smaller for smaller values of $k$.
+
+\vspace{20pt}\figH {plot3.png}{Plot of Frobenius norm vs $k$}{plot3}{.8}
+
+At first it didn't make sense to me that the accuracy would decrease
+ as $k$ increased.  This was because I was overlooking the fact that
+ $k$ was not only used to reconstruct the matrix, but also to
+ determine its rank in the first place, and increasing, in a way, the
+ entropy of the system.
 
 
 
 \end{document}
+
+
