@@ -140,13 +140,14 @@ void *ll_remove(ll_t *list, int key)
     ll_node_t *last = NULL;
     while (curr){
         if (curr->key == key){
+            list->len --;
             if (last) {
                 last->next = curr->next;
             } else {
                 list->head = curr->next;
             }
             if (list->tail == curr)
-                list->tail = NULL;
+                list->tail = last;
             void *data = curr->data;
             return data;
         }
