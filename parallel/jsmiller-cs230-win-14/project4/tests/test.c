@@ -31,7 +31,6 @@
 int FAILED = 1;
 int PASSED = 0;
 
-
 int serial_simple_hash_test(hasht_type_t type)
 {
     int nthreads = 4;
