@@ -57,6 +57,7 @@ typedef struct hasht_lockfreec_t
 
 typedef struct linear_node_t{
     unsigned int key;
+    unsigned char inuse;
     void *data;
     unsigned int steps;
 } linear_node_t;

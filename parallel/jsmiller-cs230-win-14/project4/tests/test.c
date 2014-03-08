@@ -297,9 +297,9 @@ int main(int argc, char* argv[])
 
     if (all || tests[3]){
         TEST(serial_simple_hash_test(LINEAR), "add/remove");
-        TEST(serial_resize_hash_test(LINEAR), "add/remove/resize");
-        TEST(parallel_hash_test1(LINEAR), "and/resize/contain");
-        TEST(parallel_hash_test2(LINEAR), "random traversal of keyspace");
+        /* TEST(serial_resize_hash_test(LINEAR), "add/remove/resize"); */
+        /* TEST(parallel_hash_test1(LINEAR), "and/resize/contain"); */
+        /* TEST(parallel_hash_test2(LINEAR), "random traversal of keyspace"); */
     }
 
 
