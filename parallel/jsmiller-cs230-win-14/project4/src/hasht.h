@@ -22,7 +22,6 @@ extern int MAX_BUCKET_LEN;
 /* The top level hash table abstraction */
 typedef struct hasht_t hasht_t;   
 
-
 /* Pointer types for each table interaction member */
 typedef int (*hasht_init_f)    (hasht_t *, int, int);
 typedef int (*hasht_free_f)    (hasht_t *);
@@ -59,6 +58,7 @@ typedef struct linear_node_t{
     unsigned int key;
     unsigned char inuse;
     void *data;
+    int resizing;
     unsigned int steps;
 } linear_node_t;
 

@@ -1,250 +1,29 @@
-5:test.c: 59:[      5:test.c: 59:[]: entered thread: 140177923737344
-13:hasht.c: 38:[   13:hasht.c: 38:[ ]: initialized table with logsize [3]
-35:test.c: 59:[     35:test.c: 59:[]: entered thread: 140177915344640
-13:hasht_locking.c:149:[13:hasht_lockininitializing locking table
-13:hasht_locking.c:161:[13:hasht_lockinadding list 0
-13:hasht_locking.c:161:[13:hasht_lockinadding list 1
-13:hasht_locking.c:161:[13:hasht_lockinadding list 2
-13:hasht_locking.c:161:[13:hasht_lockinadding list 3
-13:hasht_locking.c:161:[13:hasht_lockinadding list 4
-13:hasht_locking.c:161:[13:hasht_lockinadding list 5
-13:hasht_locking.c:161:[13:hasht_lockinadding list 6
-13:hasht_locking.c:161:[13:hasht_lockinadding list 7
-13:test.c: 97:[     13:test.c: 97:[]: table 0x21f42e0
-35:hasht_locking.c: 23:[35:hasht_lockinadding? [328877170] to [2], len[0]
-5:hasht_locking.c: 23:[5:hasht_locking.adding? [328877170] to [2], len[0]
-35:hasht_locking.c: 33:[35:hasht_lockinacquired lock [0]
-35:hasht_locking.c: 35:[35:hasht_lockinadding [328877170] to [2], len[0]
-35:hasht_locking.c: 40:[35:hasht_lockinreleasing lock [0]
-35:hasht_locking.c: 23:[35:hasht_lockinadding? [1387586662] to [6], len[0]
-5:hasht_locking.c: 33:[5:hasht_locking.acquired lock [0]
-5:hasht_locking.c: 35:[5:hasht_locking.adding [328877170] to [2], len[1]
-5:hasht_locking.c: 40:[5:hasht_locking.releasing lock [0]
-5:hasht_locking.c: 23:[5:hasht_locking.adding? [166759096] to [0], len[0]
-35:hasht_locking.c: 33:[35:hasht_lockinacquired lock [0]
-35:hasht_locking.c: 35:[35:hasht_lockinadding [1387586662] to [6], len[0]
-35:hasht_locking.c: 40:[35:hasht_lockinreleasing lock [0]
-35:hasht_locking.c: 23:[35:hasht_lockinadding? [1924630282] to [2], len[2]
-35:hasht_locking.c: 94:[35:hasht_lockinresizing table from [8] [3]
-vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-
-35:hasht_locking.c: 97:[35:hasht_lockin>> acquiring lock [0]
-5:hasht_locking.c: 33:[5:hasht_locking.acquired lock [0]
-5:hasht_locking.c: 35:[5:hasht_locking.adding [166759096] to [0], len[0]
-5:hasht_locking.c: 40:[5:hasht_locking.releasing lock [0]
-5:hasht_locking.c: 23:[5:hasht_locking.adding? [1901427160] to [0], len[1]
-5:hasht_locking.c: 94:[5:hasht_locking.resizing table from [8] [4]
-vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-
-35:hasht_locking.c: 99:[35:hasht_lockin<< acquired lock [0]
-5:hasht_locking.c: 97:[5:hasht_locking.>> acquiring lock [0]
-35:hasht_locking.c: 97:[35:hasht_lockin>> acquiring lock [1]
-35:hasht_locking.c: 99:[35:hasht_lockin<< acquired lock [1]
-35:hasht_locking.c:126:[35:hasht_lockinmoving node [166759096] from old[0] to new[8]
-35:hasht_locking.c:126:[35:hasht_lockinmoving node [328877170] from old[2] to new[2]
-35:hasht_locking.c:126:[35:hasht_lockinmoving node [1387586662] from old[6] to new[6]
-35:hasht_locking.c:137:[35:hasht_lockinreleasing lock [0]
-35:hasht_locking.c:137:[35:hasht_lockinreleasing lock [1]
-35:hasht_locking.c:140:[35:hasht_lockinresized table to [16]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-5:hasht_locking.c: 99:[5:hasht_locking.<< acquired lock [0]
-5:hasht_locking.c: 97:[5:hasht_locking.>> acquiring lock [1]
-5:hasht_locking.c: 99:[5:hasht_locking.<< acquired lock [1]
-5:hasht_locking.c:103:[5:hasht_locking.resize failed
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-5:hasht_locking.c: 33:[5:hasht_locking.acquired lock [0]
-5:hasht_locking.c: 35:[5:hasht_locking.adding [1901427160] to [8], len[1]
-5:hasht_locking.c: 40:[5:hasht_locking.releasing lock [0]
-5:hasht_locking.c: 23:[5:hasht_locking.adding? [1520104776] to [8], len[2]
-5:hasht_locking.c: 94:[5:hasht_locking.resizing table from [16] [5]
-vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-
-5:hasht_locking.c: 97:[5:hasht_locking.>> acquiring lock [0]
-35:hasht_locking.c: 33:[35:hasht_lockinacquired lock [0]
-35:hasht_locking.c: 35:[35:hasht_lockinadding [1924630282] to [10], len[0]
-35:hasht_locking.c: 40:[35:hasht_lockinreleasing lock [0]
-35:hasht_locking.c: 23:[35:hasht_lockinadding? [1308731292] to [12], len[0]
-5:hasht_locking.c: 99:[5:hasht_locking.<< acquired lock [0]
-5:hasht_locking.c: 97:[5:hasht_locking.>> acquiring lock [1]
-5:hasht_locking.c: 99:[5:hasht_locking.<< acquired lock [1]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [328877170] from old[2] to new[18]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [1387586662] from old[6] to new[6]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [166759096] from old[8] to new[24]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [1924630282] from old[10] to new[10]
-5:hasht_locking.c:137:[5:hasht_locking.releasing lock [0]
-35:hasht_locking.c: 33:[35:hasht_lockinacquired lock [0]
-5:hasht_locking.c:137:[5:hasht_locking.releasing lock [1]
-5:hasht_locking.c:140:[5:hasht_locking.resized table to [32]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-35:hasht_locking.c: 35:[35:hasht_lockinadding [1308731292] to [12], len[0]
-35:hasht_locking.c: 40:[35:hasht_lockinreleasing lock [0]
-35:hasht_locking.c: 23:[35:hasht_lockinadding? [1718859223] to [23], len[0]
-35:hasht_locking.c: 33:[35:hasht_lockinacquired lock [1]
-35:hasht_locking.c: 35:[35:hasht_lockinadding [1718859223] to [23], len[0]
-5:hasht_locking.c: 33:[5:hasht_locking.acquired lock [0]
-35:hasht_locking.c: 40:[35:hasht_lockinreleasing lock [1]
-5:hasht_locking.c: 35:[5:hasht_locking.adding [1520104776] to [8], len[0]
-35:hasht_locking.c: 23:[35:hasht_lockinadding? [919943248] to [16], len[0]
-5:hasht_locking.c: 40:[5:hasht_locking.releasing lock [0]
-5:hasht_locking.c: 23:[5:hasht_locking.adding? [1230428456] to [8], len[1]
-5:hasht_locking.c: 94:[5:hasht_locking.resizing table from [32] [9]
-vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-
-5:hasht_locking.c: 97:[5:hasht_locking.>> acquiring lock [0]
-35:hasht_locking.c: 33:[35:hasht_lockinacquired lock [0]
-35:hasht_locking.c: 35:[35:hasht_lockinadding [919943248] to [16], len[0]
-35:hasht_locking.c: 40:[35:hasht_lockinreleasing lock [0]
-35:hasht_locking.c: 23:[35:hasht_lockinadding? [2142245578] to [10], len[1]
-35:hasht_locking.c: 94:[35:hasht_lockinresizing table from [32] [10]
-vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-
-35:hasht_locking.c: 97:[35:hasht_lockin>> acquiring lock [0]
-5:hasht_locking.c: 99:[5:hasht_locking.<< acquired lock [0]
-5:hasht_locking.c: 97:[5:hasht_locking.>> acquiring lock [1]
-5:hasht_locking.c: 99:[5:hasht_locking.<< acquired lock [1]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [1387586662] from old[6] to new[38]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [1520104776] from old[8] to new[8]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [1924630282] from old[10] to new[10]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [1308731292] from old[12] to new[28]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [919943248] from old[16] to new[16]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [328877170] from old[18] to new[50]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [1718859223] from old[23] to new[23]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [166759096] from old[24] to new[56]
-5:hasht_locking.c:137:[5:hasht_locking.releasing lock [0]
-5:hasht_locking.c:137:[5:hasht_locking.releasing lock [1]
-5:hasht_locking.c:140:[5:hasht_locking.resized table to [64]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-35:hasht_locking.c: 99:[35:hasht_lockin<< acquired lock [0]
-35:hasht_locking.c: 97:[35:hasht_lockin>> acquiring lock [1]
-35:hasht_locking.c: 99:[35:hasht_lockin<< acquired lock [1]
-35:hasht_locking.c:103:[35:hasht_lockinresize failed
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-35:hasht_locking.c: 33:[35:hasht_lockinacquired lock [0]
-35:hasht_locking.c: 35:[35:hasht_lockinadding [2142245578] to [10], len[1]
-35:hasht_locking.c: 40:[35:hasht_lockinreleasing lock [0]
-35:hasht_locking.c: 23:[35:hasht_lockinadding? [1388239568] to [16], len[1]
-35:hasht_locking.c: 94:[35:hasht_lockinresizing table from [64] [11]
-vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-
-5:hasht_locking.c: 33:[5:hasht_locking.acquired lock [0]
-35:hasht_locking.c: 97:[35:hasht_lockin>> acquiring lock [0]
-5:hasht_locking.c: 35:[5:hasht_locking.adding [1230428456] to [40], len[0]
-5:hasht_locking.c: 40:[5:hasht_locking.releasing lock [0]
-5:hasht_locking.c: 23:[5:hasht_locking.adding? [2067801693] to [29], len[0]
-35:hasht_locking.c: 99:[35:hasht_lockin<< acquired lock [0]
-35:hasht_locking.c: 97:[35:hasht_lockin>> acquiring lock [1]
-35:hasht_locking.c: 99:[35:hasht_lockin<< acquired lock [1]
-35:hasht_locking.c:126:[35:hasht_lockinmoving node [1520104776] from old[8] to new[72]
-35:hasht_locking.c:126:[35:hasht_lockinmoving node [1924630282] from old[10] to new[10]
-35:hasht_locking.c:126:[35:hasht_lockinmoving node [919943248] from old[16] to new[80]
-35:hasht_locking.c:126:[35:hasht_lockinmoving node [1718859223] from old[23] to new[87]
-35:hasht_locking.c:126:[35:hasht_lockinmoving node [1308731292] from old[28] to new[28]
-35:hasht_locking.c:126:[35:hasht_lockinmoving node [1387586662] from old[38] to new[102]
-35:hasht_locking.c:126:[35:hasht_lockinmoving node [1230428456] from old[40] to new[40]
-35:hasht_locking.c:126:[35:hasht_lockinmoving node [328877170] from old[50] to new[114]
-35:hasht_locking.c:126:[35:hasht_lockinmoving node [166759096] from old[56] to new[56]
-35:hasht_locking.c:137:[35:hasht_lockinreleasing lock [0]
-35:hasht_locking.c:137:[35:hasht_lockinreleasing lock [1]
-35:hasht_locking.c:140:[35:hasht_lockinresized table to [128]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-5:hasht_locking.c: 33:[5:hasht_locking.acquired lock [1]
-5:hasht_locking.c: 35:[5:hasht_locking.adding [2067801693] to [29], len[0]
-35:hasht_locking.c: 33:[35:hasht_lockinacquired lock [0]
-5:hasht_locking.c: 40:[5:hasht_locking.releasing lock [1]
-35:hasht_locking.c: 35:[35:hasht_lockinadding [1388239568] to [80], len[1]
-5:hasht_locking.c: 23:[5:hasht_locking.adding? [1199302681] to [25], len[0]
-35:hasht_locking.c: 40:[35:hasht_lockinreleasing lock [0]
-5:hasht_locking.c: 33:[5:hasht_locking.acquired lock [1]
-5:hasht_locking.c: 35:[5:hasht_locking.adding [1199302681] to [25], len[0]
-35:hasht_locking.c: 23:[35:hasht_lockinadding? [430132859] to [123], len[0]
-5:hasht_locking.c: 40:[5:hasht_locking.releasing lock [1]
-5:hasht_locking.c: 23:[5:hasht_locking.adding? [2058212432] to [80], len[2]
-5:hasht_locking.c: 94:[5:hasht_locking.resizing table from [128] [15]
-vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-
-5:hasht_locking.c: 97:[5:hasht_locking.>> acquiring lock [0]
-5:hasht_locking.c: 99:[5:hasht_locking.<< acquired lock [0]
-5:hasht_locking.c: 97:[5:hasht_locking.>> acquiring lock [1]
-35:hasht_locking.c: 33:[35:hasht_lockinacquired lock [1]
-35:hasht_locking.c: 35:[35:hasht_lockinadding [430132859] to [123], len[0]
-35:hasht_locking.c: 40:[35:hasht_lockinreleasing lock [1]
-35:hasht_locking.c: 23:[35:hasht_lockinadding? [1869113780] to [52], len[0]
-5:hasht_locking.c: 99:[5:hasht_locking.<< acquired lock [1]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [1924630282] from old[10] to new[10]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [1199302681] from old[25] to new[25]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [1308731292] from old[28] to new[156]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [2067801693] from old[29] to new[93]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [1230428456] from old[40] to new[40]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [166759096] from old[56] to new[184]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [1520104776] from old[72] to new[72]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [919943248] from old[80] to new[80]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [1718859223] from old[87] to new[215]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [1387586662] from old[102] to new[102]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [328877170] from old[114] to new[114]
-5:hasht_locking.c:126:[5:hasht_locking.moving node [430132859] from old[123] to new[123]
-5:hasht_locking.c:137:[5:hasht_locking.releasing lock [0]
-5:hasht_locking.c:137:[5:hasht_locking.releasing lock [1]
-5:hasht_locking.c:140:[5:hasht_locking.resized table to [256]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-35:hasht_locking.c: 33:[35:hasht_lockinacquired lock [0]
-35:hasht_locking.c: 35:[35:hasht_lockinadding [1869113780] to [52], len[0]
-35:hasht_locking.c: 40:[35:hasht_lockinreleasing lock [0]
-35:hasht_locking.c: 54:[35:hasht_lockinchecking containment [328877170] in bucket [114]
-35:hasht_locking.c: 55:[35:hasht_lockinacquiring lock [0]
-5:hasht_locking.c: 33:[5:hasht_locking.acquired lock [0]
-5:hasht_locking.c: 35:[5:hasht_locking.adding [2058212432] to [80], len[1]
-5:hasht_locking.c: 40:[5:hasht_locking.releasing lock [0]
-5:hasht_locking.c: 23:[5:hasht_locking.adding? [1683456411] to [155], len[0]
-5:hasht_locking.c: 33:[5:hasht_locking.acquired lock [1]
-5:hasht_locking.c: 35:[5:hasht_locking.adding [1683456411] to [155], len[0]
-35:hasht_locking.c: 59:[35:hasht_lockincontains result [328877170] : 1
-5:hasht_locking.c: 40:[5:hasht_locking.releasing lock [1]
-35:hasht_locking.c: 64:[35:hasht_lockinreleasing lock [0]
-5:hasht_locking.c: 23:[5:hasht_locking.adding? [1122937018] to [186], len[0]
-35:hasht_locking.c: 54:[35:hasht_lockinchecking containment [1387586662] in bucket [102]
-35:hasht_locking.c: 55:[35:hasht_lockinacquiring lock [0]
-5:hasht_locking.c: 33:[5:hasht_locking.acquired lock [0]
-5:hasht_locking.c: 35:[5:hasht_locking.adding [1122937018] to [186], len[0]
-5:hasht_locking.c: 40:[5:hasht_locking.releasing lock [0]
-5:hasht_locking.c: 54:[5:hasht_locking.checking containment [328877170] in bucket [114]
-5:hasht_locking.c: 55:[5:hasht_locking.acquiring lock [0]
-5:hasht_locking.c: 59:[5:hasht_locking.contains result [328877170] : 1
-5:hasht_locking.c: 64:[5:hasht_locking.releasing lock [0]
-35:hasht_locking.c: 59:[35:hasht_lockincontains result [1387586662] : 1
-5:hasht_locking.c: 54:[5:hasht_locking.checking containment [166759096] in bucket [184]
-35:hasht_locking.c: 64:[35:hasht_lockinreleasing lock [0]
-5:hasht_locking.c: 55:[5:hasht_locking.acquiring lock [0]
-35:hasht_locking.c: 54:[35:hasht_lockinchecking containment [1924630282] in bucket [10]
-35:hasht_locking.c: 55:[35:hasht_lockinacquiring lock [0]
-5:hasht_locking.c: 59:[5:hasht_locking.contains result [166759096] : 1
-5:hasht_locking.c: 64:[5:hasht_locking.releasing lock [0]
-5:hasht_locking.c: 54:[5:hasht_locking.checking containment [1901427160] in bucket [216]
-5:hasht_locking.c: 55:[5:hasht_locking.acquiring lock [0]
-5:hasht_locking.c: 59:[5:hasht_locking.contains result [1901427160] : 0
-5:hasht_locking.c: 64:[5:hasht_locking.releasing lock [0]
-35:hasht_locking.c: 59:[35:hasht_lockincontains result [1924630282] : 1
-35:hasht_locking.c: 64:[35:hasht_lockinreleasing lock [0]
-35:hasht_locking.c: 54:[35:hasht_lockinchecking containment [1308731292] in bucket [156]
-35:hasht_locking.c: 55:[35:hasht_lockinacquiring lock [0]
-35:hasht_locking.c: 59:[35:hasht_lockincontains result [1308731292] : 1
-35:hasht_locking.c: 64:[35:hasht_lockinreleasing lock [0]
-35:hasht_locking.c: 54:[35:hasht_lockinchecking containment [1718859223] in bucket [215]
-35:hasht_locking.c: 55:[35:hasht_lockinacquiring lock [1]
-35:hasht_locking.c: 59:[35:hasht_lockincontains result [1718859223] : 1
-35:hasht_locking.c: 64:[35:hasht_lockinreleasing lock [1]
-35:hasht_locking.c: 54:[35:hasht_lockinchecking containment [919943248] in bucket [80]
-35:hasht_locking.c: 55:[35:hasht_lockinacquiring lock [0]
-35:hasht_locking.c: 59:[35:hasht_lockincontains result [919943248] : 1
-35:hasht_locking.c: 64:[35:hasht_lockinreleasing lock [0]
-35:hasht_locking.c: 54:[35:hasht_lockinchecking containment [2142245578] in bucket [202]
-35:hasht_locking.c: 55:[35:hasht_lockinacquiring lock [0]
-35:hasht_locking.c: 59:[35:hasht_lockincontains result [2142245578] : 0
-35:hasht_locking.c: 64:[35:hasht_lockinreleasing lock [0]
-13:test.c:103:[13:test.c:103:[13:test.tretvalue: 2
+[1;30m              [57] [test.c] [92] [parallel_loop1]  | [1;34mentered thread: 139755835295488[0m
+[1;30m              [54] [test.c] [92] [parallel_loop1]  | [1;35mentered thread: 139755818510080[0m
+[1;30m              [24] [test.c] [92] [parallel_loop1]  | [1;36mentered thread: 139755826902784[0m
+[1;30m                  [35] [hasht.c] [40] [hasht_new]  | [0;34minitialized table with logsize [3][0m
+[1;30m              [27] [test.c] [92] [parallel_loop1]  | [0;37mentered thread: 139755843688192[0m
+[1;30m  [35] [hasht_linear.c] [217] [hasht_linear_init]  | [0;34minitializing linear table[0m
+[1;30m    [24] [hasht_linear.c] [26] [hasht_linear_add]  | [1;36mAdd [1886058240] to [0][0m
+[1;30m    [57] [hasht_linear.c] [26] [hasht_linear_add]  | [1;34mAdd [1894450944] to [0][0m
+[1;30m    [24] [hasht_linear.c] [57] [hasht_linear_add]  | [1;36m   +++ added [1886058240] to [0] after [0] steps[0m
+[1;30m    [27] [hasht_linear.c] [26] [hasht_linear_add]  | [0;37mAdd [1902843648] to [0][0m
+[1;30m    [57] [hasht_linear.c] [38] [hasht_linear_add]  | [1;34m      +++ sliding [1894450944] to [1]: steps: [1][0m
+[1;30m    [57] [hasht_linear.c] [57] [hasht_linear_add]  | [1;34m   +++ added [1894450944] to [1] after [1] steps[0m
+[1;30m    [57] [hasht_linear.c] [61] [hasht_linear_add]  | [1;34msize left: 6[0m
+[1;30m    [57] [hasht_linear.c] [26] [hasht_linear_add]  | [1;34mAdd [1894450945] to [1][0m
+[1;30m    [27] [hasht_linear.c] [38] [hasht_linear_add]  | [0;37m      +++ sliding [1902843648] to [1]: steps: [1][0m
+[1;30m    [27] [hasht_linear.c] [38] [hasht_linear_add]  | [0;37m      +++ sliding [1902843648] to [2]: steps: [2][0m
+[1;30m    [24] [hasht_linear.c] [61] [hasht_linear_add]  | [1;36msize left: 5[0m
+[1;30m    [24] [hasht_linear.c] [26] [hasht_linear_add]  | [1;36mAdd [1886058241] to [1][0m
+[1;30m    [27] [hasht_linear.c] [57] [hasht_linear_add]  | [0;37m   +++ added [1902843648] to [2] after [2] steps[0m
+[1;30m    [27] [hasht_linear.c] [61] [hasht_linear_add]  | [0;37msize left: 5[0m
+[1;30m    [27] [hasht_linear.c] [26] [hasht_linear_add]  | [0;37mAdd [1902843649] to [1][0m
+[1;30m    [57] [hasht_linear.c] [38] [hasht_linear_add]  | [1;34m      +++ sliding [1894450945] to [2]: steps: [1][0m
+[1;30m    [57] [hasht_linear.c] [38] [hasht_linear_add]  | [1;34m      +++ sliding [1894450945] to [3]: steps: [2][0m
+[1;30m    [57] [hasht_linear.c] [57] [hasht_linear_add]  | [1;34m   +++ added [1894450945] to [3] after [2] steps[0m
+[1;30m    [57] [hasht_linear.c] [61] [hasht_linear_add]  | [1;34msize left: 4[0m
+[1;30m    [57] [hasht_linear.c] [26] [hasht_linear_add]  | [1;34mAdd [1894450946] to [2][0m
+[1;30m    [54] [hasht_linear.c] [26] [hasht_linear_add]  | [1;35mAdd [1877665536] to [0][0m
+[1;30m    [24] [hasht_linear.c] [38] [hasht_linear_add]  | [1;36m      +++ sliding [1886058241] to [2]: steps: [1][0m
+[1;30m    [24] [hasht_linear.c] [38] [hasht_linear_add]  | [1;36m      +++ sliding [1886058241] to [3]: steps: [2][0m

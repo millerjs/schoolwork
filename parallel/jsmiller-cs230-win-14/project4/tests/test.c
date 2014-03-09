@@ -52,6 +52,40 @@ int serial_simple_hash_test(hasht_type_t type)
     return PASSED;
 }
 
+
+int serial_resize_hash_test(hasht_type_t type)
+{
+
+    int nthreads = 4;
+    int capacity = 4;
+
+    hasht_t *table = hasht_new(type, capacity, nthreads);
+
+    int n = 100;
+
+    int keys[n];
+    double data[n];
+
+
+    srand(time(0));
+    for(int i = 0; i < n; i++){
+        keys[i] = rand();
+        data[i] = (double) rand() / RAND_MAX;
+        table->add(table, &data[i], keys[i]);
+    }
+
+    for(int i = 0; i < n; i++){
+        if (!table->contains(table, keys[i])){
+            WARN("should contain key[%d] = %d", i, keys[i]);
+            return FAILED;
+        }
+    }
+
+    return PASSED;
+
+}
+
+
 void *parallel_loop1(void * __thread__)
 {
     thread_t *thread = (thread_t*)__thread__;
@@ -61,11 +95,11 @@ void *parallel_loop1(void * __thread__)
     block_on_start(thread->pool);
 
     hasht_t *table = thread->pool->table;
-
+    
     int n = 10;
     int keys[n];
     double data[n];
-
+    
     for(int i = 0; i < n; i++){
         keys[i] = thread->self + i;
         data[i] = ((double) rand()) / RAND_MAX;
@@ -132,7 +166,7 @@ void *parallel_loop2(void * __thread__)
 
             /* make sure it's there when it's supposed to be */
             if  (!table->contains(table, key)){
-                ERROR("should contain key[%d]: %d", index, key);
+                WARN("should contain key[%d]: %d", index, key);
                 return &FAILED;
             }
 
@@ -146,7 +180,7 @@ void *parallel_loop2(void * __thread__)
             /* Otherwise, make sure it's not there and add it */
 
             if (table->contains(table, key)){
-                ERROR("should not contain key[%d]: %d", index, key);
+                WARN("should not contain key[%d]: %d", index, key);
                 return &FAILED;
             } 
 
@@ -167,9 +201,9 @@ int parallel_hash_test2(hasht_type_t type)
     int nthreads = 4;
     int capacity = 8;
     int retval = PASSED;
-
+    
     MAX_BUCKET_LEN = 4;
-
+    
     for(int i = 0; i < ntests; i++){
         thread_pool_t *pool = thread_pool_create(&parallel_loop2, nthreads);
         pool->table = hasht_new(type, capacity, nthreads);
@@ -184,40 +218,6 @@ int parallel_hash_test2(hasht_type_t type)
     return retval;
 }
 
-
-int serial_resize_hash_test(hasht_type_t type)
-{
-
-    int nthreads = 4;
-    int capacity = 8;
-    int iterations = 2;
-
-    hasht_t *table = hasht_new(type, capacity, nthreads);
-
-    int n = 100;
-
-    int keys[n];
-    double data[n];
-
-    for(int iter = 0; iter < iterations; iter++){
-
-        srand(time(0));
-        for(int i = 0; i < n; i++){
-            keys[i] = rand();
-             data[i] = (double) rand() / RAND_MAX;
-            table->add(table, &data[i], keys[i]);
-        }
-
-        for(int i = 0; i < n; i++){
-            if (!table->contains(table, keys[i]))
-                return FAILED;
-        }
-
-    }
-
-    return PASSED;
-
-}
 
 
 int test_queue()
@@ -297,8 +297,8 @@ int main(int argc, char* argv[])
 
     if (all || tests[3]){
         TEST(serial_simple_hash_test(LINEAR), "add/remove");
-        /* TEST(serial_resize_hash_test(LINEAR), "add/remove/resize"); */
-        /* TEST(parallel_hash_test1(LINEAR), "and/resize/contain"); */
+        TEST(serial_resize_hash_test(LINEAR), "add/remove/resize");
+        TEST(parallel_hash_test1(LINEAR), "and/resize/contain");
         /* TEST(parallel_hash_test2(LINEAR), "random traversal of keyspace"); */
     }
 
