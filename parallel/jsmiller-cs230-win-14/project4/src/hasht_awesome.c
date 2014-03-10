@@ -41,29 +41,32 @@ int hasht_awesome_add(hasht_t *table, void *item, int key)
             }
         }
 
+        __sync_fetch_and_or(&root->child[id].residue, key);
+
         DEBUG("ADD \t [%d] inuse? [%d]", id, root->child[id].inuse);
-    
+
         /* check if this slot is free, if so, claim it */
         if (__sync_val_compare_and_swap(&root->child[id].inuse, 0, 1)){
 
             DEBUG("ADD \t the desired location is taken [%d]", id);
 
             for (int offset = 1; offset < OPTIMISM && id + offset < table->capacity; offset++){
+
                 DEBUG("ADD \t \t checking [%d + %d]", id, offset);
-                /* check if this slot is free, if so, clame it */
+                /* check if this slot is free, if so, claim it */
                 if (!__sync_val_compare_and_swap(&root->child[id+offset].inuse, 0, 1)){
                     id += offset;
                     goto COMPLETE_ADD;
                 }
             }
-        
+
             /* if we are here, then our optimistic linear probe failed and try the next dimension*/
             dimension ++;
             root = &root->child[id];
             DEBUG("ADD \t this dimension is bunk, trying the next [%d]", dimension);
 
         } else {
-
+            root->residue = ~0;
             goto COMPLETE_ADD;
 
         }
@@ -74,13 +77,10 @@ COMPLETE_ADD:
 
     /* our atomic claim succeeded, proceed to insert the item */
     DEBUG("ADD \t found a free spot at [%d] in dimension [%d]", id, dimension);
-    __sync_fetch_and_or(&root->residue, key);
     root->child[id].key   = key;
     root->child[id].data  = item;
     root->child[id].valid = 1;
-
-
-
+    
     return 0;
 }
 
@@ -98,7 +98,7 @@ void *hasht_awesome_remove(hasht_t *table, int key)
         /* get a new hash position based in dimension */
         id = (key >> (dimension * table->logsize) ) & mask;
 
-        if (root->residue & key != key){
+        if ( (root[id].residue & key) ^ key){
             return 0;
         }
 
@@ -140,7 +140,7 @@ int hasht_awesome_contains(hasht_t *table, int key)
         /* get a new hash position based in dimension */
         id = (key >> (dimension * table->logsize) ) & mask;
 
-        if (root->residue & key != key){
+        if ( (root[id].residue & key) ^ key){            
             return 0;
         }
 
@@ -184,7 +184,8 @@ int hasht_awesome_init(hasht_t *table, int capacity, int expected_threads)
 {
     DEBUG("initializing awesome table");
 
-    table->awesome.root.child = new_awesome_array(table->capacity);
+    table->awesome.root.child   = new_awesome_array(table->capacity);
+    table->awesome.root.residue = ~0;
     
     /* assign function pointers */
     table->add = &hasht_awesome_add;
