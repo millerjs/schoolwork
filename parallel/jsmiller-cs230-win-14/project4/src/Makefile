@@ -16,6 +16,7 @@ OBJS = main.o\
 	 hasht_locking.o\
 	 hasht_lockfreec.o\
 	 hasht_linear.o\
+	 hasht_awesome.o\
 	 $(UTILS)/generators.o\
 	 $(UTILS)/stopwatch.o\
 	 $(UTILS)/fingerprint.o\

@@ -180,7 +180,6 @@ void *parallel_loop2(void * __thread__)
             /* Otherwise, make sure it's not there and add it */
 
             if (table->contains(table, key)){
-                hasht_linear_print(table);
                 WARN("should not contain key[%d]: %d", index, key);
                 return &FAILED;
             } 
@@ -301,6 +300,13 @@ int main(int argc, char* argv[])
         TEST(serial_resize_hash_test(LINEAR), "add/remove/resize");
         TEST(parallel_hash_test1(LINEAR), "and/resize/contain");
         TEST(parallel_hash_test2(LINEAR), "random traversal of keyspace");
+    }
+
+    if (all || tests[4]){
+        TEST(serial_simple_hash_test(AWESOME), "add/remove");
+        /* TEST(serial_resize_hash_test(AWESOME), "add/remove/resize"); */
+        /* TEST(parallel_hash_test1(AWESOME), "and/resize/contain"); */
+        /* TEST(parallel_hash_test2(AWESOME), "random traversal of keyspace"); */
     }
 
 

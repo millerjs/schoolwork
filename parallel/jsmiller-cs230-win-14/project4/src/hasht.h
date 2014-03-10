@@ -69,10 +69,21 @@ typedef struct hasht_linear_t
     linear_node_t *buckets;
 } hasht_linear_t;
 
+typedef struct awesome_node_t awesome_node_t;
+
+struct awesome_node_t{
+    unsigned int residue;
+    unsigned int size;
+    unsigned int key;
+    void *data;
+    awesome_node_t *child;    
+    unsigned char inuse;
+};
+
 typedef struct hasht_awesome_t
 {
-    
-} hasht_awesome_t;
+    awesome_node_t root;
+ } hasht_awesome_t;
 
 struct hasht_t 
 {
