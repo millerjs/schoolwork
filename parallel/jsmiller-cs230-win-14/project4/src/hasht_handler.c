@@ -15,8 +15,25 @@
 #include <pthread.h>
 #include <signal.h>
 
+#include "cll.h"
 #include "libhasht/hasht.h"
 #include "hasht_handler.h"
+
+#define QUEUE_DEPTH 16
+
+#define MAX_THREADS 64
+
+ll_t *qs[MAX_THREADS];
+pthread_mutex_t locks[MAX_THREADS];
+
+
+unsigned long getms()
+{
+    struct timeval tv;       
+    if(gettimeofday(&tv, NULL) != 0) return 0;
+    return (unsigned long)((tv.tv_sec * 1000ul) + (tv.tv_usec / 1000ul));
+}
+
 
 void parallelDispatcher(hasht_type_t type, 
                         loop_t loop, 
@@ -35,53 +52,62 @@ void parallelDispatcher(hasht_type_t type,
     HashPacketGenerator_t * source = 
         createHashPacketGenerator(fractionAdd,fractionRemove,hitRate,mean);
     
-    thread_pool_t *pool = thread_pool_create(loop, nthreads);
     hasht_t *table = hasht_new(type, capacity, nthreads);
-
     for(int i = 0; i < initSize; i++){
         HashPacket_t * p = getAddPacket(source);
         table->add(table, (void*)p->body, mangleKey(p));
     }
-    
+
+    for (int i = 0; i < nthreads; i++){
+        qs[i] = ll_new(QUEUE_DEPTH);
+        pthread_mutex_init(locks+i, NULL);
+    }
+
+    thread_pool_t *pool = thread_pool_create(loop, nthreads);
     pool->table = table;
 
-    //
-    // initialize your hash table w/ initSize number of add() calls using
-    // getAddPacket();
-    //
     // allocate and initialize locks and any signals used to marshal threads (eg. done signals)
     //
     // allocate and initialize Dispatcher and Worker threads
-    //
-    // start your Workers
-    //
+
+    thread_pool_start(pool);
+
+
+    int nPackets = 0;
+    /* HashPacket_t * pkt; */
+
+    unsigned long end = getms() + nmillisec;
 
     startTimer(&timer);
 
-    //
-    // start your Dispatcher
-    //
-
+    /* work until the day is done */
+    while (getms() < end){
+        usleep(10); 
+        DEBUG("DISPATCH DISPATCH DISPATCH DISPATCH ");
+        nPackets++;
+    }
+    
     usleep(nmillisec);
 
-    //
-    // assert signals to stop Dispatcher
-    //
-    // call join on Dispatcher
-    //
-    // assert signals to stop Workers - they are responsible for leaving
-    // the queues empty
-    //
-    // call join for each Worker
-    //
+    thread_pool_stop(pool);
+
+    thread_pool_join(pool);
+
     stopTimer(&timer);
 
     // report the total number of packets processed and total time
 
-
 }
 
-
+int get_next_queue(int nthreads)
+{
+    int id = (rand() * nthreads) / RAND_MAX;
+    while (pthread_mutex_trylock(locks+id)){
+        fprintf(stderr, "Trying to get queue [%d]\n", id);
+        id = (rand() * nthreads) / RAND_MAX;
+    }
+    return id;
+}
 
 void *no_load_loop(void * __thread__)
 {
@@ -89,13 +115,11 @@ void *no_load_loop(void * __thread__)
 
     block_on_start(thread->pool);
 
-    /* hasht_t *table = thread->pool->table; */
-
     while (!thread->pool->stop){
-
-        sleep(1);
-        fprintf(stderr, "LOOOPING");
-
+        int id = get_next_queue(thread->pool->size);
+        HashPacket_t * packet = ll_Lamport_pop(qs[id]);
+        fprintf(stderr, "Dropping packet [%p]\n", packet);
+        pthread_mutex_unlock(locks+id);
     }
     
     return NULL;

@@ -12,6 +12,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 
+#include "cll.h"
 #include "thread_pool.h"
 #include "util.h"
 

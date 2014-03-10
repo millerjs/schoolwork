@@ -14,10 +14,10 @@ OBJS = \
 	 hasht_handler.o\
          libexperiments.a\
          libhasht/libhasht.a\
-	 util.o\
-	 cll.o\
 	 thread_pool.o\
-	 $(UTILS)/hashgenerator.o
+	 $(UTILS)/hashgenerator.o\
+	 cll.o\
+	 util.o\
 
 all: $(BIN)
 

@@ -16,7 +16,6 @@
 #include "../cll.h"
 #include "../util.h"
 
-
 #define MAX_Q_DEPTH 16
 #define MAX_TABLE_SIZE 1<<12
 

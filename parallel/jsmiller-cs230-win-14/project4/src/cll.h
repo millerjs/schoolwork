@@ -15,7 +15,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "thread_pool.h"
 #include "util.h"
 
 #define ERR_LISTFULL -2
@@ -35,7 +34,6 @@ typedef struct ll_t {
     ll_node_t *head;
     ll_node_t *tail;    
 } ll_t; 
-
 
 ll_t * ll_new(int maxlen);;
 int ll_push(ll_t *list, void *item, int key);
