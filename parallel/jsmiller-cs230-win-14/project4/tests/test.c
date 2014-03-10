@@ -81,13 +81,10 @@ int serial_resize_hash_test(hasht_type_t type)
 
     for(int i = 0; i < n; i++){
         if (!table->contains(table, keys[i])){
-            hasht_awesome_print(table, &table->awesome.root, 0);
-            ERROR("should contain key[%d] = %d", i, keys[i]);
+            WARN("should contain key[%d] = %d", i, keys[i]);
             return FAILED;
         }
     }
-
-    hasht_awesome_print(table, &table->awesome.root, 0);
 
     return PASSED;
 
@@ -116,7 +113,7 @@ void *parallel_loop1(void * __thread__)
     
     for(int i = 0; i < n; i++){
         if (!table->contains(table, keys[i])){
-            ERROR("should contain key[%d] = %d", i, keys[i]);
+            WARN("should contain key[%d] = %d", i, keys[i]);
             ret = &FAILED;
         }
     }
@@ -174,8 +171,7 @@ void *parallel_loop2(void * __thread__)
 
             /* make sure it's there when it's supposed to be */
             if  (!table->contains(table, key)){
-                hasht_awesome_print(table, &table->awesome.root, 0);
-                ERROR("should contain key[%d]: %d", index, key);
+                WARN("should contain key[%d]: %d", index, key);
                 return &FAILED;
             }
 
@@ -189,8 +185,7 @@ void *parallel_loop2(void * __thread__)
             /* Otherwise, make sure it's not there and add it */
 
             if (table->contains(table, key)){
-                hasht_awesome_print(table, &table->awesome.root, 0);
-                ERROR("should not contain key[%d]: %d", index, key);
+                WARN("should not contain key[%d]: %d", index, key);
                 return &FAILED;
             } 
 

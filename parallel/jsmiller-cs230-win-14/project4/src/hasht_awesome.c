@@ -36,7 +36,8 @@ int hasht_awesome_add(hasht_t *table, void *item, int key)
             awesome_node_t *old = __sync_val_compare_and_swap(&root->child, NULL, new);
             /* somebody beat us to the punch */
             if (old) {
-                WARN("about to leak memory while growing branch");
+                /* maybe do something about this memory leak? for now,
+                 * just drop the array */
             }
         }
 
@@ -73,10 +74,10 @@ COMPLETE_ADD:
 
     /* our atomic claim succeeded, proceed to insert the item */
     DEBUG("ADD \t found a free spot at [%d] in dimension [%d]", id, dimension);
+    __sync_fetch_and_or(&root->residue, key);
     root->child[id].key   = key;
     root->child[id].data  = item;
     root->child[id].valid = 1;
-    __sync_fetch_and_or(&root->residue, key);
 
 
 
@@ -97,8 +98,9 @@ void *hasht_awesome_remove(hasht_t *table, int key)
         /* get a new hash position based in dimension */
         id = (key >> (dimension * table->logsize) ) & mask;
 
-        /* if (key % table->capacity && !(root->residue & key)) */
-            /* return 0; */
+        if (root->residue & key != key){
+            return 0;
+        }
 
         DEBUG("REMOVE \t [%d] in [%d] dimension [%d]?", key, id, dimension);
 
@@ -138,16 +140,19 @@ int hasht_awesome_contains(hasht_t *table, int key)
         /* get a new hash position based in dimension */
         id = (key >> (dimension * table->logsize) ) & mask;
 
-        /* if (key % table->capacity && !(root->residue & key)) */
-            /* return 0; */
+        if (root->residue & key != key){
+            return 0;
+        }
 
         DEBUG("CONTAINS \t [%d] in [%d] dimension [%d]?", key, id, dimension);
 
         for (int offset = 0; offset < OPTIMISM && id + offset < table->capacity; offset++){
             DEBUG("CONTAINS \t \t checking [%d] at [%d]: %d", key, id, root[id+offset].key);
-            if (root[id+offset].inuse && root[id+offset].key == key){
+            if (root[id+offset].inuse && 
+                root[id+offset].key == key && 
+                root[id+offset].valid){
                 DEBUG("CONTAINS \t found [%d] at [%d]: %d", key, id, root[id+offset].key);
-                return root[id+offset].valid;
+                return 1;
             }
         }
         
@@ -214,4 +219,4 @@ void hasht_awesome_print(hasht_t *table, awesome_node_t *root, int dimension)
     return;
 
 }
-\
+
