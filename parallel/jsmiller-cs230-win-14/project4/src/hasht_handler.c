@@ -15,6 +15,7 @@
 #include <pthread.h>
 #include <signal.h>
 
+#include "libhasht/hasht.h"
 #include "hasht_handler.h"
 
 void parallelDispatcher(hasht_type_t type, 
@@ -26,17 +27,23 @@ void parallelDispatcher(hasht_type_t type,
                         int maxBucketSize,
                         long mean,
                         int initSize,
+                        int capacity,
                         int nthreads)
 {
     StopWatch_t timer;
 	
-    /* 
-     * HashPacketGenerator_t * source = 
-     *     createHashPacketGenerator(fractionAdd,fractionRemove,hitRate,mean);
-     * 
-     * thread_pool_t *pool = thread_pool_create(loop, nthreads);
-     * pool->table = hasht_new(type, initSize, nthreads);
-     */
+    HashPacketGenerator_t * source = 
+        createHashPacketGenerator(fractionAdd,fractionRemove,hitRate,mean);
+    
+    thread_pool_t *pool = thread_pool_create(loop, nthreads);
+    hasht_t *table = hasht_new(type, capacity, nthreads);
+
+    for(int i = 0; i < initSize; i++){
+        HashPacket_t * p = getAddPacket(source);
+        table->add(table, (void*)p->body, mangleKey(p));
+    }
+    
+    pool->table = table;
 
     //
     // initialize your hash table w/ initSize number of add() calls using
@@ -82,7 +89,7 @@ void *no_load_loop(void * __thread__)
 
     block_on_start(thread->pool);
 
-    hasht_t *table = thread->pool->table;
+    /* hasht_t *table = thread->pool->table; */
 
     while (!thread->pool->stop){
 

@@ -23,7 +23,6 @@
 #include "util.h"
 #include "cll.h"
 
-#include "libhasht/hasht.h"
 
 #include "../hash_utils/crc32.h"
 #include "../hash_utils/fingerprint.h"
