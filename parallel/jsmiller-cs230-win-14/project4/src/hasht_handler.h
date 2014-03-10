@@ -57,5 +57,6 @@ double parallelDispatcher(hasht_type_t type,
 int get_next_queue(int nthreads);
 
 void *no_load_loop(void * __thread__);
+void *worker_loop(void * __thread__);
 
 #endif

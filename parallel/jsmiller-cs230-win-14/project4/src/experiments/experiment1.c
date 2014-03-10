@@ -31,7 +31,7 @@ int experiment1(FILE *output)
 
     hasht_type_t type    = LOCKING;
     loop_t loop          = no_load_loop;
-    int duration         = 2000;
+    int duration         = 10000;
     float fractionAdd    = .9;
     float fractionRemove = .1;
     float hitRate        = .5;
@@ -41,12 +41,12 @@ int experiment1(FILE *output)
     int capacity         = 32;
     int nthreads         = 8;
 
-    double res = parallelDispatcher(type, loop, duration, fractionAdd, fractionRemove, 
-                                    hitRate, maxBucketSize, mean, initSize, capacity, 
-                                    nthreads, &nPackets, &elapsedTime);
+    parallelDispatcher(type, loop, duration, fractionAdd, fractionRemove, 
+                       hitRate, maxBucketSize, mean, initSize, capacity, 
+                       nthreads, &nPackets, &elapsedTime);
     
     fprintf(stderr, "Rate : %lf\n", nPackets / elapsedTime);
-
+    
 
     return 0;
 }

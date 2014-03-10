@@ -11,8 +11,8 @@ SRC = ../
 BIN = ../libexperiments.a
 
 OBJS =  \
-	 experiment1.o
-
+	 experiment1.o\
+	 experiment2.o\
 
 all: $(BIN)
 

@@ -41,6 +41,7 @@ hasht_t *hasht_new(hasht_type_t type, int capacity, int expected_threads)
     DEBUG("initialized table with logsize [%d]", table->logsize);
 
     inits[type](table, capacity, expected_threads);
+
     return table;
 }
 

@@ -11,7 +11,7 @@
 #include "hasht.h"
 #include "hasht_awesome.h"
 
-int OPTIMISM = 4;
+volatile int OPTIMISM = 8;
 
 #define mask ((1<<table->logsize) - 1)
 
@@ -182,6 +182,10 @@ awesome_node_t *new_awesome_array(int size)
 int hasht_awesome_init(hasht_t *table, int capacity, int expected_threads)
 {
     DEBUG("initializing awesome table");
+
+    /* table->capacity = 8; */
+
+    /* table->logsize  = (int)log2(table->capacity); */
 
     table->awesome.root.child   = new_awesome_array(table->capacity);
     table->awesome.root.residue = ~0;

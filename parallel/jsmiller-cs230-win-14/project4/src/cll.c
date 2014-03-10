@@ -67,12 +67,16 @@ int ll_pushnode(ll_t *list, ll_node_t *new)
 
 void *ll_Lamport_pop(ll_t *list)
 {
+
+    if (!list) return NULL;
+    
     ERROR_IF(!list, ERR_NOMEM);
 
     if (list->head == list->tail)
         return NULL;
     if (!list->head)
         return NULL;
+
     ll_node_t * head = list->head;
     list->head = list->head->next;
     void *data = head->data;

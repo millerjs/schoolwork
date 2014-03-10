@@ -26,7 +26,6 @@
 ll_t *qs[MAX_THREADS];
 pthread_mutex_t locks[MAX_THREADS];
 
-
 unsigned long getms()
 {
     struct timeval tv;       
@@ -48,13 +47,17 @@ double parallelDispatcher(hasht_type_t type,
                           int *nPackets,
                           double *elapsedTime)
 {
+
+    srand(time(0));
+
     StopWatch_t timer;
 	
     HashPacketGenerator_t * source = 
         createHashPacketGenerator(fractionAdd,fractionRemove,hitRate,mean);
     
     hasht_t *table = hasht_new(type, capacity, nthreads);
-    for(int i = 0; i < initSize; i++){
+ 
+   for(int i = 0; i < initSize; i++){
         HashPacket_t * p = getAddPacket(source);
         table->add(table, (void*)p->body, mangleKey(p));
     }
@@ -66,9 +69,6 @@ double parallelDispatcher(hasht_type_t type,
 
     thread_pool_t *pool = thread_pool_create(loop, nthreads);
     pool->table = table;
-
-    *nPackets = 0;
-
 
     thread_pool_start(pool);
 
@@ -99,7 +99,7 @@ double parallelDispatcher(hasht_type_t type,
 
     stopTimer(&timer);
 
-    *elapsedTime = getElapsedTime(&timer);
+    *elapsedTime = *elapsedTime + getElapsedTime(&timer);
 
     return ret;
 
@@ -129,6 +129,36 @@ void *no_load_loop(void * __thread__)
     return NULL;
 }
 
+void *worker_loop(void * __thread__)
+{
+    thread_t *thread = (thread_t*)__thread__;
+    
+    block_on_start(thread->pool);
 
+    hasht_t *table = thread->pool->table;
+    
+    while (!thread->pool->stop){
+        int id = get_next_queue(thread->pool->size);
+        HashPacket_t * pkt = (HashPacket_t*) ll_Lamport_pop(qs[id]);
 
+        if (pkt){
+            int key = mangleKey(pkt);
+            switch(pkt->type) {
+            case Add:
+                table->add(table, (void*)pkt, key);
+                break;
+            case Remove:
+                table->remove(table, key);
+                break;
+            case Contains:
+                table->contains(table, key);
+                break;
+            }
+        }
+
+        pthread_mutex_unlock(locks+id);
+    }
+    
+    return NULL;
+}
 

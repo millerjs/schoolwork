@@ -13,7 +13,7 @@
 
 #include "hasht.h"
 
-extern int OPTIMISM;
+extern volatile int OPTIMISM;
 
 int hasht_awesome_add(hasht_t *table, void *item, int key);
 int hasht_awesome_contains(hasht_t *table, int key);

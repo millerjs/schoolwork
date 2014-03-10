@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
     fprintf(stderr, "Running Experiment %d\n", experiment);
     
     if (experiment == 1)          experiment1(output_file);
-    else if (experiment == 2)     ;
+    else if (experiment == 2)     experiment2(output_file);
     else if (experiment == 3)     ;
     else if (experiment == 4)     ;
     else if (experiment == 5)     ;

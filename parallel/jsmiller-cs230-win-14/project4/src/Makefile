@@ -41,4 +41,5 @@ check-syntax:
 
 clean:
 	rm -f $(OBJS) ../$(BIN) *.d
-	$(MAKE) clean -C experiments/ 
+	$(MAKE) clean -C experiments/
+	$(MAKE) clean -C libhasht/ 

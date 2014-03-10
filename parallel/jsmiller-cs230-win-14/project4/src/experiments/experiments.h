@@ -27,6 +27,9 @@
 
 
 int experiment1(FILE *output);
+int experiment2(FILE *output);
+int experiment3(FILE *output);
+int experiment4(FILE *output);
 
 
 #endif
