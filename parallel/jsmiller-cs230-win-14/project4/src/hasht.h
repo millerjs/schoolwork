@@ -75,8 +75,9 @@ struct awesome_node_t{
     unsigned int residue;
     unsigned int key;
     void *data;
-    awesome_node_t *child;    
+    awesome_node_t *child;
     unsigned char inuse;
+    unsigned char valid;
 };
 
 typedef struct hasht_awesome_t

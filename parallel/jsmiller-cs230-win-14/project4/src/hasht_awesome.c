@@ -18,87 +18,165 @@ int OPTIMISM = 4;
 
 int hasht_awesome_add(hasht_t *table, void *item, int key)
 {
-
     awesome_node_t *root = &table->awesome.root;
-    int level = 0;
+    int dimension = 0;
     int id;
 
-    hasht_awesome_print(table, root, 0);
+    DEBUG("ADD [%d]", key);
 
-ADD_RECURSE:
+    while (1){
+        /* get a new hash position based in dimension */
+        id = (key >> (dimension * table->logsize) ) & mask;
 
-    /* get a new hash position based on level */
-    id = (key >> level) & mask;
+        DEBUG("ADD \t root->child [%p]", root->child);
         
-    if (!root->child){
-        DEBUG("creating new child array, level %d", level);
-        awesome_node_t *new = new_awesome_array(table->capacity);
-        awesome_node_t *old = __sync_val_compare_and_swap(&root->child, NULL, new);
-        /* somebody beat us to the punch */
-        if (old) {
-            WARN("about to leak memory while growing branch");
-        }
-    }
-    
-    if (root->child[id].inuse){
-        DEBUG("the desired location is taken [%d]", id);
-        
-        for (int offset = 1; offset < OPTIMISM && id + offset < table->capacity; offset++){
-            DEBUG("checking [%d] + [%d]", id, offset);
-            if (!root->child[id + offset].inuse){
-                
-                
+        if (!root->child){
+            DEBUG("ADD \t creating new child array, dimension %d", dimension);
+            awesome_node_t *new = new_awesome_array(table->capacity);
+            awesome_node_t *old = __sync_val_compare_and_swap(&root->child, NULL, new);
+            /* somebody beat us to the punch */
+            if (old) {
+                WARN("about to leak memory while growing branch");
             }
+        }
+
+        DEBUG("ADD \t [%d] inuse? [%d]", id, root->child[id].inuse);
+    
+        /* check if this slot is free, if so, claim it */
+        if (__sync_val_compare_and_swap(&root->child[id].inuse, 0, 1)){
+
+            DEBUG("ADD \t the desired location is taken [%d]", id);
+
+            for (int offset = 1; offset < OPTIMISM && id + offset < table->capacity; offset++){
+                DEBUG("ADD \t \t checking [%d + %d]", id, offset);
+                /* check if this slot is free, if so, clame it */
+                if (!__sync_val_compare_and_swap(&root->child[id+offset].inuse, 0, 1)){
+                    id += offset;
+                    goto COMPLETE_ADD;
+                }
+            }
+        
+            /* if we are here, then our optimistic linear probe failed and try the next dimension*/
+            root = &root->child[(key >> (dimension * table->logsize) ) & mask];
+            dimension ++;
+            DEBUG("ADD \t this dimension is bunk, trying the next [%d]", dimension);
+
+        } else {
+
+            goto COMPLETE_ADD;
 
         }
 
     }
-        
-    /* leave a hint that the key might be here */
+
+COMPLETE_ADD:
+
+    /* our atomic claim succeeded, proceed to insert the item */
+    DEBUG("ADD \t found a free spot at [%d] in dimension [%d]", id, dimension);
+    root->child[id].key   = key;
+    root->child[id].data  = item;
+    root->child[id].valid = 1;
     __sync_fetch_and_or(&root->residue, key);
 
-    level++;
-        
+
 
     return 0;
 }
 
 void *hasht_awesome_remove(hasht_t *table, int key)
 {
-    void *ret = NULL;
-    
+    void *data = NULL;
+    awesome_node_t *root = &table->awesome.root;
+    int dimension = 0;
+    int id;
 
-    return ret;
+    DEBUG("REMOVE [%d]", key);
+
+    while (root){
+        /* get a new hash position based in dimension */
+        id = (key >> (dimension * table->logsize) ) & mask;
+
+        if (key % table->capacity && !(root->residue & key)) 
+            return 0;
+
+        DEBUG("REMOVE \t [%d] in [%d]?", key, id);
+    
+        for (int offset = 0; offset < OPTIMISM && id + offset < table->capacity; offset++){
+            DEBUG("REMOVE \t \t checking [%d + %d]", id, offset);
+            if (root->child[id+offset].inuse && root->child[id+offset].key == key){
+                DEBUG("REMOVE \t found [%d] at [%d]", key, id);
+
+                root->child[id+offset].valid = 0;
+                root->child[id+offset].key   = 0;
+                data = root->child[id+offset].data;
+                root->child[id+offset].data  = 0;
+                root->child[id+offset].inuse = 0;
+
+                return data;
+            }
+        }
+        
+        /* if we are here, then our optimistic linear probe failed and try the next dimension*/
+        DEBUG("CONTAINS \t this dimension is bunk, trying the next [%d]", dimension);
+        root = &root->child[(key >> (dimension * table->logsize) ) & mask];
+        dimension ++;
+
+    }
+
+    return data;
+
 }
 
 
 int hasht_awesome_contains(hasht_t *table, int key)
 {
-    int contains = 0;
+    awesome_node_t *root = &table->awesome.root;
+    volatile int dimension = 0;
+    volatile int id;
 
-    return contains;
+    DEBUG("CONTAINS [%d]", key);
+
+    while (root){
+        /* get a new hash position based in dimension */
+        id = (key >> (dimension * table->logsize) ) & mask;
+
+        if (key % table->capacity && !(root->residue & key))
+            return 0;
+
+        DEBUG("CONTAINS \t [%d] in [%d] dimension [%d]?", key, id, dimension);
+
+        for (int offset = 0; offset < OPTIMISM && id + offset < table->capacity; offset++){
+            DEBUG("CONTAINS \t \t checking [%d] at [%d]: %d", key, id, root[id+offset].key);
+            if (root[id+offset].inuse && root[id+offset].key == key){
+                DEBUG("CONTAINS \t found [%d] at [%d]: %d", key, id, root[id+offset].key);
+                return root[id+offset].valid;
+            }
+        }
+        
+        /* if we are here, then our optimistic linear probe failed and try the next dimension*/
+        root = &root[(key >> (dimension * table->logsize) ) & mask];
+        dimension ++;
+        DEBUG("CONTAINS \t this dimension is bunk, trying the next [%d]", dimension);
+
+
+        return 0;
+
+    }
+
+    return 0;
+
 }
 
 void *hasht_awesome_resize(hasht_t *table)
 {
-
-    DEBUG("Resize [%d / %d]", table->count, incoming_capacity);
-    DEBUG(" ");
-    DEBUG("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
-
-
-    DEBUG("resized table to [%d]", new_capacity);
-    DEBUG("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-    DEBUG(" ");
-
-    
+    ERROR("THERE IS NO SUCH THING AS A RESIZE IN THE AWESOME LOCK!!!!");
     return NULL;
 }
 
 awesome_node_t *new_awesome_array(int size)
 {
     awesome_node_t *new = MALLOC(awesome_node_t, size);
-    memset(new, 0, sizeof(awesome_node_t)*size);
+    memset(new, 0, size * sizeof(awesome_node_t));
     return new;
 }
 
@@ -117,28 +195,26 @@ int hasht_awesome_init(hasht_t *table, int capacity, int expected_threads)
     return RET_SUCCESS;
 }
 
-void hasht_awesome_print(hasht_t *table, awesome_node_t *root, int level)
+void hasht_awesome_print(hasht_t *table, awesome_node_t *root, int dimension)
 {
-    if (!level)
-        fprintf(stderr, "vvvvvvvvvv DUMPING AWESOME TABLE vvvvvvvvvv\n");
+    if (!dimension) fprintf(stderr, "v--------- DUMPING AWESOME TABLE ---------v\n");
     
     if (root->child){
-
+        char buf[1028] = {0};
+        for(int j = 0; j < dimension; j++) strcat(buf, " | ");
+        fprintf(stderr, "%s(%d):\t", buf, root->key);
         for(int i = 0; i < table->capacity; i++){
-
-            for(int j = 0; j < level; j++) fprintf(stderr, " | ");
-            fprintf(stderr, "(%d): ", level);
-            if (root->child[i].inuse)
-                fprintf(stderr, "[%d : %d] ", i, root->child[i].key);
-            if (root->child[i].child)
-                hasht_awesome_print(table, root->child, level+1);
+            if (root->child[i].inuse){
+                fprintf(stderr, "[%d || %d] ", i, root->child[i].key);
+            }
         }
         fprintf(stderr, "\n");
-
+        for(int i = 0; i < table->capacity; i++)
+            if (root->child[i].child)
+                hasht_awesome_print(table, root->child + i, dimension+1);
     } 
     
-    if (!level)
-        fprintf(stderr, "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n");
+    if (!dimension) fprintf(stderr, "^-----------------------------------------^\n");
 
     return;
 

@@ -3,7 +3,9 @@ SRC = ../src
 DEPS = $(OBJS:.o=.d)
 CC = colorgcc
 CFLAGS = -I../../include -g3 -Wall -fpic -std=gnu99\
-	 -MMD -MP -DDEBUG -O3 -std=gnu99 $(DEBUG) 
+	 -MMD -MP -DDEBUG  -std=gnu99 $(DEBUG)\
+	 -O3
+
 BIN = test
 LDLIBS = -lm -lrt -pthread 
 DEPS = $(OBJS:.o=.d)

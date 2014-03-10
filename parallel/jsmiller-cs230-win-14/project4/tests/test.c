@@ -22,6 +22,7 @@
 
 #include "../src/hasht_locking.h"
 #include "../src/hasht_locking.h"
+#include "../src/hasht_awesome.h"
 
 #define GREEN "\033[0;32m"
 #define NORM "\033[0m"
@@ -42,13 +43,17 @@ int serial_simple_hash_test(hasht_type_t type)
     for(int i = 0; i < n; i++)
         table->add(table, &data[i], keys[i]);
     for(int i = 0; i < n; i++)
-        if (!table->contains(table, keys[i]))
+        if (!table->contains(table, keys[i])){
+            WARN("should contain key[%d] = %d", i, keys[i]);
             return FAILED;
+        }
     for(int i = 0; i < n; i++)
         table->remove(table, keys[i]);
     for(int i = 0; i < n; i++)
-        if (table->contains(table, keys[i]))
+        if (table->contains(table, keys[i])){
+            WARN("should not contain key[%d] = %d", i, keys[i]);
             return FAILED;
+        }
     return PASSED;
 }
 
@@ -76,10 +81,13 @@ int serial_resize_hash_test(hasht_type_t type)
 
     for(int i = 0; i < n; i++){
         if (!table->contains(table, keys[i])){
+            hasht_awesome_print(table, &table->awesome.root, 0);
             ERROR("should contain key[%d] = %d", i, keys[i]);
             return FAILED;
         }
     }
+
+    hasht_awesome_print(table, &table->awesome.root, 0);
 
     return PASSED;
 
@@ -166,7 +174,8 @@ void *parallel_loop2(void * __thread__)
 
             /* make sure it's there when it's supposed to be */
             if  (!table->contains(table, key)){
-                WARN("should contain key[%d]: %d", index, key);
+                hasht_awesome_print(table, &table->awesome.root, 0);
+                ERROR("should contain key[%d]: %d", index, key);
                 return &FAILED;
             }
 
@@ -180,7 +189,8 @@ void *parallel_loop2(void * __thread__)
             /* Otherwise, make sure it's not there and add it */
 
             if (table->contains(table, key)){
-                WARN("should not contain key[%d]: %d", index, key);
+                hasht_awesome_print(table, &table->awesome.root, 0);
+                ERROR("should not contain key[%d]: %d", index, key);
                 return &FAILED;
             } 
 
@@ -304,9 +314,9 @@ int main(int argc, char* argv[])
 
     if (all || tests[4]){
         TEST(serial_simple_hash_test(AWESOME), "add/remove");
-        /* TEST(serial_resize_hash_test(AWESOME), "add/remove/resize"); */
-        /* TEST(parallel_hash_test1(AWESOME), "and/resize/contain"); */
-        /* TEST(parallel_hash_test2(AWESOME), "random traversal of keyspace"); */
+        TEST(serial_resize_hash_test(AWESOME), "add/remove/resize");
+        TEST(parallel_hash_test1(AWESOME), "and/resize/contain");
+        TEST(parallel_hash_test2(AWESOME), "random traversal of keyspace");
     }
 
 
