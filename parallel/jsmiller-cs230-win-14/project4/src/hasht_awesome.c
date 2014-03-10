@@ -57,8 +57,8 @@ int hasht_awesome_add(hasht_t *table, void *item, int key)
             }
         
             /* if we are here, then our optimistic linear probe failed and try the next dimension*/
-            root = &root->child[(key >> (dimension * table->logsize) ) & mask];
             dimension ++;
+            root = &root->child[id];
             DEBUG("ADD \t this dimension is bunk, trying the next [%d]", dimension);
 
         } else {
@@ -85,44 +85,41 @@ COMPLETE_ADD:
 
 void *hasht_awesome_remove(hasht_t *table, int key)
 {
+    awesome_node_t *root = table->awesome.root.child;
     void *data = NULL;
-    awesome_node_t *root = &table->awesome.root;
     int dimension = 0;
     int id;
 
     DEBUG("REMOVE [%d]", key);
 
     while (root){
+
         /* get a new hash position based in dimension */
         id = (key >> (dimension * table->logsize) ) & mask;
 
-        if (key % table->capacity && !(root->residue & key)) 
-            return 0;
+        /* if (key % table->capacity && !(root->residue & key)) */
+            /* return 0; */
 
-        DEBUG("REMOVE \t [%d] in [%d]?", key, id);
-    
+        DEBUG("REMOVE \t [%d] in [%d] dimension [%d]?", key, id, dimension);
+
         for (int offset = 0; offset < OPTIMISM && id + offset < table->capacity; offset++){
-            DEBUG("REMOVE \t \t checking [%d + %d]", id, offset);
-            if (root->child[id+offset].inuse && root->child[id+offset].key == key){
-                DEBUG("REMOVE \t found [%d] at [%d]", key, id);
-
-                root->child[id+offset].valid = 0;
-                root->child[id+offset].key   = 0;
-                data = root->child[id+offset].data;
-                root->child[id+offset].data  = 0;
-                root->child[id+offset].inuse = 0;
-
+            DEBUG("REMOVE \t \t checking [%d] at [%d]: %d", key, id, root[id+offset].key);
+            if (root[id+offset].inuse && root[id+offset].key == key){
+                DEBUG("REMOVE \t found [%d] at [%d]: %d", key, id, root[id+offset].key);
+                if (!__sync_val_compare_and_swap(&root[id + offset].valid, 1, 0)){
+                    data = root[id + offset].data;
+                    root[id + offset].inuse = 0;
+                }
                 return data;
             }
         }
         
-        /* if we are here, then our optimistic linear probe failed and try the next dimension*/
-        DEBUG("CONTAINS \t this dimension is bunk, trying the next [%d]", dimension);
-        root = &root->child[(key >> (dimension * table->logsize) ) & mask];
         dimension ++;
+        root = root[id].child;
+
+        DEBUG("REMOVE \t Failed. Trying [%d] on [%d], %p", id, dimension, root);
 
     }
-
     return data;
 
 }
@@ -130,18 +127,19 @@ void *hasht_awesome_remove(hasht_t *table, int key)
 
 int hasht_awesome_contains(hasht_t *table, int key)
 {
-    awesome_node_t *root = &table->awesome.root;
-    volatile int dimension = 0;
-    volatile int id;
+    awesome_node_t *root = table->awesome.root.child;
+    int dimension = 0;
+    int id;
 
     DEBUG("CONTAINS [%d]", key);
 
     while (root){
+
         /* get a new hash position based in dimension */
         id = (key >> (dimension * table->logsize) ) & mask;
 
-        if (key % table->capacity && !(root->residue & key))
-            return 0;
+        /* if (key % table->capacity && !(root->residue & key)) */
+            /* return 0; */
 
         DEBUG("CONTAINS \t [%d] in [%d] dimension [%d]?", key, id, dimension);
 
@@ -153,13 +151,10 @@ int hasht_awesome_contains(hasht_t *table, int key)
             }
         }
         
-        /* if we are here, then our optimistic linear probe failed and try the next dimension*/
-        root = &root[(key >> (dimension * table->logsize) ) & mask];
         dimension ++;
-        DEBUG("CONTAINS \t this dimension is bunk, trying the next [%d]", dimension);
+        root = root[id].child;
 
-
-        return 0;
+        DEBUG("CONTAINS \t Failed. Trying [%d] on [%d], %p", id, dimension, root);
 
     }
 
@@ -219,3 +214,4 @@ void hasht_awesome_print(hasht_t *table, awesome_node_t *root, int dimension)
     return;
 
 }
+\
