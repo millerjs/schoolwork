@@ -40,7 +40,22 @@
 
 typedef void *(*loop_t)(void*);
 
-void *no_load_loop(void * __thread__);
+double parallelDispatcher(hasht_type_t type, 
+                          loop_t loop, 
+                          int duration,
+                          float fractionAdd,
+                          float fractionRemove,
+                          float hitRate,
+                          int maxBucketSize,
+                          long mean,
+                          int initSize,
+                          int capacity,
+                          int nthreads,
+                          int *nPackets,
+                          double *ellapsedTime);
 
+int get_next_queue(int nthreads);
+
+void *no_load_loop(void * __thread__);
 
 #endif

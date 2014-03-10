@@ -45,13 +45,12 @@ int ll_len(ll_t *list)
 int ll_push(ll_t *list, void *item, int key)
 {
     ERROR_IF(!list, ERR_NOMEM);
-    /* WARN_IF(list->len >= list->maxlen, "list add exceeds maxlen"); */
     ll_node_t *new = ll_node_new(item, key);
     ll_node_t *tail = list->tail;
     list->tail = new;
     if (tail) tail->next = new;    
     else      list->head = new;
-    list->len++;
+    __sync_fetch_and_add(&list->len, 1);
     return 0;
 }
 
@@ -62,7 +61,7 @@ int ll_pushnode(ll_t *list, ll_node_t *new)
     list->tail = new;
     if (tail) tail->next = new;    
     else      list->head = new;
-    list->len++;
+    __sync_fetch_and_add(&list->len, 1);
     return list->len;
 }
 
@@ -72,11 +71,12 @@ void *ll_Lamport_pop(ll_t *list)
 
     if (list->head == list->tail)
         return NULL;
-
+    if (!list->head)
+        return NULL;
     ll_node_t * head = list->head;
     list->head = list->head->next;
     void *data = head->data;
-    list->len --;
+    __sync_fetch_and_sub(&list->len, 1);
     return data;
 }
 
@@ -90,7 +90,7 @@ void *ll_pop(ll_t *list)
 
     list->head = list->head->next;
     void *data = head->data;
-    list->len --;
+    __sync_fetch_and_sub(&list->len, 1);
     return data;
 }
 
@@ -105,7 +105,7 @@ ll_node_t *ll_popnode(ll_t *list)
     list->head = list->head->next;
 
     if (!list->head) list->tail = NULL;
-    list->len --;
+    __sync_fetch_and_sub(&list->len, 1);
     
     return head;
 }
@@ -141,7 +141,7 @@ void *ll_remove(ll_t *list, int key)
     ll_node_t *last = NULL;
     while (curr){
         if (curr->key == key){
-            list->len --;
+            __sync_fetch_and_sub(&list->len, 1);
             if (last) {
                 last->next = curr->next;
             } else {

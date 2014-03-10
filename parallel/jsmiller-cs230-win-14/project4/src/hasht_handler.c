@@ -34,18 +34,19 @@ unsigned long getms()
     return (unsigned long)((tv.tv_sec * 1000ul) + (tv.tv_usec / 1000ul));
 }
 
-
-void parallelDispatcher(hasht_type_t type, 
-                        loop_t loop, 
-                        int nmillisec,
-                        float fractionAdd,
-                        float fractionRemove,
-                        float hitRate,
-                        int maxBucketSize,
-                        long mean,
-                        int initSize,
-                        int capacity,
-                        int nthreads)
+double parallelDispatcher(hasht_type_t type, 
+                          loop_t loop, 
+                          int duration,
+                          float fractionAdd,
+                          float fractionRemove,
+                          float hitRate,
+                          int maxBucketSize,
+                          long mean,
+                          int initSize,
+                          int capacity,
+                          int nthreads,
+                          int *nPackets,
+                          double *elapsedTime)
 {
     StopWatch_t timer;
 	
@@ -66,36 +67,41 @@ void parallelDispatcher(hasht_type_t type,
     thread_pool_t *pool = thread_pool_create(loop, nthreads);
     pool->table = table;
 
-    // allocate and initialize locks and any signals used to marshal threads (eg. done signals)
-    //
-    // allocate and initialize Dispatcher and Worker threads
+    *nPackets = 0;
+
 
     thread_pool_start(pool);
 
-
-    int nPackets = 0;
-    /* HashPacket_t * pkt; */
-
-    unsigned long end = getms() + nmillisec;
-
     startTimer(&timer);
 
+    long residue = 0;
+
     /* work until the day is done */
+    unsigned long end = getms() + duration;
     while (getms() < end){
-        usleep(10); 
-        DEBUG("DISPATCH DISPATCH DISPATCH DISPATCH ");
-        nPackets++;
+        for(int i = 0; i < nthreads; i++){
+            
+            if (ll_len(qs[i]) < QUEUE_DEPTH){
+                HashPacket_t * pkt = getRandomPacket(source);
+                ll_push(qs[i], pkt, mangleKey(pkt));
+                residue += getFingerprint(pkt->body->iterations, pkt->body->seed);
+
+            }
+
+            *nPackets = *nPackets + 1;
+        }
+
     }
-    
-    usleep(nmillisec);
 
     thread_pool_stop(pool);
 
-    thread_pool_join(pool);
+    int ret = thread_pool_join(pool);
 
     stopTimer(&timer);
 
-    // report the total number of packets processed and total time
+    *elapsedTime = getElapsedTime(&timer);
+
+    return ret;
 
 }
 
@@ -103,7 +109,6 @@ int get_next_queue(int nthreads)
 {
     int id = (rand() * nthreads) / RAND_MAX;
     while (pthread_mutex_trylock(locks+id)){
-        fprintf(stderr, "Trying to get queue [%d]\n", id);
         id = (rand() * nthreads) / RAND_MAX;
     }
     return id;
@@ -117,8 +122,7 @@ void *no_load_loop(void * __thread__)
 
     while (!thread->pool->stop){
         int id = get_next_queue(thread->pool->size);
-        HashPacket_t * packet = ll_Lamport_pop(qs[id]);
-        fprintf(stderr, "Dropping packet [%p]\n", packet);
+        ll_Lamport_pop(qs[id]);
         pthread_mutex_unlock(locks+id);
     }
     

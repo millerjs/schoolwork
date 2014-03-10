@@ -22,7 +22,7 @@ int thread_pool_join(thread_pool_t *pool)
     int retvalue = 0;
     for (int i = 0; i < pool->size; i++){
         pthread_join(pool->threads[i].self, &ret);
-        retvalue += *(int*)ret;
+        if (ret) retvalue += *(int*)ret;
     }
     return retvalue;
 }
