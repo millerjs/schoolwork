@@ -1,4 +1,4 @@
-UTILS = ../../utils
+UTILS = ../hash_utils
 DEPS = $(OBJS:.o=.d)
 CC = colorgcc
 CFLAGS = -I../../include -g3 -Wall -fpic -std=gnu99 \
@@ -17,12 +17,13 @@ OBJS = main.o\
 	 hasht_lockfreec.o\
 	 hasht_linear.o\
 	 hasht_awesome.o\
+	 hasht_handler.o\
 	 $(UTILS)/generators.o\
 	 $(UTILS)/stopwatch.o\
 	 $(UTILS)/fingerprint.o\
 	 $(UTILS)/packetsource.o\
+	 $(UTILS)/paddedprim.o\
 	 $(UTILS)/crc32.o
-
 
 all: $(BIN)
 

@@ -1,9 +1,12 @@
 DEBUG = -D_$(DF)
 export DEBUG
 
-all: project4
+all: project4 libhash_utils
 
 .PHONY: project4 
+
+libhash_utils: 
+	$(MAKE) -C hash_utils/
 
 project4: 
 	$(MAKE) -C src/

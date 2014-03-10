@@ -14,12 +14,12 @@
 #include <pthread.h>
 #include <signal.h>
 
+#include "../hash_utils/hashgenerator.h"
+
 #include "../src/thread_pool.h"
 #include "../src/hasht.h"
 #include "../src/util.h"
 #include "../src/cll.h"
-#include "../../utils/hashgenerator.h"
-
 #include "../src/hasht_locking.h"
 #include "../src/hasht_locking.h"
 #include "../src/hasht_awesome.h"
