@@ -19,9 +19,11 @@
 
 #include "thread_pool.h"
 #include "util.h"
-#include "hasht.h"
 #include "cll.h"
-#include "../../utils/stopwatch.h"
+#include "../hash_utils/stopwatch.h"
+#include "libhasht/hasht.h"
+
+#include "experiments/experiments.h"
 
 #define MAX_PATH 1028
 
@@ -84,7 +86,7 @@ int main(int argc, char* argv[])
 
     fprintf(stderr, "Running Experiment %d\n", experiment);
     
-    if (experiment == 1)          ;
+    if (experiment == 1)          experiment1(output_file);
     else if (experiment == 2)     ;
     else if (experiment == 3)     ;
     else if (experiment == 4)     ;
@@ -94,13 +96,6 @@ int main(int argc, char* argv[])
     else if (experiment == 8)     ;
     else
         ERROR("unknown experiment number");
-
-
-    thread_pool_t *pool = thread_pool_create(&thread_loop, 10);
-
-    thread_pool_start(pool);
-    thread_pool_join(pool);
-    thread_pool_free(pool);
 
     fclose(output_file);
 

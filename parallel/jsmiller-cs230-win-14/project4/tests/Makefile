@@ -11,11 +11,7 @@ LDLIBS = -lm -lrt -pthread
 DEPS = $(OBJS:.o=.d)
 
 OBJS = test.o\
-	 $(SRC)/hasht.o\
-	 $(SRC)/hasht_locking.o\
-	 $(SRC)/hasht_lockfreec.o\
-	 $(SRC)/hasht_linear.o\
-	 $(SRC)/hasht_awesome.o\
+	 $(SRC)/libhasht/libhasht.a\
 	 $(SRC)/util.o\
 	 $(SRC)/cll.o\
 	 $(SRC)/thread_pool.o\

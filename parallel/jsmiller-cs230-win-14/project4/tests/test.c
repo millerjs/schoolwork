@@ -17,12 +17,9 @@
 #include "../hash_utils/hashgenerator.h"
 
 #include "../src/thread_pool.h"
-#include "../src/hasht.h"
 #include "../src/util.h"
 #include "../src/cll.h"
-#include "../src/hasht_locking.h"
-#include "../src/hasht_locking.h"
-#include "../src/hasht_awesome.h"
+#include "../src/libhasht/hasht.h"
 
 #define GREEN "\033[0;32m"
 #define NORM "\033[0m"

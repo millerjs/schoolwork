@@ -4,37 +4,40 @@ CC = colorgcc
 CFLAGS = -I../../include -g3 -Wall -fpic -std=gnu99 \
 	 -MMD -MP -DDEBUG -O3  $(DEBUG)
 BIN = project4
-LDLIBS = -lm -lrt -pthread  -D_POSIX_C_SOURCE=200112L -D_GNU_SOURCE
+LDLIBS = -lm -L../hash_utils -lhash_utils -lrt -pthread  -D_POSIX_C_SOURCE=200112L -D_GNU_SOURCE 
 
 ##### Objects
 
-OBJS = main.o\
+OBJS = \
+	 main.o\
+         libexperiments.a\
+         libhasht/libhasht.a\
 	 util.o\
-	 thread_pool.o\
 	 cll.o\
-	 hasht.o\
-	 hasht_locking.o\
-	 hasht_lockfreec.o\
-	 hasht_linear.o\
-	 hasht_awesome.o\
+	 thread_pool.o\
 	 hasht_handler.o\
-	 $(UTILS)/generators.o\
-	 $(UTILS)/stopwatch.o\
-	 $(UTILS)/fingerprint.o\
-	 $(UTILS)/packetsource.o\
-	 $(UTILS)/paddedprim.o\
-	 $(UTILS)/crc32.o
+	 $(UTILS)/hashgenerator.o
 
 all: $(BIN)
 
 $(BIN): $(OBJS)
+	$(MAKE) -C experiments/
 	$(CC) $(LDFLAGS) $(OBJS)  $(LDLIBS) -o ../$(BIN)
 
 %.d: %.c
+
+libexperiments.a:
+	$(MAKE) -C experiments/
+
+libhasht/libhasht.a:
+	$(MAKE) -C libhasht/
+
+$(UTILS)/libhash_utils.a:
+	$(MAKE) -C $(UTILS)/	
 
 check-syntax:
 	$(CC) -o nul -S ${CHK_SOURCES}
 
 clean:
-	rm -f $(OBJS) $(BIN) *.d
-	rm ../$(BIN)
+	rm -f $(OBJS) ../$(BIN) *.d
+	$(MAKE) clean -C experiments/ 

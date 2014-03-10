@@ -14,7 +14,7 @@
 
 #include <pthread.h>
 
-#include "hasht.h"
+#include "libhasht/hasht.h"
 
 typedef struct hasht_t hasht_t;   
 
