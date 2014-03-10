@@ -73,7 +73,6 @@ typedef struct awesome_node_t awesome_node_t;
 
 struct awesome_node_t{
     unsigned int residue;
-    unsigned int size;
     unsigned int key;
     void *data;
     awesome_node_t *child;    
