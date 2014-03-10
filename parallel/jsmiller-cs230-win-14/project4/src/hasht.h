@@ -58,14 +58,14 @@ typedef struct linear_node_t{
     unsigned int key;
     unsigned char inuse;
     void *data;
-    int resizing;
     unsigned int steps;
 } linear_node_t;
 
 typedef struct hasht_linear_t
 {
-    int n_rwlocks;
-    pthread_rwlock_t *rwlocks;
+    int n_locks;
+    int resizing;
+    pthread_mutex_t *locks;
     linear_node_t *buckets;
 } hasht_linear_t;
 

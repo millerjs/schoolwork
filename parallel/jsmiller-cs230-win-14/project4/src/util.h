@@ -79,12 +79,11 @@ int uerr;
     do {                                                \
         char buf[51];                                   \
         int idx = ((unsigned int)pthread_self())%14;    \
-        snprintf(buf, 50, "[%d] [%s] [%d] [%s] ",       \
+        snprintf(buf, 30, "[%d][%d][%s] ",              \
                  ((unsigned int)pthread_self())%63,     \
-                 __FILE__,                              \
                  __LINE__,                              \
                  __func__);                             \
-        fprintf(stderr, "%s%50s | %s",                  \
+        fprintf(stderr, "%s%30s | %s",                  \
                 __gry__, buf, colors[idx]);             \
         fprintf(stderr, fmt, ##__VA_ARGS__);            \
         fprintf(stderr, "%s\n", __nrm__);               \

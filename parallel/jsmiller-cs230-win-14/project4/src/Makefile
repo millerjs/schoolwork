@@ -2,7 +2,7 @@ UTILS = ../../utils
 DEPS = $(OBJS:.o=.d)
 CC = colorgcc
 CFLAGS = -I../../include -g3 -Wall -fpic -std=gnu99 \
-	 -MMD -MP -DDEBUG -O3 -Werror $(DEBUG)
+	 -MMD -MP -DDEBUG -O3  $(DEBUG)
 BIN = project4
 LDLIBS = -lm -lrt -pthread  -D_POSIX_C_SOURCE=200112L -D_GNU_SOURCE
 
