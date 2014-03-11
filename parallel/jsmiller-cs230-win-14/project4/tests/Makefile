@@ -1,7 +1,7 @@
-UTILS = ../../utils
+UTILS = ../hash_utils
 SRC = ../src
 DEPS = $(OBJS:.o=.d)
-CC = colorgcc
+CC = gcc
 CFLAGS = -I../../include -g3 -Wall -fpic -std=gnu99\
 	 -MMD -MP -DDEBUG  -std=gnu99 $(DEBUG)\
 	 -O3
@@ -15,13 +15,6 @@ OBJS = test.o\
 	 $(SRC)/util.o\
 	 $(SRC)/cll.o\
 	 $(SRC)/thread_pool.o\
-	 $(UTILS)/crc32.o\
-	 $(UTILS)/generators.o\
-	 $(UTILS)/hashgenerator.o\
-	 $(UTILS)/stopwatch.o\
-	 $(UTILS)/fingerprint.o\
-	 $(UTILS)/packetsource.o
-
 
 all: $(BIN)
 

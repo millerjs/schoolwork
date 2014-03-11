@@ -43,9 +43,7 @@ double parallelDispatcher(hasht_type_t type,
                           long mean,
                           int initSize,
                           int capacity,
-                          int nthreads,
-                          int *nPackets,
-                          double *elapsedTime)
+                          int nthreads)
 {
 
 
@@ -78,7 +76,8 @@ double parallelDispatcher(hasht_type_t type,
     startTimer(&timer);
 
     long residue = 0;
-
+    long nPackets = 0;
+    
     /* work until the day is done */
     unsigned long end = getms() + duration;
     while (getms() < end){
@@ -88,23 +87,24 @@ double parallelDispatcher(hasht_type_t type,
                 HashPacket_t * pkt = getRandomPacket(source);
                 ll_push(qs[i], pkt, mangleKey(pkt));
                 residue += getFingerprint(pkt->body->iterations, pkt->body->seed);
-
+                nPackets ++;
             }
 
-            *nPackets = *nPackets + 1;
         }
 
     }
 
     thread_pool_stop(pool);
 
-    int ret = thread_pool_join(pool);
+    thread_pool_join(pool);
 
     stopTimer(&timer);
 
-    *elapsedTime = *elapsedTime + getElapsedTime(&timer);
+    double elapsedTime = getElapsedTime(&timer);
 
-    return ret;
+    double rate = nPackets / (elapsedTime / 1000) ;
+
+    return rate;
 
 }
 

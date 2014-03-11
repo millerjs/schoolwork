@@ -1,6 +1,6 @@
 UTILS = ../hash_utils
 DEPS = $(OBJS:.o=.d)
-CC = colorgcc
+CC = gcc
 CFLAGS = -I../../include -g3 -Wall -fpic -std=gnu99 \
 	 -MMD -MP -DDEBUG -O3  $(DEBUG) -Werror
 BIN = project4

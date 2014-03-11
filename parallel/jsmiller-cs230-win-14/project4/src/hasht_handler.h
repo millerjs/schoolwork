@@ -50,9 +50,7 @@ double parallelDispatcher(hasht_type_t type,
                           long mean,
                           int initSize,
                           int capacity,
-                          int nthreads,
-                          int *nPackets,
-                          double *ellapsedTime);
+                          int nthreads);
 
 int get_next_queue(int nthreads);
 

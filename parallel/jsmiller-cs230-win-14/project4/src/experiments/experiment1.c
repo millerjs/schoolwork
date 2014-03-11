@@ -25,9 +25,6 @@
 
 int experiment1(FILE *output)
 {
-    
-    int nPackets = 0;
-    double elapsedTime = 0;
 
     hasht_type_t type    = LOCKING;
     loop_t loop          = no_load_loop;
@@ -43,17 +40,15 @@ int experiment1(FILE *output)
 
     int ntimes = 10;
 
+    double rate = 0;
     for(int i = 0; i < ntimes; i++){
-        parallelDispatcher(type, loop, duration, 
-                           fractionAdd, fractionRemove, 
-                           hitRate, maxBucketSize, mean, 
-                           initSize, capacity, nthreads, 
-                           &nPackets, &elapsedTime);
+        rate += parallelDispatcher(type, loop, duration, fractionAdd, fractionRemove, 
+                                   hitRate, maxBucketSize, mean, initSize, capacity, 
+                                   nthreads);
         garbageCollect();
-
     }
-    
-    fprintf(output, "Rate : %lf\n", nPackets / elapsedTime);
+
+    fprintf(output, "%lf\n", rate /ntimes);
 
     return 0;
 }

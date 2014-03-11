@@ -10,17 +10,17 @@ from numpy import *
 
 def main():
 
-    plt, ax = new_plot(xaxis="Optimism", yaxis="Throughput")
+    plt, ax = new_plot(xaxis="Optimism", yaxis="Throughput", logx=True)
     
     root   = "plot4"
-    path   = "plot4_7.dat"
+    path   = "plot4_a.dat"
     output = root+".png"
     
     x = []; y = []
 
     data = parse(path)
 
-    sizes = [4, 8, 16, 32, 64, 128]
+    sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
 
     throughput = 0
     capacity = 1
@@ -35,19 +35,25 @@ def main():
         yindex = throughput
         tindex = capacity
 
-        x = array([ float(row[xindex]) for row in data if 
+        x = [ float(row[xindex]) for row in data if 
                     float(row[tindex]) == size 
-                    ])
+                    ]
 
-        y = array([ abs(float(row[0])) for row in data if 
+        y = [ abs(float(row[0])) for row in data if 
                     float(row[tindex]) == size 
-                    ])
+                    ]
+
+        i = y.index(max(y))
+
+        ax.annotate("M=%d\nS=%d" % (x[i], size), xy=(x[i], y[i]), 
+                    xytext=(x[i]*.8, y[i]+50000),
+                    arrowprops=dict(facecolor='black', shrink=0.05, width=2))
+
 
         plot(x, y, "o-", alpha=.7, linewidth=3, label="Size: %d" % size)
 
-        xlim(0, 17)
-
     save_plot(plot, ax, output)
+    
 
 def save_plot(plt, ax, path):
     

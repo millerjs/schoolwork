@@ -1,5 +1,5 @@
 DEPS = $(OBJS:.o=.d)
-CC = colorgcc
+CC = gcc
 CFLAGS = -I../../include -g3 -Wall -fpic -std=gnu99 \
 	 -MMD -MP -DDEBUG -O3  $(DEBUG)
 LDLIBS = -lm -lrt -pthread  -D_POSIX_C_SOURCE=200112L -D_GNU_SOURCE

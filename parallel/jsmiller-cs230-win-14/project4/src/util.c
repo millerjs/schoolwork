@@ -103,7 +103,7 @@ void print_test_result(int failed, const char* test, const char* subtest)
 
 unsigned int malloc_count = 0;
 
-#define MAX_ALLOCATIONS 1000000
+#define MAX_ALLOCATIONS 10000000
 void *allocated_pointers[MAX_ALLOCATIONS];
 
 void *_malloc_(size_t size)

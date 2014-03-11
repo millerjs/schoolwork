@@ -86,14 +86,14 @@ int main(int argc, char* argv[])
 
     fprintf(stderr, "Running Experiment %d\n", experiment);
     
-    if (experiment == 1)          experiment1(output_file);
+    if      (experiment == 1)     experiment1(output_file);
     else if (experiment == 2)     experiment2(output_file);
-    else if (experiment == 3)     ;
+    else if (experiment == 3)     experiment3(output_file);
     else if (experiment == 4)     experiment4(output_file);
-    else if (experiment == 5)     ;
-    else if (experiment == 6)     ;
-    else if (experiment == 7)     ;
-    else if (experiment == 8)     ;
+    /* else if (experiment == 5)     ; */
+    /* else if (experiment == 6)     ; */
+    /* else if (experiment == 7)     ; */
+    /* else if (experiment == 8)     ; */
     else
         ERROR("unknown experiment number");
 
