@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
     if (experiment == 1)          experiment1(output_file);
     else if (experiment == 2)     experiment2(output_file);
     else if (experiment == 3)     ;
-    else if (experiment == 4)     ;
+    else if (experiment == 4)     experiment4(output_file);
     else if (experiment == 5)     ;
     else if (experiment == 6)     ;
     else if (experiment == 7)     ;

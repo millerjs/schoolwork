@@ -31,22 +31,29 @@ int experiment1(FILE *output)
 
     hasht_type_t type    = LOCKING;
     loop_t loop          = no_load_loop;
-    int duration         = 10000;
+    int duration         = 2000;
     float fractionAdd    = .9;
     float fractionRemove = .1;
     float hitRate        = .5;
     int maxBucketSize    = 32;
     long mean            = 1;
-    int initSize         = 40;
+    int initSize         = 10;
     int capacity         = 32;
-    int nthreads         = 8;
+    int nthreads         = 1;
 
-    parallelDispatcher(type, loop, duration, fractionAdd, fractionRemove, 
-                       hitRate, maxBucketSize, mean, initSize, capacity, 
-                       nthreads, &nPackets, &elapsedTime);
+    int ntimes = 10;
+
+    for(int i = 0; i < ntimes; i++){
+        parallelDispatcher(type, loop, duration, 
+                           fractionAdd, fractionRemove, 
+                           hitRate, maxBucketSize, mean, 
+                           initSize, capacity, nthreads, 
+                           &nPackets, &elapsedTime);
+        garbageCollect();
+
+    }
     
-    fprintf(stderr, "Rate : %lf\n", nPackets / elapsedTime);
-    
+    fprintf(output, "Rate : %lf\n", nPackets / elapsedTime);
 
     return 0;
 }

@@ -48,7 +48,10 @@ double parallelDispatcher(hasht_type_t type,
                           double *elapsedTime)
 {
 
-    srand(time(0));
+
+    struct timeval tv;       
+    gettimeofday(&tv, NULL);
+    srand(tv.tv_usec);
 
     StopWatch_t timer;
 	

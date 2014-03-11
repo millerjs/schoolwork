@@ -183,8 +183,8 @@ int hasht_awesome_init(hasht_t *table, int capacity, int expected_threads)
 {
     DEBUG("initializing awesome table");
 
+    /* fprintf(stderr, "INITIALIZING WITH OPTIMISM %d\n", OPTIMISM); */
     /* table->capacity = 8; */
-
     /* table->logsize  = (int)log2(table->capacity); */
 
     table->awesome.root.child   = new_awesome_array(table->capacity);

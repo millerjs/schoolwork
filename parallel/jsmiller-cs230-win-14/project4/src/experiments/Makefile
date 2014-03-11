@@ -13,6 +13,8 @@ BIN = ../libexperiments.a
 OBJS =  \
 	 experiment1.o\
 	 experiment2.o\
+	 experiment3.o\
+	 experiment4.o\
 
 all: $(BIN)
 
