@@ -54,8 +54,7 @@ int experiment3(FILE *output)
 
             for(int t = 0; t < 4; t++){
 
-                /* hasht_type_t type    = types[t]; */
-                hasht_type_t type    = AWESOME;
+                hasht_type_t type    = types[t];
                 float fractionAdd    = .09;
                 float fractionRemove = .01;
                 double rate = 0;

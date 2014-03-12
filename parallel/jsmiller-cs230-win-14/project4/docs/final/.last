@@ -239,13 +239,13 @@ the new array before the locks are released.
 The two main focal points that I wanted to improve were (1) locking
 and (2) resizing (3) locality.  All of the above designs required a
 stop-the-world resizing strategy, and I wanted to create a design that
-was free of this long pause progress.  Furthermore, I wanted to
+was free of this long pause in progress.  Furthermore, I wanted to
 maximize the spacial locality of my data structure; I decided to use
 arrays, rather than linked lists, as the backbone for this hash
 table. The problem with arrays, however, as we saw with the linear
 probe is the resize. For these reasons I came up with the following
 design. The idea is a dynamicly multidimensional hash table somewhere
-between a linear probe and a tree. 
+between a linear probe and a tree.
 
 Consider the table to be one dimensional at initialization. Add calls
 proceed as if the table were a linear probe hash table, except each
@@ -334,11 +334,24 @@ TEST: [  random traversal of key..] [     parallel_hash_test2(AWESOME)] [ PASSED
 This experiment involves running the parallel test with no load and
 minimal packet size for the number of threads equal to the number of
 cores. This will present us with the rate at which the dispatcher
-thread can enqueue the packets onto the lamport queues. I predict that
-the dispatcher rate will be based upon the relative performanc of
+thread can enqueue the packets onto the lamport queues. I predicted
+that the dispatcher rate will be based upon the relative performanc of
 the \t{hashgenerator}, which I believe will be slightly slower, and
 therefore the performance will fall just below the performance of the
-dispatcher rate in previous projects.
+dispatcher rate in previous projects. This prediction was true.
+
+I decided to use the \t{HomeQueue} work load method because each
+thread should have a constant work load supplied to it, as the
+dispatch dishes one packet out to each queue iteratively. Furthermore,
+since this is a time based test, the queue fairness is less important
+in the performance statistics.
+
+When running this test, I decided that I was looking for the quickest
+possible rate that the dispatcher could work, otherwise I could get a
+hash table performance that is better than the 'ideal' performance
+that this experiment is simulating.  Therefore I chose the maximum
+dispatcher rate at each of the thread counts I would run Experiment~3
+at.  This allowed me to compare each data point to an 'ideal' speedup.
 
 \figH {../plots/plot1.png}{Dispatcher rate as a function of thread count}{plot1}{.9}
 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2014.2.10)  12 MAR 2014 16:47
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2014.2.10)  12 MAR 2014 18:01
 entering extended mode
  %&-line parsing enabled.
 **final.tex zLaTex-Preamble.tex
@@ -2763,19 +2763,19 @@ Missing character: There is no > in font rm-inconsolata!
 File: ../plots/plot1.png Graphic file (type png)
  <use ../plots/plot1.png>
 [6 <../plots/plot1.png>]
-<../plots/plot3_0.png, id=35, 1068.1506pt x 518.8986pt>
+<../plots/plot3_0.png, id=35, 1057.3101pt x 518.8986pt>
 File: ../plots/plot3_0.png Graphic file (type png)
 
 <use ../plots/plot3_0.png>
-<../plots/plot3_1.png, id=36, 1068.1506pt x 518.8986pt>
+<../plots/plot3_1.png, id=36, 1057.3101pt x 518.8986pt>
 File: ../plots/plot3_1.png Graphic file (type png)
 
 <use ../plots/plot3_1.png> [7 <../plots/plot3_0.png>]
-<../plots/plot3_2.png, id=44, 1068.1506pt x 518.8986pt>
+<../plots/plot3_2.png, id=44, 1057.3101pt x 518.8986pt>
 File: ../plots/plot3_2.png Graphic file (type png)
 
 <use ../plots/plot3_2.png>
-<../plots/plot3_3.png, id=45, 1068.1506pt x 518.8986pt>
+<../plots/plot3_3.png, id=45, 1057.3101pt x 518.8986pt>
 File: ../plots/plot3_3.png Graphic file (type png)
 
 <use ../plots/plot3_3.png> [8 <../plots/plot3_1.png> <../plots/plot3_2.png>]
@@ -2809,7 +2809,7 @@ sfonts/cm/cmssbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm
 /cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
 </usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share
 /texmf/fonts/type1/public/cm-super/sfrm1000.pfb>
-Output written on final.pdf (9 pages, 544602 bytes).
+Output written on final.pdf (9 pages, 570317 bytes).
 PDF statistics:
  101 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

@@ -18,6 +18,7 @@ SerialList_t *  createSerialListWithItem(int key, volatile Packet_t * value)
 	list->size = 1;
 	Item_t * newItem = (Item_t *)malloc(sizeof(Item_t));
 	newItem->key = key;
+        newItem->next = NULL;
 	newItem->value = value;
 	list->head = newItem;
 

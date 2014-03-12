@@ -11,12 +11,33 @@ from numpy import *
 def main():
     
     root   = "plot3"
-    path   = "experiment_3_1394656398.dat"
+    # path   = "experiment_3_1394656398.dat"
+    path   = "exp3_combo.dat"
     output = "plot3_%s.png" % sys.argv[1]
     
     data = parse(path)
 
     types = ["LOCKING", "LOCKFREEC", "LINEAR", "AWESOME"]
+
+
+Sleeping!!count: 393549 
+time: 2000.168945
+196.757879 inc / msSleeping!!count: 389992 
+time: 2000.149048
+194.981469 inc / msSleeping!!count: 404937 
+time: 2000.155029
+202.452807 inc / msSleeping!!count: 390872 
+time: 2000.146973
+195.421639 inc / msSleeping!!count: 414599 
+time: 2000.146973
+207.284267 inc / msSleeping!!count: 405594 
+time: 2000.155029
+202.781281 inc / msSleeping!!count: 413010 
+time: 2000.149048
+206.489612 inc / msSleeping!!count: 402508 
+time: 2000.150024
+201.238905 inc / ms
+
 
     loads = [ 
         [.09, .01, .5],
@@ -31,7 +52,7 @@ def main():
 
     load = loads[int(sys.argv[1])]
 
-    plt, ax = new_plot(xaxis="Thread count", yaxis="Throughput", 
+    plt, ax = new_plot(xaxis="Thread count", yaxis="Speedup", 
                        title="Experiment 3\nfracAdd: %.2f \nfracRemove: %.2f \nhitRate: %.2f" 
                        % (load[0], load[1], load[2]))
 
@@ -40,14 +61,14 @@ def main():
 
     for t in [0, 1, 2, 3]:
         
-        x = [ item[-3] for item in data if
+        x = [ float(item[-3]) for item in data if
               float(item[1]) == t       and
               float(item[2]) == load[0] and
               float(item[3]) == load[1] and 
               float(item[4]) == load[2]
               ]
 
-        y = [ item[-1] for item in data if
+        y = [ float(item[-1]) for item in data if
               float(item[1]) == t       and
               float(item[2]) == load[0] and
               float(item[3]) == load[1] and 
@@ -60,7 +81,12 @@ def main():
         x = array(x)
         y = array(y)
 
-        plot(x/, y, "o-", alpha=.7, linewidth=3, label="Type: %s" % types[t])
+        plot(x, y/566.36, "o-", alpha=.7, linewidth=3, label="Type: %s" % types[t])
+
+
+    x = [ 1, 3, 7, 15]
+    y = array([100, 800, 1700, 1600])
+    plot(x, y/566.36, "k-.", alpha=.7, linewidth=3, label="Ideal")
 
     save_plot(plot, ax, output)
     

@@ -38,42 +38,37 @@ int experiment4(FILE *output)
     int maxBucketSize    = 32;
     long mean            = 4000;
     int initSize         = 1;
-    /* int nthreads         = 1; */
     
-    for(int n = 1; n < 5; n++){
-        
-        int nthreads = (1<<n) - 1;
+    int nthreads = 7;
 
-        for (capacity = 1; capacity <= 512; capacity *= 2){ 
-            for(OPTIMISM = 1; OPTIMISM <= capacity; OPTIMISM *= 2){
+    for (capacity = 1; capacity <= 512; capacity *= 2){ 
+        for(OPTIMISM = 1; OPTIMISM <= capacity; OPTIMISM *= 2){
 
-                double rate = 0;
-                for(int i = 0; i < ntimes; i++){
-                    rate += parallelDispatcher(type, loop, duration, 
-                                               fractionAdd, fractionRemove, 
-                                               hitRate, maxBucketSize, mean, 
-                                               initSize, capacity, nthreads);
-                    garbageCollect();
-                }
-
-                fprintf(output, "%lf \t %d \t %d \t %dn\n", 
-                        rate/ntimes, 
-                        capacity, 
-                        OPTIMISM, 
-                        nthreads);
-
-                fprintf(stderr, "%lf \t %d \t %d\n", 
-                        rate/ntimes, 
-                        capacity, 
-                        OPTIMISM);
-
-                fflush(output);
-                fflush(stderr);
-
+            double rate = 0;
+            for(int i = 0; i < ntimes; i++){
+                rate += parallelDispatcher(type, loop, duration, 
+                                           fractionAdd, fractionRemove, 
+                                           hitRate, maxBucketSize, mean, 
+                                           initSize, capacity, nthreads);
+                garbageCollect();
             }
+
+            fprintf(output, "%lf \t %d \t %d \t %dn\n", 
+                    rate/ntimes, 
+                    capacity, 
+                    OPTIMISM, 
+                    nthreads);
+
+            fprintf(stderr, "%lf \t %d \t %d\n", 
+                    rate/ntimes, 
+                    capacity, 
+                    OPTIMISM);
+
+            fflush(output);
+            fflush(stderr);
+
         }
     }
-
 
     return 0;
 }

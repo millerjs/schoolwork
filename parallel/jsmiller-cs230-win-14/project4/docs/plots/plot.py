@@ -13,7 +13,7 @@ def main():
     plt, ax = new_plot(xaxis="Optimism", yaxis="Throughput", logx=True)
     
     root   = "plot4"
-    path   = "plot4_.dat"
+    path   = "plot4_g.dat"
     output = root+".png"
     
     x = []; y = []
@@ -50,6 +50,7 @@ def main():
         #             xytext=(x[i]*.8, y[i]+50000),
         #             arrowprops=dict(facecolor='black', shrink=0.05, width=2))
 
+        
 
         plot(x, y, "o-", alpha=.7, linewidth=3, label="Size: %d" % size)
 

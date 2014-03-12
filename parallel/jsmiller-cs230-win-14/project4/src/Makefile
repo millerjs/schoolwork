@@ -10,11 +10,20 @@ LDLIBS = -lm -L./libhasht -L../hash_utils -lhash_utils -lrt -pthread \
 ##### Objects
 
 OBJS = \
+	 $(UTILS)/crc32.o\
+	 $(UTILS)/fingerprint.o\
+	 $(UTILS)/generators.o\
+	 $(UTILS)/hashgenerator.o\
+	 $(UTILS)/packetsource.o\
+	 $(UTILS)/hashpacketworker.o\
+	 $(UTILS)/hashpackettest.o\
+	 $(UTILS)/stopwatch.o\
+	 $(UTILS)/hashtable.o\
+	 $(UTILS)/seriallist.o\
 	 main.o\
 	 hasht_handler.o\
          libexperiments.a\
          libhasht/libhasht.a\
-         ../hash_utils/libhash_utils.a\
 	 thread_pool.o\
 	 cll.o\
 	 util.o\

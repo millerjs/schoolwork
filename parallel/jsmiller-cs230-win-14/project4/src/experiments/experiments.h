@@ -33,5 +33,6 @@ int experiment4(FILE *output);
 int experiment5(FILE *output, hasht_type_t type, 
                 float fractionAdd, float fractionRemove, 
                 float hitRate, int nthreads);
+int experiment7(FILE *output);
 
 #endif

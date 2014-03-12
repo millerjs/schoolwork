@@ -108,12 +108,19 @@ int main(int argc, char* argv[])
     else if (experiment == 2)     experiment2(output_file);
     else if (experiment == 3)     experiment3(output_file);
     else if (experiment == 4)     experiment4(output_file);
+    else if (experiment == 7)     experiment7(output_file);
     else if (experiment == 5){
         ERROR_IF(!(fracAdd && fracRem && hitRate && nthreads), "exp5 needs options -artnh");
         experiment5(output_file, type, fracAdd, fracRem, hitRate, nthreads);
     } else if (experiment == 6){
-        serialHashPacketTest(2000, .09, .01, .9, 32, 1000, 10);
-
+        serialHashPacketTest(2000, .09, .01, .5, 32, 4000, 10);
+        serialHashPacketTest(2000, .45, .05, .5, 32, 4000, 10);
+        serialHashPacketTest(2000, .09, .01, .75, 32, 4000, 10);
+        serialHashPacketTest(2000, .45, .05, .75, 32, 4000, 10);
+        serialHashPacketTest(2000, .09, .01, .9, 32, 4000, 10);
+        serialHashPacketTest(2000, .45, .05, .9, 32, 4000, 10);
+        serialHashPacketTest(2000, .09, .01, .99, 32, 4000, 10);
+        serialHashPacketTest(2000, .45, .05, .99, 32, 4000, 10);
     }
     else
         ERROR("unknown experiment number");
