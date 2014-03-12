@@ -15,6 +15,7 @@ OBJS =  \
 	 experiment2.o\
 	 experiment3.o\
 	 experiment4.o\
+	 experiment5.o\
 
 all: $(BIN)
 

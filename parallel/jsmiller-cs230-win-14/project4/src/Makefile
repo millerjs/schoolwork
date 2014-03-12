@@ -2,7 +2,7 @@ UTILS = ../hash_utils
 DEPS = $(OBJS:.o=.d)
 CC = gcc
 CFLAGS = -I../../include -g3 -Wall -fpic -std=gnu99 \
-	 -MMD -MP -DDEBUG -O3  $(DEBUG) -Werror
+	 -MMD -MP -DDEBUG -O3  $(DEBUG)
 BIN = project4
 LDLIBS = -lm -L./libhasht -L../hash_utils -lhash_utils -lrt -pthread \
 	  -D_POSIX_C_SOURCE=200112L -D_GNU_SOURCE 
@@ -14,8 +14,8 @@ OBJS = \
 	 hasht_handler.o\
          libexperiments.a\
          libhasht/libhasht.a\
+         ../hash_utils/libhash_utils.a\
 	 thread_pool.o\
-	 $(UTILS)/hashgenerator.o\
 	 cll.o\
 	 util.o\
 

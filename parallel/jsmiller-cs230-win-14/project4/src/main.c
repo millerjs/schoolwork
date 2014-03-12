@@ -38,7 +38,7 @@ FILE *open_output_file(int experiment)
 {
     long sec = time(NULL);
     char output_path[MAX_PATH];
-    sprintf(output_path, "output/experiment_%d_%li.dat", experiment, sec);
+    sprintf(output_path, "/home/jsmiller/output/experiment_%d_%li.dat", experiment, sec);
     
     fprintf(stderr, "Writing output to [%s]\n", output_path);
 
@@ -65,13 +65,31 @@ int main(int argc, char* argv[])
     int experiment = 0;
     FILE *output_file = NULL;
 
-    while ((c = getopt (argc, argv, "n:e:")) != -1){
+    float fracAdd = 0;
+    float fracRem = 0;
+    float hitRate = 0;
+    int nthreads = 0;
+    int type = 0;
+
+    while ((c = getopt (argc, argv, "n:e:a:r:h:t:")) != -1){
         switch (c){
+        case 'a':
+            ERROR_IF(sscanf(optarg, "%f", &fracAdd) != 1, "-a expects an float option\n");
+            break;
+        case 'r':
+            ERROR_IF(sscanf(optarg, "%f", &fracRem) != 1, "-r expects an float option\n");
+            break;
+        case 'h':
+            ERROR_IF(sscanf(optarg, "%f", &hitRate) != 1, "-h expects an float option\n");
+            break;
+        case 't':
+            ERROR_IF(sscanf(optarg, "%d", &type) != 1, "-t expects an int option\n");
+            break;
         case 'n':
+            ERROR_IF(sscanf(optarg, "%d", &nthreads) != 1, "-n expects an integer option\n");
             break;
         case 'e':
-            ERROR_IF(sscanf(optarg, "%d", &experiment) != 1,
-                     "-e expects an integer option\n");
+            ERROR_IF(sscanf(optarg, "%d", &experiment) != 1, "-e expects an integer option\n");
             break;
         default:
             fprintf(stderr, "Unknown argument -%c\n", c);
@@ -90,10 +108,13 @@ int main(int argc, char* argv[])
     else if (experiment == 2)     experiment2(output_file);
     else if (experiment == 3)     experiment3(output_file);
     else if (experiment == 4)     experiment4(output_file);
-    /* else if (experiment == 5)     ; */
-    /* else if (experiment == 6)     ; */
-    /* else if (experiment == 7)     ; */
-    /* else if (experiment == 8)     ; */
+    else if (experiment == 5){
+        ERROR_IF(!(fracAdd && fracRem && hitRate && nthreads), "exp5 needs options -artnh");
+        experiment5(output_file, type, fracAdd, fracRem, hitRate, nthreads);
+    } else if (experiment == 6){
+        serialHashPacketTest(2000, .09, .01, .9, 32, 1000, 10);
+
+    }
     else
         ERROR("unknown experiment number");
 

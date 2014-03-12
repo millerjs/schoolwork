@@ -11,8 +11,8 @@
 #include "hasht.h"
 #include "hasht_awesome.h"
 
-volatile int OPTIMISM = 64;
-#define DIM_LEN 128
+volatile int OPTIMISM = 4;
+#define DIM_LEN 4
 
 #define mask ((1<<table->logsize) - 1)
 

@@ -10,48 +10,38 @@ from numpy import *
 
 def main():
 
-    plt, ax = new_plot(xaxis="Optimism", yaxis="Throughput", logx=True)
     
-    root   = "plot4"
-    path   = "plot4_.dat"
-    output = root+".png"
+    root   = "plot2"
+    path   = "experiment_2_1394652082.dat"
+    output = "plot2.png" 
     
-    x = []; y = []
-
     data = parse(path)
-    print data
 
-    sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
-    # sizes = [128, 256]
 
-    throughput = 0
-    capacity = 1
-    optimism = 2
-    
-    for size in sizes:
+    types = ["LOCKING", "LOCKFREEC", "LINEAR", "AWESOME"]
+
+
+    plt, ax = new_plot(xaxis="Thread count", yaxis="Throughput", 
+                       title="Experiment 2: Parallel Overhead")
+
+
+    for row in data:
+        print row
+
+    for t in [0, 1, 2, 3]:
         
-        xindex = optimism
-        yindex = throughput
-        tindex = capacity
+        x = [ item[-3] for item in data if
+              float(item[1]) == t
+              ]
 
-        print [row[tindex] for row in data]
+        y = [ item[-1] for item in data if
+              float(item[1]) == t
+              ]
+        
+        print types[t]
+        print x
 
-        x = [ float(row[xindex]) for row in data if 
-                    float(row[tindex]) == size 
-                    ]
-
-        y = [ abs(float(row[0])) for row in data if 
-                    float(row[tindex]) == size 
-                    ]
-
-        # i = y.index(max(y))
-
-        # ax.annotate("M=%d\nS=%d" % (x[i], size), xy=(x[i], y[i]), 
-        #             xytext=(x[i]*.8, y[i]+50000),
-        #             arrowprops=dict(facecolor='black', shrink=0.05, width=2))
-
-
-        plot(x, y, "o-", alpha=.7, linewidth=3, label="Size: %d" % size)
+        plot(x, y, "o-", alpha=.7, linewidth=3, label="Type: %s" % types[t])
 
     save_plot(plot, ax, output)
     

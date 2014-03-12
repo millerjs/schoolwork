@@ -10,48 +10,19 @@ from numpy import *
 
 def main():
 
-    plt, ax = new_plot(xaxis="Optimism", yaxis="Throughput", logx=True)
+    plt, ax = new_plot(xaxis="Thread count", yaxis="Throughput")
     
-    root   = "plot4"
-    path   = "plot4_.dat"
-    output = root+".png"
+    root   = "plot1"
+    path   = "experiment_1_1394652040.dat"
+    output = "plot1.png"
     
-    x = []; y = []
-
     data = parse(path)
-    print data
-
-    sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
-    # sizes = [128, 256]
-
-    throughput = 0
-    capacity = 1
-    optimism = 2
     
-    for size in sizes:
-        
-        xindex = optimism
-        yindex = throughput
-        tindex = capacity
+    x = [ float(row[0]) for row in data ]
 
-        print [row[tindex] for row in data]
+    y = [ abs(float(row[-1])) for row in data]
 
-        x = [ float(row[xindex]) for row in data if 
-                    float(row[tindex]) == size 
-                    ]
-
-        y = [ abs(float(row[0])) for row in data if 
-                    float(row[tindex]) == size 
-                    ]
-
-        # i = y.index(max(y))
-
-        # ax.annotate("M=%d\nS=%d" % (x[i], size), xy=(x[i], y[i]), 
-        #             xytext=(x[i]*.8, y[i]+50000),
-        #             arrowprops=dict(facecolor='black', shrink=0.05, width=2))
-
-
-        plot(x, y, "o-", alpha=.7, linewidth=3, label="Size: %d" % size)
+    plot(x, y, "o-", alpha=.7, linewidth=3, label="Dispatcher Rate")
 
     save_plot(plot, ax, output)
     

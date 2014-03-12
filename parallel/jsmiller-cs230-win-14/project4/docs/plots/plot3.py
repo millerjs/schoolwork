@@ -9,49 +9,58 @@ from numpy import *
 
 
 def main():
-
-    plt, ax = new_plot(xaxis="Optimism", yaxis="Throughput", logx=True)
     
-    root   = "plot4"
-    path   = "plot4_.dat"
-    output = root+".png"
+    root   = "plot3"
+    path   = "experiment_3_1394656398.dat"
+    output = "plot3_%s.png" % sys.argv[1]
     
-    x = []; y = []
-
     data = parse(path)
-    print data
 
-    sizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
-    # sizes = [128, 256]
+    types = ["LOCKING", "LOCKFREEC", "LINEAR", "AWESOME"]
 
-    throughput = 0
-    capacity = 1
-    optimism = 2
-    
-    for size in sizes:
+    loads = [ 
+        [.09, .01, .5],
+        [.09, .01, .75],
+        [.09, .01, .9],
+        [.09, .01, .99],
+        [.45, .05, .5],
+        [.45, .05, .75],
+        [.45, .05, .9],
+        [.45, .05, .99]
+        ]
+
+    load = loads[int(sys.argv[1])]
+
+    plt, ax = new_plot(xaxis="Thread count", yaxis="Throughput", 
+                       title="Experiment 3\nfracAdd: %.2f \nfracRemove: %.2f \nhitRate: %.2f" 
+                       % (load[0], load[1], load[2]))
+
+    for row in data:
+        print row
+
+    for t in [0, 1, 2, 3]:
         
-        xindex = optimism
-        yindex = throughput
-        tindex = capacity
+        x = [ item[-3] for item in data if
+              float(item[1]) == t       and
+              float(item[2]) == load[0] and
+              float(item[3]) == load[1] and 
+              float(item[4]) == load[2]
+              ]
 
-        print [row[tindex] for row in data]
+        y = [ item[-1] for item in data if
+              float(item[1]) == t       and
+              float(item[2]) == load[0] and
+              float(item[3]) == load[1] and 
+              float(item[4]) == load[2]
+              ]
+        
+        print types[t]
+        print x
 
-        x = [ float(row[xindex]) for row in data if 
-                    float(row[tindex]) == size 
-                    ]
+        x = array(x)
+        y = array(y)
 
-        y = [ abs(float(row[0])) for row in data if 
-                    float(row[tindex]) == size 
-                    ]
-
-        # i = y.index(max(y))
-
-        # ax.annotate("M=%d\nS=%d" % (x[i], size), xy=(x[i], y[i]), 
-        #             xytext=(x[i]*.8, y[i]+50000),
-        #             arrowprops=dict(facecolor='black', shrink=0.05, width=2))
-
-
-        plot(x, y, "o-", alpha=.7, linewidth=3, label="Size: %d" % size)
+        plot(x/, y, "o-", alpha=.7, linewidth=3, label="Type: %s" % types[t])
 
     save_plot(plot, ax, output)
     

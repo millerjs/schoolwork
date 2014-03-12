@@ -36,19 +36,27 @@ int experiment1(FILE *output)
     long mean            = 1;
     int initSize         = 10;
     int capacity         = 32;
-    int nthreads         = 1;
 
-    int ntimes = 10;
+    int ntimes = 5;
 
-    double rate = 0;
-    for(int i = 0; i < ntimes; i++){
-        rate += parallelDispatcher(type, loop, duration, fractionAdd, fractionRemove, 
-                                   hitRate, maxBucketSize, mean, initSize, capacity, 
-                                   nthreads);
-        garbageCollect();
+    for(int n = 1; n < 5; n++){
+
+        int nthreads = (1 << n) - 1;
+
+        double rate = 0;
+        for(int i = 0; i < ntimes; i++){
+            rate += parallelDispatcher(type, loop, duration, 
+                                       fractionAdd, fractionRemove, 
+                                       hitRate, maxBucketSize, mean, 
+                                       initSize, capacity, 
+                                       nthreads);
+            garbageCollect();
+        }
+
+        fprintf(output, "%d\t%lf\n", nthreads, rate /ntimes);
+        fprintf(stderr, "%d\t%lf\n", nthreads, rate /ntimes);
+
     }
-
-    fprintf(output, "%lf\n", rate /ntimes);
 
     return 0;
 }
